@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/observation/db" VERSION="20200615" COMMENT="XMLDB file for Moodle mod/observation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="observation" COMMENT="The settings for each observation.">
+        <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key."/>
+            <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the instance of the observation. Displayed at the top of each page."/>
+            <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The description of the observation. This field is used by feature MOD_INTRO."/>
+            <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the settings for this assign module instance were last modified."/>
+        </FIELDS>
+        <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        </KEYS>
+      </TABLE>
+      <TABLE NAME="observation_timeslots" COMMENT="Details about specific timeslots students can sign up to for an observation activity.">
+        <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
+            <FIELD NAME="observation" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" />
+            <FIELD NAME="starttime" TYPE="char" LENGTH="255" NOTNULL="false" COMMENT="Start datetime for the timeslot (ISO8601 format)" />
+            <FIELD NAME="duration" TYPE="int" LENGTH="20" SEQUENCE="false" COMMENT="Duration of this timeslot (minutes)" />
+        </FIELDS>
+        <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            <KEY NAME="observation" TYPE="foreign" FIELDS="observation" REFTABLE="observation" REFFIELDS="id" COMMENT="The particular instance of the mod_observation this timeslot is linked to." />
+        </KEYS>
+      </TABLE>
+  </TABLES>
+</XMLDB>
