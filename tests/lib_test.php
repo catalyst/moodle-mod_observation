@@ -19,6 +19,8 @@
  *
  * @package    mod_observation
  * @category   test
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,6 +31,8 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    mod_observation
  * @category   test
+ * @copyright  2021 Endurer Solutions Team
+ * @author     Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_observation_lib_testcase extends advanced_testcase {

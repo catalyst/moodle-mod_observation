@@ -17,12 +17,14 @@
 /**
  * Defines the observation module settings form.
  *
- * @package    mod_form
+ * @package    mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot . '/course/moodleform_mod.php');
+require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 /**
  * Settings form for the observation module.
@@ -30,15 +32,10 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_observation_mod_form extends moodleform_mod {
-
-    // Constructor for the mod_form
-    public function __construct($current, $section, $cm, $course){
-        // Can do things to add extra data to constructor here.
-        // Else just call the parents constructor.
-        parent::__construct($current, $section, $cm, $course);
-    }
-
-    // Definition of the form which mod_form will create
+    /**
+     * Called to define the form for this observation instance.
+     * @return void
+     */
     protected function definition() {
         // Get config and get the form object to construct.
         $obsconfig = get_config('observation');

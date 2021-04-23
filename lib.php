@@ -20,6 +20,8 @@
  * It delegates most functions to the assignment class.
  *
  * @package   mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -53,22 +55,17 @@ function observation_get_course_content_items(\core_course\local\entity\content_
  * @param object $data
  * @return int new observation instance id
  */
-function observation_add_instance($data) {
+function observation_add_instance($data): int {
     global $DB;
     $cmid = $data->coursemodule;
-
-    // Prepare array for insert.
-    $insertInstance = array(
-        "course" => $cmid,
-        "name" => $data->name,
-        "intro" => "",
-        "timemodified" => time()
-    );
     
     // Insert into DB.
-    $obsId = $DB->insert_record('observation', $insertInstance);
-
-    return $obsId;
+    return $DB->insert_record('observation', array(
+            "course" => $cmid,
+            "name" => $data->name,
+            "intro" => "",
+            "timemodified" => time()
+    ));
 }
 
 /**
@@ -77,9 +74,9 @@ function observation_add_instance($data) {
  * will update an existing instance with new data.
  *
  * @param object $data the data that came from the form.
- * @return mixed true on success, false or a string error message on failure.
+ * @return bool true on success, false or a string error message on failure.
  */
-function observation_update_instance($data) {
+function observation_update_instance($data): bool {
     global $DB;
     
     $data->id = $data->instance;
