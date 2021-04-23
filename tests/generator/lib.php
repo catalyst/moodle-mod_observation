@@ -19,6 +19,8 @@
  *
  * @package    mod_observation
  * @category   test
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,10 +31,11 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    mod_observation
  * @category   test
+ * @copyright  2021 Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_observation_generator extends testing_module_generator {
-    // Create a instance to run the tests on
+    // Create a instance to run the tests on.
     public function create_instance($record = null, array $options = null) {
         $record = (array)$record;
         return parent::create_instance($record, $options);

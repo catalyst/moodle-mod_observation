@@ -18,12 +18,23 @@
  * Library of functions and constants for module label
  *
  * @package mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../../config.php");
-require_once("lib.php");
+require_once('../../config.php');
 
-$id = required_param('id',PARAM_INT);
-$PAGE->set_url('/mod/observation/index.php', array('id'=>$id));
-redirect("$CFG->wwwroot/course/view.php?id=$id");
+global $CFG;
+global $DB;
+
+// Course id.
+$id = required_param('id', PARAM_INT);
+
+// Ensure that the course specified is valid.
+if (!$course = $DB->get_record('course', array('id'=> $id))) {
+    print_error('Course ID is incorrect');
+}
+
+// Redirect to the view.php file to show this activity.
+redirect("$CFG->wwwroot . '/mod/observation/view.php?id=' . $id");

@@ -18,17 +18,27 @@
  * Page to view an observation module
  *
  * @package mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
 
 $id = optional_param('id', 0, PARAM_INT);// Course module ID.
-$odId = optional_param('o', 0, PARAM_INT);// Observation instance ID.
+$observationid = optional_param('o', 0, PARAM_INT);// Observation instance ID.
 
 // Can access directly from observation ID or from course module ID.
-if ($odId) {
+if ($observationid) {
     // Access directly via observation ID.
+    if(!$cm = get_coursemodule_from_instance('observation', $observationid)){
+        print_error('invalidcoursemodule');
+    }
+
+    // Get the course from the course module (or error).
+    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
+        print_error('coursemisconf');
+    }
 } else {
     // Access indirectly via course module ID.
 
@@ -36,16 +46,16 @@ if ($odId) {
     if (!$cm = get_coursemodule_from_id('observation', $id)) {
         print_error('invalidcoursemodule');
     }
-    // Get the course from the course module (or error)
+    // Get the course from the course module (or error).
     if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
         print_error('coursemisconf');
     }
 
-    $odId = $cm->instance;
+    $observationid = $cm->instance;
 }
 
 // Get the observation instance (or error).
-if(!$observation = $DB->get_record('observation', array('id' => $odId))){
+if (!$observation = $DB->get_record('observation', array('id' => $observationid))){
     print_error('cannotfindcontext');
 }
 
@@ -53,12 +63,12 @@ require_login($course, true, $cm);
 
 // TODO check permissions.
 
-$PAGE->set_url('/mod/url/view.php', array('id' => $odId));
+$PAGE->set_url('/mod/url/view.php', array('id' => $observationid));
 
 // Render output (nothing right now, just some random debug info) TODO move into function.
 global $CFG, $PAGE, $OUTPUT;
 
-// Moodle header
+// Moodle header.
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
