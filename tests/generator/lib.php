@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_observation_generator extends testing_module_generator {
-
+    // Create a instance to run the tests on
     public function create_instance($record = null, array $options = null) {
         $record = (array)$record;
         return parent::create_instance($record, $options);

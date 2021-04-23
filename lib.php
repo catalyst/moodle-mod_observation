@@ -24,24 +24,26 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Return the preconfigured tools which are configured for inclusion in the activity picker.
+ *
+ * @param \core_course\local\entity\content_item $defaultmodulecontentitem reference to the content item for the Observation module.
+ * @return array the array of content items.
+ */
 function observation_get_course_content_items(\core_course\local\entity\content_item $defaultmodulecontentitem) {
     global $CFG, $OUTPUT;
 
     $types = [];
 
-    // Every thing that gets added to the activity picker is an instance of the 'content_item' class
-    // An array is returned in case a mod might add multiple things to the activity picker
-    // The 'External tool' entry (the main module content item), should always take the id of 1.
-
     $types = [new \core_course\local\entity\content_item(
-        1, // This is the ID of the content item (in case of multiples)
-        "observationActivityModule", // This is the internal name of the content item (not human readable)
-        new core_course\local\entity\string_title("Observation"), // This is the human readable title that shows up on the activity picker (an instance of the string_title class)
-        $defaultmodulecontentitem->get_link(), // TODO
-        '<img src="/mod/observation/pix/icon.png" />', // This is a string, which is the HTML for the icon. Images in the 'pix' folder are public by default.
-        $defaultmodulecontentitem->get_help(), // TODO
-        $defaultmodulecontentitem->get_archetype(), // TODO
-        $defaultmodulecontentitem->get_component_name() // TODO
+        1,
+        "observationActivityModule",
+        new core_course\local\entity\string_title("Observation"),
+        $defaultmodulecontentitem->get_link(),
+        '<img src="/mod/observation/pix/icon.png" />',
+        $defaultmodulecontentitem->get_help(),
+        $defaultmodulecontentitem->get_archetype(),
+        $defaultmodulecontentitem->get_component_name()
     )];
     return $types;
 }
@@ -55,18 +57,18 @@ function observation_add_instance($data) {
     global $DB;
     $cmid = $data->coursemodule;
 
-    // Prepare array for insert
-    $insert_instance = array(
+    // Prepare array for insert.
+    $insertInstance = array(
         "course" => $cmid,
         "name" => $data->name,
         "intro" => "",
         "timemodified" => time()
     );
     
-    // Insert into DB
-    $obs_id = $DB->insert_record('observation', $insert_instance);
+    // Insert into DB.
+    $obsId = $DB->insert_record('observation', $insertInstance);
 
-    return $obs_id;
+    return $obsId;
 }
 
 /**
@@ -81,7 +83,7 @@ function observation_update_instance($data) {
     global $DB;
     
     $data->id = $data->instance;
-    $data->intro="";
+    $data->intro = "";
 
     return $DB->update_record('observation', $data);
 }
