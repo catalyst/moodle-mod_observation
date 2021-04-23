@@ -58,7 +58,6 @@ function observation_get_course_content_items(\core_course\local\entity\content_
 function observation_add_instance($data): int {
     global $DB;
     $cmid = $data->coursemodule;
-    
     // Insert into DB.
     return $DB->insert_record('observation', array(
             "course" => $cmid,
@@ -78,10 +77,8 @@ function observation_add_instance($data): int {
  */
 function observation_update_instance($data): bool {
     global $DB;
-    
     $data->id = $data->instance;
     $data->intro = "";
-
     return $DB->update_record('observation', $data);
 }
 
