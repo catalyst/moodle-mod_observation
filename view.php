@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,18 +23,16 @@
 
 require('../../config.php');
 
-$id    = optional_param('id', 0, PARAM_INT);        // Course module ID
-$ob_id = optional_param('o', 0, PARAM_INT); // Observation instance ID
+$id = optional_param('id', 0, PARAM_INT);// Course module ID.
+$odId = optional_param('o', 0, PARAM_INT);// Observation instance ID.
 
-// Can access directly from observation ID or from course module ID
-if($ob_id) {
-    // Access directly via observation ID
-    
-    // TODO
+// Can access directly from observation ID or from course module ID.
+if ($odId) {
+    // Access directly via observation ID.
 } else {
-    // Access indirectly via course module ID
+    // Access indirectly via course module ID.
 
-    // Get the course module object from the ID (or error)
+    // Get the course module object from the ID (or error).
     if (!$cm = get_coursemodule_from_id('observation', $id)) {
         print_error('invalidcoursemodule');
     }
@@ -44,39 +41,32 @@ if($ob_id) {
         print_error('coursemisconf');
     }
 
-    $ob_id = $cm->instance;
+    $odId = $cm->instance;
 }
 
-// Get the observation instance (or error)
-if(!$observation = $DB->get_record('observation', array('id' => $ob_id))){
+// Get the observation instance (or error).
+if(!$observation = $DB->get_record('observation', array('id' => $odId))){
     print_error('cannotfindcontext');
 }
 
 require_login($course, true, $cm);
 
-// TODO check permissions 
+// TODO check permissions.
 
-$PAGE->set_url('/mod/url/view.php', array('id' => $ob_id));
+$PAGE->set_url('/mod/url/view.php', array('id' => $odId));
 
-// Render output (nothing right now, just some random debug info) TODO move into function
+// Render output (nothing right now, just some random debug info) TODO move into function.
 global $CFG, $PAGE, $OUTPUT;
 
 // Moodle header
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
-#$PAGE->set_activity_record($observation);
 echo $OUTPUT->header();
 
-// Our activity page header
+// Our activity page header.
 echo $OUTPUT->heading($observation->name);
 echo "Test.\n it works!";
 
 // Moodle footer
 echo $OUTPUT->footer();
 die;
-
-// DEBUG
-/*
-echo json_encode($cm);
-echo json_encode($course);
-echo "\n $ob_id";*/

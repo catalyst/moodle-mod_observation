@@ -15,34 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the activity observations's lib.
+ * Library of functions and constants for module label
  *
- * @package    mod_observation
- * @category   test
+ * @package mod_observation
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once("../../config.php");
+require_once("lib.php");
 
-/**
- * Unit tests for the activity observations's lib.
- *
- * @package    mod_observation
- * @category   test
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_observation_lib_testcase extends advanced_testcase {
-    /**
-     * Set up.
-     */
-    public function setUp(): void {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-    }
-
-    // Example test.
-    public function test_observation_dummy_test() {
-        $this->assertEquals(true, true);
-        $this->assertTrue(true);
-    }
-}
+$id = required_param('id',PARAM_INT);
+$PAGE->set_url('/mod/observation/index.php', array('id'=>$id));
+redirect("$CFG->wwwroot/course/view.php?id=$id");

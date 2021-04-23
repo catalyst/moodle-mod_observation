@@ -15,34 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the activity observations's lib.
+ * Capability definitions for the observation module.
  *
  * @package    mod_observation
- * @category   test
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Unit tests for the activity observations's lib.
- *
- * @package    mod_observation
- * @category   test
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_observation_lib_testcase extends advanced_testcase {
-    /**
-     * Set up.
-     */
-    public function setUp(): void {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-    }
+$capabilities = array(
+    'mod/observation:view' => array(
 
-    // Example test.
-    public function test_observation_dummy_test() {
-        $this->assertEquals(true, true);
-        $this->assertTrue(true);
-    }
-}
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+        )
+    ),
+);
