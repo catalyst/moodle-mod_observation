@@ -31,7 +31,7 @@ $observationid = optional_param('o', 0, PARAM_INT);// Observation instance ID.
 // Can access directly from observation ID or from course module ID.
 if ($observationid) {
     // Access directly via observation ID.
-    if(!$cm = get_coursemodule_from_instance('observation', $observationid)){
+    if (!$cm = get_coursemodule_from_instance('observation', $observationid)){
         print_error('invalidcoursemodule');
     }
 
@@ -55,7 +55,7 @@ if ($observationid) {
 }
 
 // Get the observation instance (or error).
-if (!$observation = $DB->get_record('observation', array('id' => $observationid))){
+if (!$observation = $DB->get_record('observation', array('id' => $observationid))) {
     print_error('cannotfindcontext');
 }
 
@@ -77,6 +77,6 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($observation->name);
 echo "Test.\n it works!";
 
-// Moodle footer
+// Moodle footer.
 echo $OUTPUT->footer();
 die;

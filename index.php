@@ -32,9 +32,12 @@ global $DB;
 $id = required_param('id', PARAM_INT);
 
 // Ensure that the course specified is valid.
-if (!$course = $DB->get_record('course', array('id'=> $id))) {
+if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('Course ID is incorrect');
 }
+
+// Require login to this course.
+require_login($course);
 
 // Redirect to the view.php file to show this activity.
 redirect("$CFG->wwwroot . '/mod/observation/view.php?id=' . $id");
