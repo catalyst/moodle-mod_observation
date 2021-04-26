@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library of functions and constants for module label
+ * Library of functions and constants for module observation
  *
  * @package mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -33,7 +33,7 @@ $id = required_param('id', PARAM_INT);
 
 // Ensure that the course specified is valid.
 if (!$course = $DB->get_record('course', array('id' => $id))) {
-    print_error('Course ID is incorrect');
+    throw new moodle_exception('cannotfindcontext');
 }
 
 // Require login to this course.

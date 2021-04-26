@@ -31,3 +31,4 @@ $string['modulenameplural'] = 'Observations';
 $string['modulename_help'] = 'TODO';
 $string['pluginadministration'] = 'Observation module administration';
 $string['observation:addinstance'] = 'Add a new observation';
+$string['observationnotfound'] = 'Observation instance not found.';

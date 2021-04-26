@@ -25,30 +25,33 @@
 
 require('../../config.php');
 
+global $PAGE;
+global $DB;
+
 $id = optional_param('id', 0, PARAM_INT);// Course module ID.
 $observationid = optional_param('o', 0, PARAM_INT);// Observation instance ID.
 
 // Can access directly from observation ID or from course module ID.
 if ($observationid) {
     // Access directly via observation ID.
-    if (!$cm = get_coursemodule_from_instance('observation', $observationid)){
-        print_error('invalidcoursemodule');
+    if (!$cm = get_coursemodule_from_instance('observation', $observationid)) {
+        throw new moodle_exception('invalidcoursemodule');
     }
 
     // Get the course from the course module (or error).
     if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+        throw new moodle_exception('coursemisconf');
     }
 } else {
     // Access indirectly via course module ID.
 
     // Get the course module object from the ID (or error).
     if (!$cm = get_coursemodule_from_id('observation', $id)) {
-        print_error('invalidcoursemodule');
+        throw new moodle_exception('invalidcoursemodule');
     }
     // Get the course from the course module (or error).
     if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+        throw new moodle_exception('coursemisconf');
     }
 
     $observationid = $cm->instance;
@@ -56,7 +59,7 @@ if ($observationid) {
 
 // Get the observation instance (or error).
 if (!$observation = $DB->get_record('observation', array('id' => $observationid))) {
-    print_error('cannotfindcontext');
+    throw new moodle_exception('cannotfindcontext');
 }
 
 require_login($course, true, $cm);
