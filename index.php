@@ -15,16 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Observation activity version information.
+ * Library of functions and constants for module observation
  *
- * @package   mod_observation
+ * @package mod_observation
  * @copyright  2021 Endurer Solutions Team
  * @author Matthew Hilton <mj.hilton@outlook.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once('../../config.php');
 
-$plugin->version   = 2021052504;
-$plugin->requires  = 2021052500;
-$plugin->component = 'mod_observation';
+global $CFG;
+global $DB;
+
+// Course id.
+$id = required_param('id', PARAM_INT);
+
+// Ensure that the course specified is valid.
+if (!$course = $DB->get_record('course', array('id' => $id))) {
+    throw new moodle_exception('cannotfindcontext');
+}
+
+// Require login to this course.
+require_login($course);
+
+// Redirect to the view.php file to show this activity.
+redirect("$CFG->wwwroot . '/mod/observation/view.php?id=' . $id");

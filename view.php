@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,64 +18,68 @@
  * Page to view an observation module
  *
  * @package mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
 
-$id    = optional_param('id', 0, PARAM_INT);        // Course module ID
-$ob_id = optional_param('o', 0, PARAM_INT); // Observation instance ID
+global $PAGE;
+global $DB;
 
-// Can access directly from observation ID or from course module ID
-if($ob_id) {
-    // Access directly via observation ID
-    
-    // TODO
-} else {
-    // Access indirectly via course module ID
+$id = optional_param('id', 0, PARAM_INT);// Course module ID.
+$observationid = optional_param('o', 0, PARAM_INT);// Observation instance ID.
 
-    // Get the course module object from the ID (or error)
-    if (!$cm = get_coursemodule_from_id('observation', $id)) {
-        print_error('invalidcoursemodule');
+// Can access directly from observation ID or from course module ID.
+if ($observationid) {
+    // Access directly via observation ID.
+    if (!$cm = get_coursemodule_from_instance('observation', $observationid)) {
+        throw new moodle_exception('invalidcoursemodule');
     }
-    // Get the course from the course module (or error)
+
+    // Get the course from the course module (or error).
     if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+        throw new moodle_exception('coursemisconf');
+    }
+} else {
+    // Access indirectly via course module ID.
+
+    // Get the course module object from the ID (or error).
+    if (!$cm = get_coursemodule_from_id('observation', $id)) {
+        throw new moodle_exception('invalidcoursemodule');
+    }
+    // Get the course from the course module (or error).
+    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
+        throw new moodle_exception('coursemisconf');
     }
 
-    $ob_id = $cm->instance;
+    $observationid = $cm->instance;
 }
 
-// Get the observation instance (or error)
-if(!$observation = $DB->get_record('observation', array('id' => $ob_id))){
-    print_error('cannotfindcontext');
+// Get the observation instance (or error).
+if (!$observation = $DB->get_record('observation', array('id' => $observationid))) {
+    throw new moodle_exception('cannotfindcontext');
 }
 
 require_login($course, true, $cm);
 
-// TODO check permissions 
+// TODO check permissions.
 
-$PAGE->set_url('/mod/url/view.php', array('id' => $ob_id));
+$PAGE->set_url('/mod/url/view.php', array('id' => $observationid));
 
-// Render output (nothing right now, just some random debug info) TODO move into function
+// Render output (nothing right now, just some random debug info) TODO move into function.
 global $CFG, $PAGE, $OUTPUT;
 
-// Moodle header
+// Moodle header.
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
-#$PAGE->set_activity_record($observation);
 echo $OUTPUT->header();
 
-// Our activity page header
+// Our activity page header.
 echo $OUTPUT->heading($observation->name);
 echo "Test.\n it works!";
 
-// Moodle footer
+// Moodle footer.
 echo $OUTPUT->footer();
 die;
-
-// DEBUG
-/*
-echo json_encode($cm);
-echo json_encode($course);
-echo "\n $ob_id";*/

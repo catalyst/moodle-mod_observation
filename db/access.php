@@ -15,16 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Observation activity version information.
+ * Capability definitions for the observation module.
  *
- * @package   mod_observation
+ * @package    mod_observation
  * @copyright  2021 Endurer Solutions Team
  * @author Matthew Hilton <mj.hilton@outlook.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2021052504;
-$plugin->requires  = 2021052500;
-$plugin->component = 'mod_observation';
+$capabilities = array(
+    'mod/observation:view' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+    'mod/observation:addinstance' => array(
+        'riskbitmask' => RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+);
