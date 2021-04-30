@@ -37,13 +37,22 @@ class mod_observation_mod_form extends moodleform_mod {
      * @return void
      */
     protected function definition() {
-        // Get config and get the form object to construct.
-        $obsconfig = get_config('observation');
         $mform = $this->_form;
 
         // General.
         $mform->addElement('header', 'general', get_string('general', 'observation'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
+        $mform->setType('name', PARAM_RAW);
+
+        // Activity Instructions Elements
+        $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
+        
+        // Check if instruction data exists       
+        $mform->addElement('editor', 'observerins_editor', get_string('instructionsobserver', 'observation'));
+        $mform->setType('observerins_editor', PARAM_RAW);
+
+        $mform->addElement('editor', 'observeeins_editor', get_string('instructionsobservee', 'observation'));
+        $mform->setType('observeeins_editor', PARAM_RAW);
 
         // Instructions.
         $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
@@ -72,5 +81,32 @@ class mod_observation_mod_form extends moodleform_mod {
         // Footer.
         $this->standard_coursemodule_elements();
         $this->add_action_buttons();
+    }
+    
+    /**
+     * Overrides some default values for some form elements
+     *
+     * @param array $defaultvalues Form defaults
+     * @return void
+     **/
+    public function data_preprocessing(&$defaultvalues) {
+        global $DB;
+
+        // Get observation instruction editor values from the db
+        $obsid = $this->_instance;
+
+        // Creating new - no defaults to add
+        if($obsid == null) return;
+
+        // Editing - find defaults...
+        $obsdata = $DB->get_record('observation', array('id'=>$obsid));
+
+        $defaultvalues['observerins_editor']->text=$obsdata->observer_ins;
+        $defaultvalues['observerins_editor']->format=$obsdata->observer_ins_f;
+        
+        $defaultvalues['observeeins_editor']->text=$obsdata->observee_ins;
+        $defaultvalues['observeeins_editor']->format=$obsdata->observee_ins_f;
+
+        return;
     }
 }
