@@ -48,6 +48,7 @@ class mod_observation_mod_form extends moodleform_mod {
         // text form instructions for tutors
 
         // Timeslots.
+        $mform->addElement('header', 'general', get_string('timeslots', 'observation'));
         // create new timeslot
 
         // Observation Points.
