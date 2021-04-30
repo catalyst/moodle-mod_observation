@@ -52,18 +52,33 @@ function observation_get_course_content_items(\core_course\local\entity\content_
 
 /**
  * Adds an Observation instance.
- * @param object $data
+ * @param object $data form data
  * @return int new observation instance id
  */
 function observation_add_instance($data): int {
     global $DB;
     $cmid = $data->coursemodule;
-    // Insert into DB.
+
+    // Ensure empty strings are not added
+    if($data->observerins_editor['text'] === ""){
+        $data->observerins_editor['text'] = null;
+        $data->observerins_editor['format'] = null;
+    }
+
+    if($data->observeeins_editor['text'] === ""){
+        $data->observeeins_editor['text'] = null;
+        $data->observeeins_editor['format'] = null;
+    }
+
     return $DB->insert_record('observation', array(
-            "course" => $cmid,
-            "name" => $data->name,
-            "intro" => "",
-            "timemodified" => time()
+        "course" => $cmid,
+        "name" => $data->name,
+        "intro" => "",
+        "timemodified" => time(),
+        "observer_ins" => $data->observerins_editor['text'],
+        "observer_ins_f" => $data->observerins_editor['format'],
+        "observee_ins" => $data->observeeins_editor['text'],
+        "observee_ins_f" => $data->observeeins_editor['format'],
     ));
 }
 
@@ -77,9 +92,27 @@ function observation_add_instance($data): int {
  */
 function observation_update_instance($data): bool {
     global $DB;
-    $data->id = $data->instance;
-    $data->intro = "";
-    return $DB->update_record('observation', $data);
+  
+    // Ensure empty strings are not updated
+    if($data->observerins_editor['text'] === ""){
+        $data->observerins_editor['text'] = null;
+        $data->observerins_editor['format'] = null;
+    }
+
+    if($data->observeeins_editor['text'] === ""){
+        $data->observeeins_editor['text'] = null;
+        $data->observeeins_editor['format'] = null;
+    }
+
+    return $DB->update_record('observation', array(
+        "id" => $data->instance,
+        "name" => $data->name,
+        "timemodified" => time(),
+        "observer_ins" => $data->observerins_editor['text'],
+        "observer_ins_f" => $data->observerins_editor['format'],
+        "observee_ins" => $data->observeeins_editor['text'],
+        "observee_ins_f" => $data->observeeins_editor['format'],
+    ));
 }
 
 /**
@@ -89,6 +122,7 @@ function observation_update_instance($data): bool {
  */
 function observation_delete_instance($id) {
     global $DB;
+
     $DB->delete_records('observation', array('id' => $id));
     return true;
 }
