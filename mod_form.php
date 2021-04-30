@@ -45,13 +45,19 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
         // text form information for students
+        $mform->addElement('static', 'instructions', get_string('instructions', 'observation'));
+            // Coordiantor view: Form API - editor 
+            // Student/tutor view: From API - static
         // text form instructions for tutors
+            // Coordiantor view: Form API - editor
+            // Student/tutor view: From API - static
 
         // Timeslots.
-        $mform->addElement('header', 'general', get_string('timeslots', 'observation'));
+        $mform->addElement('header', 'timeslots', get_string('timeslots', 'observation'));
         // create new timeslot
 
         // Observation Points.
+        $mform->addElement('header', 'observationpoints', get_string('observationpoints', 'observation'));
         // actions
         // current observation points
 
