@@ -44,6 +44,17 @@ class mod_observation_mod_form extends moodleform_mod {
         // General.
         $mform->addElement('header', 'general', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
+        // text form information for students
+        // text form instructions for tutors
+
+        // Timeslots.
+        // create new timeslot
+
+        // Observation Points.
+        // actions
+        // current observation points
+
+        // Settings.
 
         // Footer.
         $this->standard_coursemodule_elements();
