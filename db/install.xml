@@ -15,10 +15,10 @@
         
         <!-- Instructions Fields -->
         <FIELD NAME="observer_ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="string encoded observer instructions"/>
-        <FIELD NAME="observer_ins_f" TYPE="char" LENGTH="32" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observer instructions, either 'html', 'markdown' or 'plaintext'"/>
+        <FIELD NAME="observer_ins_f" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observer instructions, 1 = 'html'"/>
 
         <FIELD NAME="observee_ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="string encoded observee instructions"/>
-        <FIELD NAME="observee_ins_f" TYPE="char" LENGTH="32" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observee instructions, either 'html', 'markdown' or 'plaintext'"/>
+        <FIELD NAME="observee_ins_f" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observee instructions, 1 = 'html'"/>
 
         <!-- Settings Fields -->
         <FIELD NAME="students_self_unregister" TYPE="int" LENGTH="1" SEQUENCE="false" NOTNULL="true" DEFAULT="0" COMMENT="Setting to allow students to unregister themselves"/>
