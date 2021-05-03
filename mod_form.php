@@ -42,24 +42,29 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform = $this->_form;
 
         // General.
-        $mform->addElement('header', 'general', get_string('general', 'form'));
+        $mform->addElement('header', 'general', get_string('general', 'observation'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
-        // static text information for students
-        $mform->addElement('static', 'instructions', get_string('instructions', 'observation'));#, get_string('instructions', 'observation'));
-            // Coordiantor view: Form API - editor 
-            // Student view: From API - static
-        // text form instructions for tutors
-            // Coordiantor view: Form API - editor
-            // Tutor view: Form API - static
+        // Instructions
+        // Coordiantor view: Form API - editor
+        // Tutor view: Form API - static
+        // Student view: Form API - static
+        $mform->addElement('static', 'instructions', get_string('instructions', 'observation'), get_string('instructions', 'observation'));
 
         // Timeslots.
         $mform->addElement('header', 'general', get_string('timeslots', 'observation')); # instead of general it should maybe be timeslots, but it doesn't like that
-        // create new timeslot
+        // Create new timeslot
+
 
         // Observation Points.
         $mform->addElement('header', 'general', get_string('observationpoints', 'observation')); # instead of general it should maybe be timeslots, but it doesn't like that
-        // actions
-        // current observation points
+        // Actions
+        // Observation points
+        // Coorindator view: ???
+        // Tutor view: table of checkbutton tasks to be completed
+        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 'Example: Using correct PPE while handling chemicals'); # , array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 'Example: Reading chemical safety information'); # , array('group' => 1), array(0, 1));
+        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 'Example: Choosing correct equipment'); # , array('group' => 1), array(0, 1));
+        // Student view: table of checkbuttons that they can't alter?
 
         // Settings.
 

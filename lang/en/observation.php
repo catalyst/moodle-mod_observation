@@ -36,3 +36,4 @@ $string['observationnotfound'] = 'Observation instance not found.';
 $string['instructions'] = 'Instructions';
 $string['timeslots'] = 'Timeslots';
 $string['observationpoints'] = 'Observation Points';
+$string['placeholder'] = 'Placeholder';
