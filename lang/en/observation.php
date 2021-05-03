@@ -18,17 +18,16 @@
  * Strings for component 'observation', language 'en'
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Observation';
-$string['name'] = 'Name';
+$string['endtime'] = 'Assign End Time';
 $string['general'] = 'General';
 $string['modulename'] = 'Observation';
 $string['modulenameplural'] = 'Observations';
 $string['modulename_help'] = 'TODO';
+$string['name'] = 'Name';
 $string['pluginadministration'] = 'Observation module administration';
-$string['observation:addinstance'] = 'Add a new observation';
-$string['observationnotfound'] = 'Observation instance not found.';
+$string['pluginname'] = 'Observation';
+$string['timeslot'] = 'Time Slot';
+$string['starttime'] = 'Assign Start Time';
