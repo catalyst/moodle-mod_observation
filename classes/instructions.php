@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'observation', language 'en'
+ * This file contains the page view if the user has the capability 'perform_observations'
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -23,20 +23,22 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Observation';
-$string['name'] = 'Name';
-$string['general'] = 'General';
-$string['modulename'] = 'Observation';
-$string['modulenameplural'] = 'Observations';
-$string['modulename_help'] = 'TODO';
-$string['pluginadministration'] = 'Observation module administration';
-$string['observation:addinstance'] = 'Add a new observation';
-$string['observationnotfound'] = 'Observation instance not found.';
-$string['instructions'] = 'Instructions';
-$string['instructionsobserver'] = 'Instructions for Observers';
-$string['instructionsobservee'] = 'Instructions for Observees';
-$string['observation:performobservation'] = 'Perform Observation';
-$string['observation:view'] = 'View Observation';
-$string['timeslots'] = 'Timeslots';
-$string['observationpoints'] = 'Observation Points';
-$string['placeholder'] = 'Placeholder';
+/**
+ * Generates a formatting block of HTML to output to a page that displays the instructions passed
+ *
+ * @param string $heading Instructions heading
+ * @param string $bodytext Instructions body text
+ * @param int $bodyformat Format for the body (moodle format identifier)
+ * @param int $headinglevel HTML heading level
+ * @return string formatted html to be displays encoded as a string
+ **/
+function observation_instructions(string $heading, string $bodytext, int $bodyformat, int $headinglevel=3): string {
+    global $OUTPUT;
+
+    $out = $OUTPUT->container_start();
+    $out .= $OUTPUT->heading($heading, $headinglevel);
+    $out .= format_text($bodytext, $bodyformat);
+    $out .= $OUTPUT->container_end();
+
+    return $out;
+}

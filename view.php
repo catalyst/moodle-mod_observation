@@ -38,19 +38,19 @@ if ($observationid) {
         throw new moodle_exception('invalidcoursemodule');
     }
     list($course, $cm) = get_course_and_cm_from_cmid($cm->id, 'observation');
-} else if($id) {
+} else if ($id) {
     // Access indirectly via course module ID.
     list($course, $cm) = get_course_and_cm_from_cmid($id, 'observation');
     $observationid = $cm->instance;
 } else {
-    // Neither given, error
+    // Neither given, error.
     throw new moodle_exception('missingparameter');
 }
 
 require_login($course, true, $cm);
 
 // If user can perform observations, redirect to the 'observer' view.
-if(has_capability('mod/observation:performobservation', $PAGE->context)) {
+if (has_capability('mod/observation:performobservation', $PAGE->context)) {
     $observerurl = new moodle_url('/mod/observation/observer.php', array('id' => $observationid));
     redirect($observerurl);
     die;

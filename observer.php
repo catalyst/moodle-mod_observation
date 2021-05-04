@@ -24,9 +24,10 @@
  */
 
 require('../../config.php');
+require('./classes/instructions.php');
 
 // Get related ids.
-$id = required_param('id', PARAM_INT); // Observation instance ID
+$id = required_param('id', PARAM_INT); // Observation instance ID.
 if (!$cm = get_coursemodule_from_instance('observation', $id)) {
     throw new moodle_exception('invalidcoursemodule');
 }
@@ -38,7 +39,7 @@ require_capability('mod/observation:performobservation', $PAGE->context);
 
 // Get the observation instance (or error).
 global $DB;
-if(!$observation = $DB->get_record('observation', array('id' => $id))){
+if (!$observation = $DB->get_record('observation', array('id' => $id))) {
     throw new moodle_exception('moduleinstancedoesnotexist');
 }
 
@@ -48,8 +49,9 @@ $PAGE->set_url(new moodle_url('/mod/observation/observer.php', array('id' => $id
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->heading($observation->name);
-echo "Observer view";
+echo $OUTPUT->heading($observation->name, 2);
+
+echo observation_instructions(get_string('instructions', 'observation'), $observation->observer_ins, $observation->observer_ins_f);
 
 echo $OUTPUT->footer();
 die;
