@@ -37,49 +37,26 @@ if ($observationid) {
     if (!$cm = get_coursemodule_from_instance('observation', $observationid)) {
         throw new moodle_exception('invalidcoursemodule');
     }
-
-    // Get the course from the course module (or error).
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        throw new moodle_exception('coursemisconf');
-    }
-} else {
+    list($course, $cm) = get_course_and_cm_from_cmid($cm->id, 'observation');
+} else if($id) {
     // Access indirectly via course module ID.
-
-    // Get the course module object from the ID (or error).
-    if (!$cm = get_coursemodule_from_id('observation', $id)) {
-        throw new moodle_exception('invalidcoursemodule');
-    }
-    // Get the course from the course module (or error).
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        throw new moodle_exception('coursemisconf');
-    }
-
+    list($course, $cm) = get_course_and_cm_from_cmid($id, 'observation');
     $observationid = $cm->instance;
-}
-
-// Get the observation instance (or error).
-if (!$observation = $DB->get_record('observation', array('id' => $observationid))) {
-    throw new moodle_exception('cannotfindcontext');
+} else {
+    // Neither given, error
+    throw new moodle_exception('missingparameter');
 }
 
 require_login($course, true, $cm);
 
-// TODO check permissions.
+// If user can perform observations, redirect to the 'observer' view.
+if(has_capability('mod/observation:performobservation', $PAGE->context)) {
+    $observerurl = new moodle_url('/mod/observation/observer.php', array('id' => $observationid));
+    redirect($observerurl);
+    die;
+}
 
-$PAGE->set_url('/mod/url/view.php', array('id' => $observationid));
-
-// Render output (nothing right now, just some random debug info) TODO move into function.
-global $CFG, $PAGE, $OUTPUT;
-
-// Moodle header.
-$PAGE->set_title($course->shortname.': '.$observation->name);
-$PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
-
-// Our activity page header.
-echo $OUTPUT->heading($observation->name);
-echo "Test.\n it works!";
-
-// Moodle footer.
-echo $OUTPUT->footer();
+// Else, redirect user to 'observee' view.
+$observeeurl = new moodle_url('/mod/observation/observee.php', array('id' => $observationid));
+redirect($observeeurl);
 die;
