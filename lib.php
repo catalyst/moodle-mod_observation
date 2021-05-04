@@ -59,13 +59,13 @@ function observation_add_instance($data): int {
     global $DB;
     $cmid = $data->coursemodule;
 
-    // Ensure empty strings are not added
-    if($data->observerins_editor['text'] === ""){
+    // Ensure if no text was given it is null (instead of an empty string).
+    if ($data->observerins_editor['text'] === "") {
         $data->observerins_editor['text'] = null;
         $data->observerins_editor['format'] = null;
     }
 
-    if($data->observeeins_editor['text'] === ""){
+    if ($data->observeeins_editor['text'] === "") {
         $data->observeeins_editor['text'] = null;
         $data->observeeins_editor['format'] = null;
     }
@@ -92,14 +92,14 @@ function observation_add_instance($data): int {
  */
 function observation_update_instance($data): bool {
     global $DB;
-  
-    // Ensure empty strings are not updated
-    if($data->observerins_editor['text'] === ""){
+
+    // Ensure if no text was given it is null (instead of an empty string).
+    if ($data->observerins_editor['text'] === "") {
         $data->observerins_editor['text'] = null;
         $data->observerins_editor['format'] = null;
     }
 
-    if($data->observeeins_editor['text'] === ""){
+    if ($data->observeeins_editor['text'] === "") {
         $data->observeeins_editor['text'] = null;
         $data->observeeins_editor['format'] = null;
     }
