@@ -44,10 +44,9 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
         $mform->setType('name', PARAM_RAW);
 
-        // Activity Instructions Elements
+        // Activity Instructions Elements.
         $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
         
-        // Check if instruction data exists       
         $mform->addElement('editor', 'observerins_editor', get_string('instructionsobserver', 'observation'));
         $mform->setType('observerins_editor', PARAM_RAW);
 
@@ -92,13 +91,13 @@ class mod_observation_mod_form extends moodleform_mod {
     public function data_preprocessing(&$defaultvalues) {
         global $DB;
 
-        // Get observation instruction editor values from the db
+        // Get observation instruction editor values from the db.
         $obsid = $this->_instance;
 
-        // Creating new - no defaults to add
+        // Creating new - no defaults to add.
         if($obsid == null) return;
 
-        // Editing - find defaults...
+        // Editing, find the defaults and update the form values.
         $obsdata = $DB->get_record('observation', array('id'=>$obsid));
 
         $defaultvalues['observerins_editor']->text=$obsdata->observer_ins;
