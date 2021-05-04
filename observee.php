@@ -24,9 +24,10 @@
  */
 
 require('../../config.php');
+require('./classes/instructions.php');
 
 // Get related ids.
-$id = required_param('id', PARAM_INT); // Observation instance ID
+$id = required_param('id', PARAM_INT); // Observation instance ID.
 if (!$cm = get_coursemodule_from_instance('observation', $id)) {
     throw new moodle_exception('invalidcoursemodule');
 }
@@ -38,18 +39,23 @@ require_capability('mod/observation:view', $PAGE->context);
 
 // Get the observation instance (or error).
 global $DB;
-if(!$observation = $DB->get_record('observation', array('id' => $id))){
+if (!$observation = $DB->get_record('observation', array('id' => $id))) {
     throw new moodle_exception('moduleinstancedoesnotexist');
 }
 
 global $CFG, $PAGE, $OUTPUT;
 
-$PAGE->set_url(new moodle_url('/mod/observation/observer.php', array('id' => $id)));
+$PAGE->set_url(new moodle_url('/mod/observation/observee.php', array('id' => $id)));
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->heading($observation->name);
-echo "Observee view";
+echo $OUTPUT->heading($observation->name, 2);
+
+echo observation_instructions(get_string('instructions', 'observation'), $observation->observee_ins, $observation->observee_ins_f);
+
+echo $OUTPUT->container_start();
+echo "Timeslot selection placeholder";
+echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
 die;

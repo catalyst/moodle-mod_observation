@@ -46,7 +46,6 @@ class mod_observation_mod_form extends moodleform_mod {
 
         // Activity Instructions Elements.
         $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
-        
         $mform->addElement('editor', 'observerins_editor', get_string('instructionsobserver', 'observation'));
         $mform->setType('observerins_editor', PARAM_RAW);
 
@@ -81,7 +80,7 @@ class mod_observation_mod_form extends moodleform_mod {
         $this->standard_coursemodule_elements();
         $this->add_action_buttons();
     }
-    
+
     /**
      * Overrides some default values for some form elements
      *
@@ -95,17 +94,17 @@ class mod_observation_mod_form extends moodleform_mod {
         $obsid = $this->_instance;
 
         // Creating new - no defaults to add.
-        if($obsid == null) return;
+        if ($obsid == null) {
+            return;
+        }
 
         // Editing, find the defaults and update the form values.
-        $obsdata = $DB->get_record('observation', array('id'=>$obsid));
+        $obsdata = $DB->get_record('observation', array('id' => $obsid));
 
-        $defaultvalues['observerins_editor']->text=$obsdata->observer_ins;
-        $defaultvalues['observerins_editor']->format=$obsdata->observer_ins_f;
-        
-        $defaultvalues['observeeins_editor']->text=$obsdata->observee_ins;
-        $defaultvalues['observeeins_editor']->format=$obsdata->observee_ins_f;
-
+        $defaultvalues['observerins_editor']->text = $obsdata->observer_ins;
+        $defaultvalues['observerins_editor']->format = $obsdata->observer_ins_f;
+        $defaultvalues['observeeins_editor']->text = $obsdata->observee_ins;
+        $defaultvalues['observeeins_editor']->format = $obsdata->observee_ins_f;
         return;
     }
 }
