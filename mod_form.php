@@ -19,7 +19,7 @@
  *
  * @package    mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -48,24 +48,24 @@ class mod_observation_mod_form extends moodleform_mod {
         // Instructions.
         $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
         $mform->addElement('static', 'description', get_string('instructions', 'observation'), 
-                            get_string('instructions', 'observation')); // TODO: replace.
+        get_string('instructions', 'observation')); // TODO: replace.
 
         // Timeslots.
         $mform->addElement('header', 'timeslots', get_string('timeslots', 'observation'));
         $mform->addElement('static', 'description', get_string('placeholder', 'observation'), 
-                            get_string('placeholder', 'observation')); // TODO: replace.
+        get_string('placeholder', 'observation')); // TODO: replace.
 
         // Observation Points.
         $mform->addElement('header', 'observationpoints', get_string('observationpoints', 'observation'));
         // Actions.
         // Observation points.
         // TODO: replace.
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 
-                            'Example: Using correct PPE while handling chemicals');
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 
-                            'Example: Reading chemical safety information');
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 
-                            'Example: Choosing correct equipment');
+        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'),
+        'Example: Using correct PPE while handling chemicals');
+        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'),
+        'Example: Reading chemical safety information');
+        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'),
+        'Example: Choosing correct equipment');
 
         // Settings.
 
