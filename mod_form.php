@@ -46,9 +46,16 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
         // Instructions
         // Coordiantor view: Form API - editor
+        // Activity Instructions Elements.
+        $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
+        $mform->addElement('editor', 'observerins_editor', get_string('instructionsobserver', 'observation'));
+        $mform->setType('observerins_editor', PARAM_RAW);
+
+        $mform->addElement('editor', 'observeeins_editor', get_string('instructionsobservee', 'observation'));
+        $mform->setType('observeeins_editor', PARAM_RAW);
         // Tutor view: Form API - static
         // Student view: Form API - static
-        $mform->addElement('static', 'instructions', get_string('instructions', 'observation'), get_string('instructions', 'observation'));
+        
 
         // Timeslots.
         $mform->addElement('header', 'general', get_string('timeslots', 'observation')); # instead of general it should maybe be timeslots, but it doesn't like that
