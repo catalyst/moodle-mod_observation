@@ -25,24 +25,16 @@
 
 require('../../config.php');
 require('./classes/instructions.php');
+require('./classes/datalib.php');
 
-// Get related ids.
 $id = required_param('id', PARAM_INT); // Observation instance ID.
-if (!$cm = get_coursemodule_from_instance('observation', $id)) {
-    throw new moodle_exception('invalidcoursemodule');
-}
-list($course, $cm) = get_course_and_cm_from_cmid($cm, 'observation');
+list($observation, $course, $cm) = get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
 require_capability('mod/observation:view', $PAGE->context);
 
-// Get the observation instance (or error).
-global $DB;
-if (!$observation = $DB->get_record('observation', array('id' => $id))) {
-    throw new moodle_exception('moduleinstancedoesnotexist');
-}
-
+// Render page.
 global $CFG, $PAGE, $OUTPUT;
 
 $PAGE->set_url(new moodle_url('/mod/observation/observee.php', array('id' => $id)));

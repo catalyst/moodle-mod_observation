@@ -24,39 +24,39 @@
  */
 
 require('../../config.php');
+require('./classes/datalib.php');
 
 global $PAGE;
 global $DB;
 
-$id = optional_param('id', 0, PARAM_INT);// Course module ID.
-$observationid = optional_param('o', 0, PARAM_INT);// Observation instance ID.
+$id = optional_param('id', null, PARAM_INT);// Course module ID.
+$observationid = optional_param('o', null, PARAM_INT);// Observation instance ID.
 
-// Can access directly from observation ID or from course module ID.
-if ($observationid) {
-    // Access directly via observation ID.
-    if (!$cm = get_coursemodule_from_instance('observation', $observationid)) {
-        throw new moodle_exception('invalidcoursemodule');
-    }
-    list($course, $cm) = get_course_and_cm_from_cmid($cm->id, 'observation');
-} else if ($id) {
-    // Access indirectly via course module ID.
-    list($course, $cm) = get_course_and_cm_from_cmid($id, 'observation');
-    $observationid = $cm->instance;
-} else {
-    // Neither given, error.
+// Needs at least one of the two optional parameters.
+if ($id === null && $observationid === null) {
     throw new moodle_exception('missingparameter');
+}
+
+// Access via observation instance id.
+if ($observationid != null) {
+    list($observation, $course, $cm) = get_observation_course_cm_from_obid($observationid);
+}
+
+// Access via course module id.
+if ($id != null) {
+    list($observation, $course, $cm) = get_observation_course_cm_from_cmid($id);
 }
 
 require_login($course, true, $cm);
 
 // If user can perform observations, redirect to the 'observer' view.
 if (has_capability('mod/observation:performobservation', $PAGE->context)) {
-    $observerurl = new moodle_url('/mod/observation/observer.php', array('id' => $observationid));
+    $observerurl = new moodle_url('/mod/observation/observer.php', array('id' => $observation->id));
     redirect($observerurl);
     die;
 }
 
-// Else, redirect user to 'observee' view.
-$observeeurl = new moodle_url('/mod/observation/observee.php', array('id' => $observationid));
+// Else, redirect user to 'observee' view (default).
+$observeeurl = new moodle_url('/mod/observation/observee.php', array('id' => $observation->id));
 redirect($observeeurl);
 die;
