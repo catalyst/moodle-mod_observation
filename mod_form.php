@@ -44,34 +44,23 @@ class mod_observation_mod_form extends moodleform_mod {
         // General.
         $mform->addElement('header', 'general', get_string('general', 'observation'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
-        // Instructions
-        // Coordiantor view: Form API - editor
-        // Activity Instructions Elements.
-        $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
-        $mform->addElement('editor', 'observerins_editor', get_string('instructionsobserver', 'observation'));
-        $mform->setType('observerins_editor', PARAM_RAW);
-
-        $mform->addElement('editor', 'observeeins_editor', get_string('instructionsobservee', 'observation'));
-        $mform->setType('observeeins_editor', PARAM_RAW);
-        // Tutor view: Form API - static
-        // Student view: Form API - static
         
+        // Instructions
+        $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
+        $mform->addElement('static', 'description', get_string('instructions', 'observation'), get_string('instructions', 'observation')); // TODO: replace
 
         // Timeslots.
-        $mform->addElement('header', 'general', get_string('timeslots', 'observation')); # instead of general it should maybe be timeslots, but it doesn't like that
-        // Create new timeslot
-
+        $mform->addElement('header', 'timeslots', get_string('timeslots', 'observation'));
+        $mform->addElement('static', 'description', get_string('placeholder', 'observation'), get_string('placeholder', 'observation')); // TODO: replace
 
         // Observation Points.
-        $mform->addElement('header', 'general', get_string('observationpoints', 'observation')); # instead of general it should maybe be timeslots, but it doesn't like that
+        $mform->addElement('header', 'observationpoints', get_string('observationpoints', 'observation'));
         // Actions
         // Observation points
-        // Coorindator view: ???
-        // Tutor view: table of checkbutton tasks to be completed
+        // TODO: replace
         $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 'Example: Using correct PPE while handling chemicals'); # , array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 'Example: Reading chemical safety information'); # , array('group' => 1), array(0, 1));
         $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 'Example: Choosing correct equipment'); # , array('group' => 1), array(0, 1));
-        // Student view: table of checkbuttons that they can't alter?
 
         // Settings.
 
