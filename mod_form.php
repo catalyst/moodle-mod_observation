@@ -44,23 +44,28 @@ class mod_observation_mod_form extends moodleform_mod {
         // General.
         $mform->addElement('header', 'general', get_string('general', 'observation'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
-        
-        // Instructions
+
+        // Instructions.
         $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
-        $mform->addElement('static', 'description', get_string('instructions', 'observation'), get_string('instructions', 'observation')); // TODO: replace
+        $mform->addElement('static', 'description', get_string('instructions', 'observation'), 
+                            get_string('instructions', 'observation')); // TODO: replace.
 
         // Timeslots.
         $mform->addElement('header', 'timeslots', get_string('timeslots', 'observation'));
-        $mform->addElement('static', 'description', get_string('placeholder', 'observation'), get_string('placeholder', 'observation')); // TODO: replace
+        $mform->addElement('static', 'description', get_string('placeholder', 'observation'), 
+                            get_string('placeholder', 'observation')); // TODO: replace.
 
         // Observation Points.
         $mform->addElement('header', 'observationpoints', get_string('observationpoints', 'observation'));
-        // Actions
-        // Observation points
-        // TODO: replace
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 'Example: Using correct PPE while handling chemicals'); # , array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 'Example: Reading chemical safety information'); # , array('group' => 1), array(0, 1));
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 'Example: Choosing correct equipment'); # , array('group' => 1), array(0, 1));
+        // Actions.
+        // Observation points.
+        // TODO: replace.
+        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 
+                            'Example: Using correct PPE while handling chemicals');
+        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 
+                            'Example: Reading chemical safety information');
+        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'), 
+                            'Example: Choosing correct equipment');
 
         // Settings.
 
