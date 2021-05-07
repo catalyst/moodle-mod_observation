@@ -23,28 +23,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
-require('./classes/datalib.php');
-
-global $PAGE;
-global $DB;
+require_once($dir . '../../config.php');
 
 $id = optional_param('id', null, PARAM_INT);// Course module ID.
-$observationid = optional_param('o', null, PARAM_INT);// Observation instance ID.
+$observationid = optional_param('obid', null, PARAM_INT);// Observation instance ID.
 
 // Needs at least one of the two optional parameters.
-if ($id === null && $observationid === null) {
+if (empty($id) && empty($observationid) ) {
     throw new moodle_exception('missingparameter');
 }
 
 // Access via observation instance id.
-if ($observationid != null) {
-    list($observation, $course, $cm) = get_observation_course_cm_from_obid($observationid);
+if (!empty($observationid) ) {
+    list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($observationid);
 }
 
 // Access via course module id.
-if ($id != null) {
-    list($observation, $course, $cm) = get_observation_course_cm_from_cmid($id);
+if (!empty($id)) {
+    list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_cmid($id);
 }
 
 require_login($course, true, $cm);

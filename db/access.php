@@ -44,7 +44,7 @@ $capabilities = array(
         )
     ),
     'mod/observation:performobservation' => array(
-        'riskbitmask' => RISK_XSS,
+        'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
