@@ -19,17 +19,13 @@
  *
  * @package mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
 
-global $PAGE;
-global $DB;
-
-$id = optional_param('id', 0, PARAM_INT);// Course module ID.
-$observationid = optional_param('o', 0, PARAM_INT);// Observation instance ID.
+$id    = optional_param('id', 0, PARAM_INT);        // Course module ID.
+$observationid = optional_param('o', 0, PARAM_INT);          // Observation instance ID.
 
 // Can access directly from observation ID or from course module ID.
 if ($observationid) {

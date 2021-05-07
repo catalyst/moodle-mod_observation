@@ -17,13 +17,13 @@
 /**
  * Defines the observation module settings form.
  *
- * @package    mod_form
+ * @package    mod_observation
+ * @copyright  2021 Endurer Solutions Team
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-// require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 /**
  * Settings form for the observation module.
@@ -31,40 +31,34 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_observation_mod_form extends moodleform_mod {
-    public function __construct($current, $section, $cm, $course){
-        // Can do things to add extra data to constructor here
-        // Else just call the parents constructor 
-        parent::__construct($current, $section, $cm, $course);
-    }
 
     protected function definition() {
-        // Get config and get the form object to construct
+        // Get config and get the form object to construct.
         $obsconfig = get_config('observation');
         $mform = $this->_form;
 
-        // General
+        // General.
         $mform->addElement('header', 'general', get_string('general', 'observation'));
-        $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
+        $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
 
-        // Time Slots
+        // Time Slots.
         $mform->addElement('header', 'timeslot', get_string('timeslot', 'observation'));
 
-        //Testing
-        //$mform->addElement('text', 'starttime', get_string('starttime', 'observation'), array('size'=>'64'));
+        // Testing.
         $mform->setExpanded('timeslot', true);
 
-        //Setting up boxes to set time slots
+        // Setting up boxes to set time slots.
         $name = get_string('starttime', 'observation');
-        $mform->addElement('date_time_selector', 'starttime', $name, array('optional'=>false));
+        $mform->addElement('date_time_selector', 'starttime', $name, array('optional' => false));
         $mform->addHelpButton('starttime', 'starttime', 'observation');
 
         $name = get_string('endtime', 'observation');
-        $mform->addElement('date_time_selector', 'endtime', $name, array('optional'=>false));
+        $mform->addElement('date_time_selector', 'endtime', $name, array('optional' => false));
         $mform->addHelpButton('endtime', 'endtime', 'observation');
 
-        //-------------------------------------------------------
+        // Body Elements.
         $this->standard_coursemodule_elements();
-        //-------------------------------------------------------
+        // Action Buttons.
         $this->add_action_buttons();
     }
 }
