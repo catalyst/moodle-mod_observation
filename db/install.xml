@@ -15,10 +15,10 @@
         
         <!-- Instructions Fields -->
         <FIELD NAME="observer_ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="string encoded observer instructions"/>
-        <FIELD NAME="observer_ins_f" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observer instructions, 1 = 'html'"/>
+        <FIELD NAME="observer_ins_f" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observer instructions, 1 = 'html'"/>
 
         <FIELD NAME="observee_ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="string encoded observee instructions"/>
-        <FIELD NAME="observee_ins_f" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observee instructions, 1 = 'html'"/>
+        <FIELD NAME="observee_ins_f" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observee instructions, 1 = 'html'"/>
 
         <!-- Settings Fields -->
         <FIELD NAME="students_self_unregister" TYPE="int" LENGTH="1" SEQUENCE="false" NOTNULL="true" DEFAULT="0" COMMENT="Setting to allow students to unregister themselves"/>
@@ -52,7 +52,7 @@
             <FIELD NAME="title" TYPE="text" SEQUENCE="false" NOTNULL="true" COMMENT="Title of this observation point, used when shown in lists." />
             <FIELD NAME="order" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Determines the ordering of this point relative to other points." />
             <FIELD NAME="ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="Instructions for grading this observation point." />
-            <FIELD NAME="ins_f" TYPE="char" LENGTH="32" SEQUENCE="false" NOTNULL="false" COMMENT="Format of the instructions, either 'html', 'markdown' or 'plaintext'" />
+            <FIELD NAME="ins_f" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="false" COMMENT="Format of the instructions, either 'html', 'markdown' or 'plaintext'" />
             <FIELD NAME="max_grade" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="true" COMMENT="Maximum grade that can be given for this observation point." />
             <FIELD NAME="res_type" TYPE="char" LENGTH="32" SEQUENCE="false" NOTNULL="true" COMMENT="Type of response required for this point. Can be either 'passfail', 'text', 'image', 'video' or 'audio'." />
         </FIELDS>
@@ -86,7 +86,7 @@
           <FIELD NAME="grade_given" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Grade assigned by the observer for this observation point." />
           <FIELD NAME="response" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="String encoded response, originally formatted as defined by the FK observation_point_id.response_type." />
           <FIELD NAME="ex_comment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="String encoded optional extra comment given if needed." />
-          <FIELD NAME="ex_comment_f" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false" COMMENT="Format for the extra_comment field, either 'html', 'markdown', or 'plaintext'." />
+          <FIELD NAME="ex_comment_f" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Format for the extra_comment field, either 'html', 'markdown', or 'plaintext'." />
         </FIELDS>
         <KEYS>
           <KEY NAME="primary" TYPE="primary" FIELDS="id" />

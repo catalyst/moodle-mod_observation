@@ -23,22 +23,57 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_observation;
+
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Generates a formatting block of HTML to output to a page that displays the instructions passed
+ * mod_observation functions for processing instructions
  *
- * @param string $heading Instructions heading
- * @param string $bodytext Instructions body text
- * @param int $bodyformat Format for the body (moodle format identifier)
- * @param int $headinglevel HTML heading level
- * @return string formatted html to be displays encoded as a string
- **/
-function observation_instructions(string $heading, string $bodytext, int $bodyformat, int $headinglevel=3): string {
-    global $OUTPUT;
+ * @package   mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class instructions {
+    /**
+     * Generates a formatting block of HTML to output to a page that displays the instructions passed
+     *
+     * @param string|null $heading Instructions heading
+     * @param string|null $bodytext Instructions body text
+     * @param int|null $bodyformat Format for the body (moodle format identifier)
+     * @param int $headinglevel HTML heading level
+     * @param string|null $defaultmessage Message to display if there were no instructions given.
+     * Defaults to lang string ['defaultmessagenoinstructions]
+     * @return string formatted html to be displays encoded as a string
+     **/
+    public static function observation_instructions(
+        $heading,
+        $bodytext,
+        $bodyformat,
+        int $headinglevel=3,
+        string $defaultmessage=null
+    ): string {
 
-    $out = $OUTPUT->container_start();
-    $out .= $OUTPUT->heading($heading, $headinglevel);
-    $out .= format_text($bodytext, $bodyformat);
-    $out .= $OUTPUT->container_end();
+        global $OUTPUT;
+        // Can't set function values as default parameters, so do it here.
+        if (is_null($defaultmessage)) {
+            $defaultmessage = get_string('defaultmessagenoinstructions', 'observation');
+        }
 
-    return $out;
+        $out = $OUTPUT->container_start();
+
+        if (is_string($heading)) {
+            $out .= $OUTPUT->heading($heading, $headinglevel);
+        }
+
+        if (!is_null($bodytext) && !is_null($bodyformat)) {
+            $out .= format_text($bodytext, $bodyformat);
+        } else {
+            $out .= $defaultmessage;
+        }
+
+        $out .= $OUTPUT->container_end();
+        return $out;
+    }
 }

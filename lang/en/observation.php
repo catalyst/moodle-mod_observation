@@ -37,6 +37,7 @@ $string['instructionsobserver'] = 'Instructions for Observers';
 $string['instructionsobservee'] = 'Instructions for Observees';
 $string['observation:performobservation'] = 'Perform Observation';
 $string['observation:view'] = 'View Observation';
+$string['defaultmessagenoinstructions'] = 'No instructions provided.';
 $string['timeslots'] = 'Timeslots';
 $string['observationpoints'] = 'Observation Points';
 $string['placeholder'] = 'Placeholder';

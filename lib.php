@@ -56,21 +56,8 @@ function observation_get_course_content_items(\core_course\local\entity\content_
  * @return int new observation instance id
  */
 function observation_add_instance($data): int {
-    global $DB;
     $cmid = $data->coursemodule;
-
-    // Ensure if no text was given it is null (instead of an empty string).
-    if ($data->observerins_editor['text'] === "") {
-        $data->observerins_editor['text'] = null;
-        $data->observerins_editor['format'] = null;
-    }
-
-    if ($data->observeeins_editor['text'] === "") {
-        $data->observeeins_editor['text'] = null;
-        $data->observeeins_editor['format'] = null;
-    }
-
-    return $DB->insert_record('observation', array(
+    return \mod_observation\manager::modify_instance(array(
         "course" => $cmid,
         "name" => $data->name,
         "intro" => "",
@@ -79,7 +66,7 @@ function observation_add_instance($data): int {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
-    ));
+    ), true);
 }
 
 /**
@@ -91,20 +78,7 @@ function observation_add_instance($data): int {
  * @return bool true on success, false or a string error message on failure.
  */
 function observation_update_instance($data): bool {
-    global $DB;
-
-    // Ensure if no text was given it is null (instead of an empty string).
-    if ($data->observerins_editor['text'] === "") {
-        $data->observerins_editor['text'] = null;
-        $data->observerins_editor['format'] = null;
-    }
-
-    if ($data->observeeins_editor['text'] === "") {
-        $data->observeeins_editor['text'] = null;
-        $data->observeeins_editor['format'] = null;
-    }
-
-    return $DB->update_record('observation', array(
+    return \mod_observation\manager::modify_instance(array(
         "id" => $data->instance,
         "name" => $data->name,
         "timemodified" => time(),
@@ -112,7 +86,7 @@ function observation_update_instance($data): bool {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
-    ));
+    ), false);
 }
 
 /**

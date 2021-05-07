@@ -23,31 +23,29 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
-require('./classes/instructions.php');
-require('./classes/datalib.php');
+require_once($dir . '../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
-list($observation, $course, $cm) = get_observation_course_cm_from_obid($id);
+list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
 require_capability('mod/observation:view', $PAGE->context);
 
 // Render page.
-global $CFG, $PAGE, $OUTPUT;
-
 $PAGE->set_url(new moodle_url('/mod/observation/observee.php', array('id' => $id)));
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($observation->name, 2);
 
-echo observation_instructions(get_string('instructions', 'observation'), $observation->observee_ins, $observation->observee_ins_f);
+echo \mod_observation\instructions::observation_instructions(
+    get_string('instructions', 'observation'),
+    $observation->observee_ins,
+    $observation->observee_ins_f);
 
 echo $OUTPUT->container_start();
 echo "Timeslot selection placeholder";
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
-die;
