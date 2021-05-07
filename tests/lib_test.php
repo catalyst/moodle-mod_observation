@@ -20,7 +20,6 @@
  * @package    mod_observation
  * @category   test
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,8 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    mod_observation
  * @category   test
- * @copyright  2021 Endurer Solutions Team
- * @author     Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_observation_lib_testcase extends advanced_testcase {
@@ -44,9 +41,10 @@ class mod_observation_lib_testcase extends advanced_testcase {
         $this->setAdminUser();
     }
 
-    // Example test.
+    // Example test - remove once done TODO.
     public function test_observation_dummy_test() {
         $this->assertEquals(true, true);
         $this->assertTrue(true);
+        // .... the rest of the tests
     }
 }
