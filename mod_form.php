@@ -42,10 +42,11 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform = $this->_form;
 
         // General.
-        $mform->addElement('header', 'general', get_string('general', 'form'));
+        $mform->addElement('header', 'general', get_string('general', 'observation'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
 
         // Setting up boxes to set time slots.
+        $mform->addElement('header', 'timeslot', get_string('timeslot', 'observation'));
         $name = get_string('starttime', 'observation');
         $mform->addElement('date_time_selector', 'starttime', $name, array('optional' => false));
         $mform->addHelpButton('starttime', 'starttime', 'observation');
