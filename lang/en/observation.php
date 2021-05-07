@@ -18,6 +18,7 @@
  * Strings for component 'observation', language 'en'
  *
  * @package   mod_observation
+ * @copyright  2021 Endurer Solutions Team
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
