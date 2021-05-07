@@ -49,7 +49,7 @@ class mod_observation_mod_form extends moodleform_mod {
         $name = get_string('starttime', 'observation');
         $mform->addElement('date_time_selector', 'starttime', $name, array('optional' => false));
         $mform->addHelpButton('starttime', 'starttime', 'observation');
-        
+
         $name = get_string('endtime', 'observation');
         $mform->addElement('date_time_selector', 'endtime', $name, array('optional' => false));
         $mform->addHelpButton('endtime', 'endtime', 'observation');
