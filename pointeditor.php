@@ -39,10 +39,24 @@ list($observation, $course, $cm) = \mod_observation\manager::get_observation_cou
 require_login($course, true, $cm);
 require_capability('mod/observation:editobservationpoints', $PAGE->context);
 
-// Load form
-$pointeditorform = new \mod_observation\pointeditor_form();
 
-// Render page.
+
+// TODO if editing, get prefill data
+$formprefill = array(
+    'id' => $id,
+    'mode' => $mode,
+);
+
+// Load form
+$pointeditorform = new \mod_observation\pointeditor_form(null, $formprefill);
+
+if($fromform = $pointeditorform->get_data()){
+    // Form submitted, use the data.
+    echo "form submitted";
+    die;
+}
+
+// Form not submitted, render form.
 $PAGE->set_url(new moodle_url('/mod/observation/pointeditor.php', array('mode' => $mode,'id' => $id)));
 $PAGE->set_title(get_string('creatingobservationpoint', 'observation'));
 $PAGE->set_heading($course->fullname);
@@ -52,7 +66,6 @@ if ($mode === 'new'){
     echo $OUTPUT->heading(get_string('creatingobservationpoint', 'observation'), 2);
 }
 
-// TODO pass in prefill if editing, else creating new...
 $pointeditorform->display();
 
 echo $OUTPUT->footer();
