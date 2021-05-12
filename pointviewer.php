@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the page view if the user has the capability 'perform_observations'
+ * This file contains functions to edit observation points for an observation.
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -23,41 +23,33 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__.'/../../config.php');
+require_once($dir . '../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
 list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
-require_capability('mod/observation:performobservation', $PAGE->context);
+require_capability('mod/observation:editobservationpoints', $PAGE->context);
 
 // Render page.
-$PAGE->set_url(new moodle_url('/mod/observation/observer.php', array('id' => $id)));
+$PAGE->set_url(new moodle_url('/mod/observation/pointviewer.php', array('id' => $id)));
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->heading($observation->name, 2);
+echo $OUTPUT->heading(get_string('editingobservationpoints', 'observation'), 2);
 
-// If user has permissions show observation point editor page link.
-if(has_capability('mod/observation:editobservationpoints', $PAGE->context)){
-    echo $OUTPUT->box_start();
-    echo $OUTPUT->heading(get_string('actions', 'observation'), 3);
-    echo $OUTPUT->single_button(
-        new moodle_url('/mod/observation/pointviewer.php', array('id' => $observation->id)), 
-        get_string('editobservationpoints', 'observation'),
-        'get'
-    );
-    echo $OUTPUT->box_end();
-}
-
-echo \mod_observation\instructions::observation_instructions(
-    get_string('instructions', 'observation'),
-    $observation->observer_ins,
-    $observation->observer_ins_f);
-
+// Actions buttons.
 echo $OUTPUT->box_start();
-echo "Timeslots assigned placeholder";
+echo $OUTPUT->single_button(
+    new moodle_url('/mod/observation/pointeditor.php', array('mode' => 'new', 'id' => $observation->id)), 
+    get_string('createnew', 'observation'),
+    'get'
+);
 echo $OUTPUT->box_end();
+
+// View observation points already created.
+echo $OUTPUT->heading(get_string('currentpoints', 'observation'), 3);
+echo "point viewer table class here...";
 
 echo $OUTPUT->footer();

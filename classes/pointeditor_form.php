@@ -33,6 +33,32 @@ use moodleform;
 class pointeditor_form extends moodleform {
     function definition(){
         $mform = $this->_form;
-        $mform->addElement('header', 'general', get_string('editingobservationpoints', 'observation'));
+
+        $mform->addElement('header', 'gradingsettings', get_string('grading', 'observation'));
+
+        // Point type selection.
+        $radioarray=array();
+        $radioarray[] = $mform->createElement('radio', 'type', '', get_string('textinputtype', 'observation'), 0);
+        $mform->addGroup($radioarray, 'radioar', get_string('obpointtype', 'observation'), array(' '), false);
+        $mform->setDefault('type', 0);
+
+        // Grading instructions.
+        $mform->addElement('editor', 'pointins_editor', get_string('gradinginstructions', 'observation'));
+        $mform->setType('pointins_editor', PARAM_RAW);
+        $mform->addRule('pointins_editor', get_string('required', 'observation'), 'required', null, 'client');
+
+        // Max / default grade selection.
+        $mform->addElement('text', 'maxgradeinput', get_string('maxgrade', 'observation'));
+        $mform->setType('maxgradeinput', PARAM_INT);
+        $mform->addRule('maxgradeinput', get_string('err_numeric', 'form'), 'numeric', null, 'client');
+        $mform->addRule('maxgradeinput', get_string('required', 'observation'), 'required', null, 'client');
+
+        // Enforce validations.
+        if ($mform->validate()) {
+            $mform->freeze();
+        }
+
+        // Action buttons.
+        $this->add_action_buttons();
     }
 }

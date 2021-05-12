@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains functions to generate an observation point editor form
+ * Strings for component 'observation', language 'en'
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -26,22 +26,33 @@
 require_once($dir . '../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
+$mode = required_param('mode', PARAM_TEXT); // Editor mode ('new' or 'edit').
+
+// Ensure $mode param is allowed option
+if($mode !== 'new' && $mode !== 'edit'){
+    throw new moodle_exception('invalidqueryparam', 'error', null, $a=array('expected' => 'mode to be \'new\' or \'edit\'', 'actual' => $mode));
+}
+
 list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
 require_capability('mod/observation:editobservationpoints', $PAGE->context);
 
-// Load form.
-$mform = new \mod_observation\pointeditor_form();
+// Load form
+$pointeditorform = new \mod_observation\pointeditor_form();
 
 // Render page.
-$PAGE->set_url(new moodle_url('/mod/observation/editor.php', array('id' => $id)));
-$PAGE->set_title($course->shortname.': '.$observation->name);
+$PAGE->set_url(new moodle_url('/mod/observation/pointeditor.php', array('mode' => $mode,'id' => $id)));
+$PAGE->set_title(get_string('creatingobservationpoint', 'observation'));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-// Render form.
-$mform->display();
+if ($mode === 'new'){
+    echo $OUTPUT->heading(get_string('creatingobservationpoint', 'observation'), 2);
+}
+
+// TODO pass in prefill if editing, else creating new...
+$pointeditorform->display();
 
 echo $OUTPUT->footer();
