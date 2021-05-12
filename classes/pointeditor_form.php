@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Observation activity version information.
+ * This file contains functions to generate an observation point editor form
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -23,8 +23,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace mod_observation;
 
-$plugin->version   = 2021052505;
-$plugin->requires  = 2021052500;
-$plugin->component = 'mod_observation';
+defined('MOODLE_INTERNAL') || die;
+require_once($CFG->libdir.'/formslib.php');
+
+use moodleform;
+
+class pointeditor_form extends moodleform {
+    function definition(){
+        $mform = $this->_form;
+        $mform->addElement('header', 'general', get_string('editingobservationpoints', 'observation'));
+    }
+}

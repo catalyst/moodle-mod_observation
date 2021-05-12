@@ -41,3 +41,7 @@ $string['defaultmessagenoinstructions'] = 'No instructions provided.';
 $string['timeslots'] = 'Timeslots';
 $string['observationpoints'] = 'Observation Points';
 $string['placeholder'] = 'Placeholder';
+$string['observationpointtype'] = 'Observation Point Type';
+$string['editobservationpoints'] = 'Edit Observation Points';
+$string['openeditor'] = 'Open Editor';
+$string['editingobservationpoints'] = 'Editing Observation Points';
