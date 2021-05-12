@@ -34,6 +34,8 @@ class pointeditor_form extends moodleform {
     function definition(){
         $mform = $this->_form;
 
+        $prefill = $this->_customdata;
+
         $mform->addElement('header', 'gradingsettings', get_string('grading', 'observation'));
 
         // Point type selection.
@@ -52,6 +54,13 @@ class pointeditor_form extends moodleform {
         $mform->setType('maxgradeinput', PARAM_INT);
         $mform->addRule('maxgradeinput', get_string('err_numeric', 'form'), 'numeric', null, 'client');
         $mform->addRule('maxgradeinput', get_string('required', 'observation'), 'required', null, 'client');
+
+        // Hidden form elements.
+        $mform->addElement('hidden', 'id', $prefill['id']);
+        $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'mode', $prefill['mode']);
+        $mform->setType('mode', PARAM_TEXT);
 
         // Enforce validations.
         if ($mform->validate()) {
