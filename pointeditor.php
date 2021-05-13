@@ -51,8 +51,27 @@ $formprefill = array(
 $pointeditorform = new \mod_observation\pointeditor_form(null, $formprefill);
 
 if($fromform = $pointeditorform->get_data()){
-    // Form submitted, use the data.
-    echo "form submitted";
+    // Form submitted, save/edit the data.
+
+    $db_data = array(
+        "obs_id" => $fromform->id,
+        "title" => $fromform->title,
+        "ins" => $fromform->ins['text'],
+        "ins_f" => $fromform->ins['format'],
+        "max_grade" => $fromform->maxgrade,
+        "res_type" => $fromform->res_type,
+    );
+
+    if ($fromform->mode === "new"){
+        \mod_observation\observation_manager::modify_observation_point($db_data, true);
+    } else {
+        // Add point ID
+        // TODO
+
+    }
+
+    // Redirect back to point viewer.
+    redirect(new moodle_url('pointviewer.php', array('id' => $id)));
     die;
 }
 
