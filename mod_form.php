@@ -58,17 +58,21 @@ class mod_observation_mod_form extends moodleform_mod {
         get_string('placeholder', 'observation')); // TODO: replace.
         
         //Selecting Observer ***to be moved into Timeslots***
-        $searcharea = \core_search\manager::get_search_areas_list(true);
+        //$searcharea = \core_search\manager::get_search_areas_list(true);
         $areanames = array();
-        foreach ($searcharea as $areaid => $searcharea) {
-            $areanames[$areaid] = $searcharea->get_visible_name();
-        }
-        $options = array(
-            'multiple' => false,
-            'noselectionstring' => get_string('allareas', 'search'),
+        $areanames[0] = 'kermit the frog';
+        $areanames[1] = 'donald duck';
+        $areanames[2] = 'mickey the mouse';
+        $areanames[3] = 'eric cartman';
+        //foreach ($searcharea as $areaid => $searcharea) {
+        //    $areanames[$areaid] = $searcharea->get_visible_name();
+        //}
+        //$options = array(
+        //    'multiple' => false,
+        //    'noselectionstring' => get_string('allareas', 'search'),
         );
         $mform->addElement('header', 'Selecting-Observer', get_string('Selecting Observer', 'observation');
-        $mform->addElement('autocomplete', 'observers', get_string('Select Observer', 'observation'), get_string('searcharea', 'search'), $areanames, $options);
+        $mform->addElement('autocomplete', 'observers', get_string('Select Observer', 'observation'), get_string('searcharea', 'search'), $areanames);
         
 
         // Observation Points.
