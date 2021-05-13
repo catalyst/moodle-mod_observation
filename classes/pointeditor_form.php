@@ -66,10 +66,16 @@ class pointeditor_form extends moodleform {
         $mform->addElement('hidden', 'mode', $prefill['mode']);
         $mform->setType('mode', PARAM_TEXT);
 
+        $mform->addElement('hidden', 'pointid', $prefill['pointid']);
+        $mform->setType('pointid', PARAM_INT);
+
         // Enforce validations.
         if ($mform->validate()) {
             $mform->freeze();
         }
+
+        // Set defaults.
+        $this->set_data($prefill);
 
         // Action buttons.
         $this->add_action_buttons();
