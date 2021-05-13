@@ -50,11 +50,11 @@
             <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
             <FIELD NAME="obs_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" />
             <FIELD NAME="title" TYPE="text" SEQUENCE="false" NOTNULL="true" COMMENT="Title of this observation point, used when shown in lists." />
-            <FIELD NAME="order" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Determines the ordering of this point relative to other points." />
+            <FIELD NAME="list_order" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Determines the ordering of this point relative to other points." />
             <FIELD NAME="ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="Instructions for grading this observation point." />
             <FIELD NAME="ins_f" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="false" COMMENT="Format of the instructions, either 'html', 'markdown' or 'plaintext'" />
             <FIELD NAME="max_grade" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="true" COMMENT="Maximum grade that can be given for this observation point." />
-            <FIELD NAME="res_type" TYPE="char" LENGTH="32" SEQUENCE="false" NOTNULL="true" COMMENT="Type of response required for this point. Can be either 'passfail', 'text', 'image', 'video' or 'audio'." />
+            <FIELD NAME="res_type" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="true" COMMENT="Type of response required for this point. 0 = 'text input'. " />
         </FIELDS>
         <KEYS>
             <KEY NAME="primary" TYPE="primary" FIELDS="id" />

@@ -40,20 +40,24 @@ class pointeditor_form extends moodleform {
 
         // Point type selection.
         $radioarray=array();
-        $radioarray[] = $mform->createElement('radio', 'type', '', get_string('textinputtype', 'observation'), 0);
+        $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('textinputtype', 'observation'), 0);
         $mform->addGroup($radioarray, 'radioar', get_string('obpointtype', 'observation'), array(' '), false);
         $mform->setDefault('type', 0);
 
+        // Title.
+        $mform->addElement('text', 'title', get_string('title', 'observation'));
+        $mform->addRule('title', get_string('required', 'observation'), 'required', null, 'client');
+
         // Grading instructions.
-        $mform->addElement('editor', 'pointins_editor', get_string('gradinginstructions', 'observation'));
-        $mform->setType('pointins_editor', PARAM_RAW);
-        $mform->addRule('pointins_editor', get_string('required', 'observation'), 'required', null, 'client');
+        $mform->addElement('editor', 'ins', get_string('gradinginstructions', 'observation'));
+        $mform->setType('ins', PARAM_RAW);
+        $mform->addRule('ins', get_string('required', 'observation'), 'required', null, 'client');
 
         // Max / default grade selection.
-        $mform->addElement('text', 'maxgradeinput', get_string('maxgrade', 'observation'));
-        $mform->setType('maxgradeinput', PARAM_INT);
-        $mform->addRule('maxgradeinput', get_string('err_numeric', 'form'), 'numeric', null, 'client');
-        $mform->addRule('maxgradeinput', get_string('required', 'observation'), 'required', null, 'client');
+        $mform->addElement('text', 'maxgrade', get_string('maxgrade', 'observation'));
+        $mform->setType('maxgrade', PARAM_INT);
+        $mform->addRule('maxgrade', get_string('err_numeric', 'form'), 'numeric', null, 'client');
+        $mform->addRule('maxgrade', get_string('required', 'observation'), 'required', null, 'client');
 
         // Hidden form elements.
         $mform->addElement('hidden', 'id', $prefill['id']);

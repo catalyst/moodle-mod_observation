@@ -58,3 +58,4 @@ $string['obpointtype'] = 'Type';
 $string['grading'] = 'Grading';
 $string['maxgrade'] = 'Maximum Grade';
 $string['required'] = 'Required';
+$string['title'] = 'Title';
