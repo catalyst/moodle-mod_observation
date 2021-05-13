@@ -63,4 +63,9 @@ class observation_manager {
             return $DB->update_record($tablename, $data);
         }
     }
+
+    public static function get_existing_point_data(int $observationid, int $pointid, string $tablename = 'observation_points') {
+        global $DB;
+        return $DB->get_record($tablename, ['id' => $pointid, 'obs_id' => $observationid], '*', MUST_EXIST);
+    }
 }
