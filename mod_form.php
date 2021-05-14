@@ -69,7 +69,7 @@ class mod_observation_mod_form extends moodleform_mod {
             'noselectionstring' => get_string('allareas', 'search'),
         );
                 
-        $mform->addElement('header', 'Selecting-Observer', get_string('Selecting Observer', 'observation'));
+        $mform->addElement('header', 'selecting_observer', get_string('selecting_observer', 'observation'));
         $mform->addElement('autocomplete', 'areaids', get_string('searcharea', 'search'), $areanames, $options);
         
 
