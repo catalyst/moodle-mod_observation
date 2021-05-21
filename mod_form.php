@@ -61,11 +61,18 @@ class mod_observation_mod_form extends moodleform_mod {
         get_string('placeholder', 'observation')); // TODO: replace.
         
         //Selecting Observer ***to be moved into Timeslots***
-        //$context = $PAGE->get_context();
-        $areanames = array();
-        $areanames = get_enrolled_users($PAGE->context);                
+        $context = $PAGE->context;
+        $finalusers = [];
+        $users = get_enrolled_users($context, 'mod/observation:performobservation');
+        foreach ($users as $user) {                                                                          
+            $finalusers[$user->id] = fullname($user);                                                               
+        }
+        $options = array(                                                                                                           
+            'multiple' => false,                                                  
+            'noselectionstring' => get_string('allareas', 'search'),                                                                
+        );                   
         $mform->addElement('header', 'selecting_observer', get_string('selecting_observer', 'observation'));
-        $mform->addElement('autocomplete', 'observerver', get_string('teacher', 'search'), $areanames);
+        $mform->addElement('autocomplete', 'observer', get_string('teacher', 'observation'),$finalusers, $options);
         
 
         // Observation Points.

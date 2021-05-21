@@ -41,3 +41,6 @@ $string['defaultmessagenoinstructions'] = 'No instructions provided.';
 $string['timeslots'] = 'Timeslots';
 $string['observationpoints'] = 'Observation Points';
 $string['placeholder'] = 'Placeholder';
+$string['selecting_observer'] = 'Selecting Observers';
+$string['observer'] = 'Observer';
+$string['teacher'] = 'Observer';
