@@ -19,63 +19,40 @@
  *
  * @package mod_observation
  * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
+require_once($dir . '../../config.php');
 
-$id    = optional_param('id', 0, PARAM_INT);        // Course module ID.
-$observationid = optional_param('o', 0, PARAM_INT);          // Observation instance ID.
+$id = optional_param('id', null, PARAM_INT);// Course module ID.
+$observationid = optional_param('obid', null, PARAM_INT);// Observation instance ID.
 
-// Can access directly from observation ID or from course module ID.
-if ($observationid) {
-    // Access directly via observation ID.
-    if (!$cm = get_coursemodule_from_instance('observation', $observationid)) {
-        throw new moodle_exception('invalidcoursemodule');
-    }
-
-    // Get the course from the course module (or error).
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        throw new moodle_exception('coursemisconf');
-    }
-} else {
-    // Access indirectly via course module ID.
-
-    // Get the course module object from the ID (or error).
-    if (!$cm = get_coursemodule_from_id('observation', $id)) {
-        throw new moodle_exception('invalidcoursemodule');
-    }
-    // Get the course from the course module (or error).
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        throw new moodle_exception('coursemisconf');
-    }
-
-    $observationid = $cm->instance;
+// Needs at least one of the two optional parameters.
+if (empty($id) && empty($observationid) ) {
+    throw new moodle_exception('missingparameter');
 }
 
-// Get the observation instance (or error).
-if (!$observation = $DB->get_record('observation', array('id' => $observationid))) {
-    throw new moodle_exception('cannotfindcontext');
+// Access via observation instance id.
+if (!empty($observationid) ) {
+    list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($observationid);
+}
+
+// Access via course module id.
+if (!empty($id)) {
+    list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_cmid($id);
 }
 
 require_login($course, true, $cm);
 
-// TODO check permissions.
+// If user can perform observations, redirect to the 'observer' view.
+if (has_capability('mod/observation:performobservation', $PAGE->context)) {
+    $observerurl = new moodle_url('/mod/observation/observer.php', array('id' => $observation->id));
+    redirect($observerurl);
+    die;
+}
 
-$PAGE->set_url('/mod/url/view.php', array('id' => $observationid));
-
-// Render output (nothing right now, just some random debug info) TODO move into function.
-global $CFG, $PAGE, $OUTPUT;
-
-// Moodle header.
-$PAGE->set_title($course->shortname.': '.$observation->name);
-$PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
-
-// Our activity page header.
-echo $OUTPUT->heading($observation->name);
-echo "Test.\n it works!";
-
-// Moodle footer.
-echo $OUTPUT->footer();
+// Else, redirect user to 'observee' view (default).
+$observeeurl = new moodle_url('/mod/observation/observee.php', array('id' => $observation->id));
+redirect($observeeurl);
 die;
