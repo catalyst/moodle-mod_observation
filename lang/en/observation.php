@@ -22,15 +22,23 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['endtime'] = 'Assign End Time';
+$string['pluginname'] = 'Observation';
+$string['name'] = 'Name';
 $string['general'] = 'General';
 $string['modulename'] = 'Observation';
 $string['modulenameplural'] = 'Observations';
 $string['modulename_help'] = 'TODO';
-$string['name'] = 'Name';
+$string['pluginadministration'] = 'Observation module administration';
 $string['observation:addinstance'] = 'Add a new observation';
 $string['observationnotfound'] = 'Observation instance not found.';
-$string['pluginadministration'] = 'Observation module administration';
-$string['pluginname'] = 'Observation';
-$string['timeslot'] = 'Time Slot';
+$string['instructions'] = 'Instructions';
+$string['instructionsobserver'] = 'Instructions for Observers';
+$string['instructionsobservee'] = 'Instructions for Observees';
+$string['observation:performobservation'] = 'Perform Observation';
+$string['observation:view'] = 'View Observation';
+$string['defaultmessagenoinstructions'] = 'No instructions provided.';
+$string['timeslot'] = 'Timeslots';
+$string['observationpoints'] = 'Observation Points';
+$string['placeholder'] = 'Placeholder';
+$string['endtime'] = 'Assign End Time';
 $string['starttime'] = 'Assign Start Time';
