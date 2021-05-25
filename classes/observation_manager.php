@@ -43,11 +43,12 @@ class observation_manager {
      * Modifies or creates a new observation point in the database
      * @param mixed $data Data to pass to database function
      * @param bool $newinstance True if new instance, else false if editing
+     * @param bool $returnid True if should return id (only when $newinstance = true)
      * @param string $tablename Tablename
-     * @return bool true if successful
+     * @return mixed True if successful. If $returnid is True and $newinstance is True, returns ID
      */
     public static function modify_observation_point(
-        $data, bool $newinstance=false, string $tablename = 'observation_points'): bool {
+        $data, bool $newinstance = false, bool $returnid = false, string $tablename = 'observation_points') {
 
         global $DB;
 
@@ -63,7 +64,7 @@ class observation_manager {
             $data['list_order'] = $maxordering + 1;
 
             // Insert.
-            return $DB->insert_record($tablename, $data, false);
+            return $DB->insert_record($tablename, $data, $returnid);
         } else {
             return $DB->update_record($tablename, $data);
         }

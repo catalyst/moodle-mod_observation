@@ -58,7 +58,7 @@ class mod_observation_generator extends testing_module_generator {
             'observeeins_editor' => $defaulteditorvalues,
         );
 
-        // Set defaults if not already set
+        // Set defaults if not already set.
         foreach ($defaultobservationsettings as $name => $value) {
             if (!isset($record->{$name})) {
                 $record->{$name} = $value;

@@ -25,6 +25,8 @@
 
 namespace mod_observation;
 
+use moodle_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
