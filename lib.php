@@ -33,21 +33,20 @@ defined('MOODLE_INTERNAL') || die();
  * @return array the array of content items.
  */
 function observation_get_course_content_items(\core_course\local\entity\content_item $defaultmodulecontentitem) {
-    global $CFG, $OUTPUT;
+    global $OUTPUT;
 
-    $types = [];
-
-    $types = [new \core_course\local\entity\content_item(
+    $contentitem = new \core_course\local\entity\content_item(
         1,
         "observationActivityModule",
         new core_course\local\entity\string_title("Observation"),
         $defaultmodulecontentitem->get_link(),
-        '<img src="/mod/observation/pix/icon.png" />',
+        $OUTPUT->pix_icon('icon', 'add observation', 'observation'),
         $defaultmodulecontentitem->get_help(),
         $defaultmodulecontentitem->get_archetype(),
         $defaultmodulecontentitem->get_component_name()
-    )];
-    return $types;
+    );
+
+    return [$contentitem];
 }
 
 /**

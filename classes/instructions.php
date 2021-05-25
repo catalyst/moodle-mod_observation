@@ -47,13 +47,8 @@ class instructions {
      * Defaults to lang string ['defaultmessagenoinstructions]
      * @return string formatted html to be displays encoded as a string
      **/
-    public static function observation_instructions(
-        $heading,
-        $bodytext,
-        $bodyformat,
-        int $headinglevel=3,
-        string $defaultmessage=null
-    ): string {
+    public static function observation_instructions(?string $heading, ?string $bodytext, ?int $bodyformat, int $headinglevel = 3,
+        string $defaultmessage = null): string {
 
         global $OUTPUT;
         // Can't set function values as default parameters, so do it here.

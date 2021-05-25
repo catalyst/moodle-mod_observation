@@ -42,14 +42,14 @@ class manager {
      * @param string $tablename database table name
      * @return list List containing the observation instance, course and coursemodule (in that order)
      */
-    public static function get_observation_course_cm_from_cmid(int $cmid, string $tablename='observation') {
+    public static function get_observation_course_cm_from_cmid(int $cmid, string $tablename = 'observation') {
         global $DB;
         list($course, $cm) = get_course_and_cm_from_cmid($cmid, $tablename);
         $observationid = $cm->instance;
-        if (!$observation = $DB->get_record($tablename, array('id' => $observationid))) {
+        if (!$observation = $DB->get_record($tablename, ['id' => $observationid])) {
             throw new moodle_exception('moduleinstancedoesnotexist');
         }
-        return array($observation, $course, $cm);
+        return [$observation, $course, $cm];
     }
 
     /**
@@ -58,16 +58,16 @@ class manager {
      * @param string $tablename Database table name
      * @return list List containing the observation instance, course and coursemodule (in that order)
      */
-    public static function get_observation_course_cm_from_obid(int $obid, string $tablename='observation') {
+    public static function get_observation_course_cm_from_obid(int $obid, string $tablename = 'observation') {
         global $DB;
         if (!$cm = get_coursemodule_from_instance($tablename, $obid)) {
             throw new moodle_exception('invalidcoursemodule');
         }
         list($course, $cm) = get_course_and_cm_from_cmid($cm->id, 'observation');
-        if (!$observation = $DB->get_record($tablename, array('id' => $obid))) {
+        if (!$observation = $DB->get_record($tablename, ['id' => $obid])) {
             throw new moodle_exception('moduleinstancedoesnotexist');
         }
-        return array($observation, $course, $cm);
+        return [$observation, $course, $cm];
     }
 
     /**
@@ -78,7 +78,7 @@ class manager {
      * @param string $tablename Name of database table to operate on.
      * @return int If param $newinstance is true, returns ID of new instance. Else returns 1 if updated successfully, else 0.
      */
-    public static function modify_instance($data, bool $newinstance=false, string $tablename='observation'): int {
+    public static function modify_instance($data, bool $newinstance = false, string $tablename = 'observation'): int {
         global $DB;
 
         // Editor data need to be checked to ensure empty strings are not added.
