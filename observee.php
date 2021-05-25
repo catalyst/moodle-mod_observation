@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($dir . '../../config.php');
+require_once(__DIR__.'/../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
 list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($id);
@@ -39,10 +39,8 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($observation->name, 2);
 
-echo \mod_observation\instructions::observation_instructions(
-    get_string('instructions', 'observation'),
-    $observation->observee_ins,
-    $observation->observee_ins_f);
+echo \mod_observation\instructions::observation_instructions(get_string('instructions', 'observation'),
+    $observation->observee_ins, $observation->observee_ins_f);
 
 echo $OUTPUT->container_start();
 echo "Timeslot selection placeholder";
