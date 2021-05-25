@@ -44,7 +44,27 @@ class mod_observation_generator extends testing_module_generator {
      * @throws coding_exception
      */
     public function create_instance($record = null, array $options = null) {
-        $record = (array)$record;
-        return parent::create_instance($record, $options);
+        $record = (object)(array)$record;
+
+        // Default editor values.
+        $defaulteditorvalues = array(
+            'text' => null,
+            'format' => null,
+        );
+
+        // Default observation activity settings.
+        $defaultobservationsettings = array(
+            'observerins_editor' => $defaulteditorvalues,
+            'observeeins_editor' => $defaulteditorvalues,
+        );
+
+        // Set defaults if not already set
+        foreach ($defaultobservationsettings as $name => $value) {
+            if (!isset($record->{$name})) {
+                $record->{$name} = $value;
+            }
+        }
+
+        return parent::create_instance($record, (array)$options);
     }
 }
