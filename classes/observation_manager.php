@@ -65,11 +65,14 @@ class observation_manager {
 
         if ($newinstance) {
             // Get the max observation point list_order to place this new one after it.
-            $ordering = $DB->get_record($tablename, ['obs_id' => $data->obs_id], 'MAX(list_order)');
+            // Get all the points to get the bounds.
+            $allpoints = self::get_observation_points($data->obs_id);
+            $alllistorders = array_column($allpoints, 'list_order');
 
+            // Default to zero, update to max if a point already exists.
             $maxordering = 0;
-            if ($ordering !== null && isset($ordering->max)) {
-                $maxordering = $ordering->max;
+            if (count($alllistorders) != 0) {
+                $maxordering = max($alllistorders);
             }
 
             // Update $data ordering property to be the max_ordering + 1 (place at end of list).
@@ -167,21 +170,23 @@ class observation_manager {
         // First get the ordering of the current point.
         $currentpoint = self::get_existing_point_data($observationid, $obpointid, $tablename);
 
-        // Also get the min and max orderings (the bounds).
-        $orderbounds = $DB->get_record(
-            $tablename,
-            ['obs_id' => $observationid],
-            'min(list_order), max(list_order)',
-            MUST_EXIST
-        );
+        // Get all the points to get the bounds.
+        $allpoints = self::get_observation_points($observationid);
+        $alllistorders = array_column($allpoints, 'list_order');
+
+        if (count($alllistorders) === 0) {
+            throw new coding_exception('No list orderings found for this observation instance, but expected at least one.');
+        }
+
         $newordering = $currentpoint->list_order + $direction;
+
         // Is currently the minimum - do nothing.
-        if ($newordering < $orderbounds->min) {
+        if ($newordering < min($alllistorders)) {
             return;
         }
 
         // Is currently the maximum - do nothing.
-        if ($newordering > $orderbounds->max) {
+        if ($newordering > max($alllistorders)) {
             return;
         }
 
