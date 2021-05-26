@@ -36,6 +36,18 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observation_point_test extends advanced_testcase {
+
+    /**
+     * Valid data point to use for testing.
+     */
+    private const VALID_DATA = [
+        'title' => 'point1',
+        'ins' => '<p dir="ltr" style="text-align: left;">text1<br></p>',
+        'ins_f' => 1,
+        'max_grade' => 5,
+        'res_type' => 0,
+    ];
+
     /**
      * Set up for tests. Creates course, activity and adds three basic user roles to it.
      */
@@ -72,17 +84,11 @@ class observation_point_test extends advanced_testcase {
      * @return mixed observation point data saved in DB
      */
     private static function create_valid_point($observationid) {
-        $validdata = [
-            'obs_id' => $observationid,
-            'title' => 'point1',
-            'ins' => '<p dir="ltr" style="text-align: left;">text1<br></p>',
-            'ins_f' => 1,
-            'max_grade' => 5,
-            'res_type' => 0,
-        ];
+        $data = self::VALID_DATA;
+        $data['obs_id'] = $observationid;
 
         // Create point and return data.
-        $newpointid = \mod_observation\observation_manager::modify_observation_point($validdata, true, true);
+        $newpointid = \mod_observation\observation_manager::modify_observation_point($data, true, true);
         return \mod_observation\observation_manager::get_existing_point_data($observationid, $newpointid);
     }
 
@@ -90,15 +96,8 @@ class observation_point_test extends advanced_testcase {
      * Tests CRUD operations for observation point with expected data.
      */
     public function test_crud_expected () {
-        // Create point.
-        $validdata = [
-            'obs_id' => $this->instance->id,
-            'title' => 'point1',
-            'ins' => '<p dir="ltr" style="text-align: left;">text1<br></p>',
-            'ins_f' => 1,
-            'max_grade' => 5,
-            'res_type' => 0,
-        ];
+        $data = self::VALID_DATA;
+        $data['obs_id'] = $this->instance->id;
 
         // No data yet.
         $this->assertEmpty(
@@ -106,7 +105,7 @@ class observation_point_test extends advanced_testcase {
         );
 
         $this->assertTrue(
-            \mod_observation\observation_manager::modify_observation_point($validdata, true));
+            \mod_observation\observation_manager::modify_observation_point($data, true));
 
         // Unset DB generated values to compare to the original data.
         $returndata = \mod_observation\observation_manager::get_observation_points($this->instance->id);
@@ -116,7 +115,7 @@ class observation_point_test extends advanced_testcase {
         }
 
         // Ensure contains point just added.
-        $this->assertContainsEquals((object)$validdata, $returndata);
+        $this->assertContainsEquals((object)$data, $returndata);
 
         // Re-get points to get ID.
         $returndata = \mod_observation\observation_manager::get_observation_points($this->instance->id);
@@ -142,7 +141,7 @@ class observation_point_test extends advanced_testcase {
         $returnedpoint = array_values($returndata)[0];
 
         $this->assertContainsEquals((object)$editeddata, $returndata);
-        $this->assertNotContainsEquals((object)$validdata, $returndata);
+        $this->assertNotContainsEquals((object)$data, $returndata);
 
         // Delete point.
         \mod_observation\observation_manager::delete_observation_point($this->instance->id, $returnedpoint->id);
@@ -213,5 +212,53 @@ class observation_point_test extends advanced_testcase {
         $point2 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point2->id);
 
         $this->assertEquals([1, 2], [$point2->list_order, $point1->list_order]);
+    }
+
+    /**
+     * Test maxgrade input as float.
+     */
+    public function test_float_maxgrade() {
+        // Get some valid data to begin with.
+        $data = self::VALID_DATA;
+        $data['obs_id'] = $this->instance->id;
+
+        // Test invalid max grade.
+        $invalidmaxgrade = $data;
+        $invalidmaxgrade['max_grade'] = 5.5;
+
+        $this->expectException('dml_exception');
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
+    }
+
+    /**
+     * Tests a negative max grade.
+     */
+    public function test_negative_maxgrade() {
+        $data = self::VALID_DATA;
+        $data['obs_id'] = $this->instance->id;
+
+        // Test negative max grade.
+        $invalidmaxgrade = $data;
+        $invalidmaxgrade['max_grade'] = -1;
+
+        $this->expectException('coding_exception');
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
+    }
+
+    /**
+     * Tests restype that doesn't exist.
+     */
+    public function test_invalid_restype() {
+        // Get some valid data to begin with.
+        $data = self::VALID_DATA;
+        $data['obs_id'] = $this->instance->id;
+
+        // Don't actually know in the future how many response types there will be,
+        // But will likely never have 1000 response types to a question.
+        $invalidmaxgrade = $data;
+        $invalidmaxgrade['res_type'] = 1000;
+
+        $this->expectException('dml_exception');
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
     }
 }

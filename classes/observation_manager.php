@@ -26,7 +26,6 @@
 namespace mod_observation;
 
 use coding_exception;
-use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -47,21 +46,34 @@ class observation_manager {
      * @param string $tablename Tablename
      * @return mixed True if successful. If $returnid is True and $newinstance is True, returns ID
      */
-    public static function modify_observation_point(
-        $data, bool $newinstance = false, bool $returnid = false, string $tablename = 'observation_points') {
+    public static function modify_observation_point($data, bool $newinstance = false, bool $returnid = false,
+        string $tablename = 'observation_points') {
+
+        $data = (object)$data;
 
         global $DB;
 
+        // Ensure maxgrade (if set) is not negative.
+        if (property_exists($data, 'max_grade') && $data->max_grade < 0) {
+            throw new coding_exception("Property max_grade cannot be negative");
+        }
+
+        if (property_exists($data, 'res_type')) {
+            // Get record, MUST_EXIST is passed so will except if res_type is invalid.
+            $DB->get_record('observation_res_type_map', ['res_type' => $data->res_type], '*', MUST_EXIST);
+        }
+
         if ($newinstance) {
             // Get the max observation point list_order to place this new one after it.
-            $ordering = $DB->get_record($tablename, ['obs_id' => $data['obs_id']], 'max(list_order)');
-            $maxordering = $ordering->max;
-            if ($maxordering == null) {
-                $maxordering = 0;
+            $ordering = $DB->get_record($tablename, ['obs_id' => $data->obs_id], 'MAX(list_order)');
+
+            $maxordering = 0;
+            if ($ordering !== null && isset($ordering->max)) {
+                $maxordering = $ordering->max;
             }
 
             // Update $data ordering property to be the max_ordering + 1 (place at end of list).
-            $data['list_order'] = $maxordering + 1;
+            $data->list_order = $maxordering + 1;
 
             // Insert.
             return $DB->insert_record($tablename, $data, $returnid);
@@ -77,8 +89,8 @@ class observation_manager {
      * @param string $tablename database table name
      * @return object existing point data
      */
-    public static function get_existing_point_data(
-        int $observationid, int $pointid, string $tablename = 'observation_points'): object {
+    public static function get_existing_point_data(int $observationid, int $pointid,
+        string $tablename = 'observation_points'): object {
 
         global $DB;
         return $DB->get_record($tablename, ['id' => $pointid, 'obs_id' => $observationid], '*', MUST_EXIST);
@@ -91,8 +103,8 @@ class observation_manager {
      * @param string $tablename database tablename
      * @return array array of database objects obtained from database
      */
-    public static function get_observation_points(
-        int $observationid, string $sortby='list_order', string $tablename='observation_points'): array {
+    public static function get_observation_points(int $observationid, string $sortby='list_order',
+        string $tablename='observation_points'): array {
 
         global $DB;
         return $DB->get_records($tablename, ['obs_id' => $observationid], $sortby);
@@ -144,8 +156,8 @@ class observation_manager {
      * @param int $direction direction to reorder the point in, must be -1 or 1.
      * @param string $tablename database table name
      */
-    public static function reorder_observation_point(
-        int $observationid, int $obpointid, int $direction, string $tablename='observation_points') {
+    public static function reorder_observation_point(int $observationid, int $obpointid, int $direction,
+        string $tablename='observation_points') {
 
         if ($direction != 1 && $direction != -1) {
             throw new coding_exception("direction must be -1 or 1.");
