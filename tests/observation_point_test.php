@@ -226,7 +226,7 @@ class observation_point_test extends advanced_testcase {
         $invalidmaxgrade = $data;
         $invalidmaxgrade['max_grade'] = 5.5;
 
-        $this->expectException('dml_exception');
+        $this->expectException('coding_exception');
         \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
     }
 

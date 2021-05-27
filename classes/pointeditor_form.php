@@ -69,6 +69,7 @@ class pointeditor_form extends moodleform {
         $mform->setType('maxgrade', PARAM_INT);
         $mform->addRule('maxgrade', get_string('err_numeric', 'form'), 'numeric', null, 'client');
         $mform->addRule('maxgrade', get_string('required', 'observation'), 'required', null, 'client');
+        $mform->addRule('maxgrade', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
 
         // Hidden form elements.
         $mform->addElement('hidden', 'id', $prefill['id']);
