@@ -65,3 +65,4 @@ $string['moveup'] = 'Move Up';
 $string['movedown'] = 'Move Down';
 $string['id'] = 'ID';
 $string['order'] = 'Order';
+$string['intgreaterthanorzero'] = 'Must be an integer that is greater than or equal to zero';

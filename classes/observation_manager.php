@@ -53,9 +53,16 @@ class observation_manager {
 
         global $DB;
 
-        // Ensure maxgrade (if set) is not negative.
-        if (property_exists($data, 'max_grade') && $data->max_grade < 0) {
-            throw new coding_exception("Property max_grade cannot be negative");
+        if (property_exists($data, 'max_grade')) {
+            // Ensure maxgrade (if set) is an int.
+            if (!is_int($data->max_grade)) {
+                throw new coding_exception("Property max_grade must be an int.");
+            }
+
+            // Ensure maxgrade (if set) is not negative.
+            if ($data->max_grade < 0) {
+                throw new coding_exception("Property max_grade cannot be negative");
+            }
         }
 
         if (property_exists($data, 'res_type')) {
