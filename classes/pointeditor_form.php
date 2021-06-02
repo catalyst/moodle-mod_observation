@@ -28,8 +28,6 @@ namespace mod_observation;
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
 
-use moodleform;
-
 /**
  * Creates a moodle_form to edit observation points.
  *
@@ -38,7 +36,7 @@ use moodleform;
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class pointeditor_form extends moodleform {
+class pointeditor_form extends \moodleform {
     /**
      * Defines the observation point form
      */

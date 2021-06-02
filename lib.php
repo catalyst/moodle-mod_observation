@@ -56,7 +56,7 @@ function observation_get_course_content_items(\core_course\local\entity\content_
  */
 function observation_add_instance($data): int {
     $cmid = $data->coursemodule;
-    return \mod_observation\manager::modify_instance(array(
+    return \mod_observation\observation_manager::modify_instance(array(
         "course" => $cmid,
         "name" => $data->name,
         "intro" => "",
@@ -77,7 +77,7 @@ function observation_add_instance($data): int {
  * @return bool true on success, false or a string error message on failure.
  */
 function observation_update_instance($data): bool {
-    return \mod_observation\manager::modify_instance(array(
+    return \mod_observation\observation_manager::modify_instance(array(
         "id" => $data->instance,
         "name" => $data->name,
         "timemodified" => time(),

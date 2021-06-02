@@ -23,13 +23,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($dir . '../../config.php');
+require_once(__DIR__.'/../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
 $pointid = optional_param('pointid', null, PARAM_INT); // Observation point ID.
 $action = optional_param('action', null, PARAM_TEXT); // Action.
 
-list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($id);
+list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
@@ -39,25 +39,35 @@ $pageurl = new moodle_url('/mod/observation/viewpoints.php', array('id' => $id))
 
 // Check if action and pointid are present.
 if ($action !== null && $pointid !== null) {
-    if ($action == 'edit') {
-        // Redirect to editor form page.
-        redirect(new moodle_url('/mod/observation/pointeditor.php', ['mode' => 'edit', 'pointid' => $pointid, 'id' => $id]));
-    } else if ($action == 'delete') {
-        \mod_observation\observation_manager::delete_observation_point($observation->id, $pointid);
-    } else if ($action == 'moveup') {
-        \mod_observation\observation_manager::reorder_observation_point($observation->id, $pointid, -1);
-    } else if ($action == 'movedown') {
-        \mod_observation\observation_manager::reorder_observation_point($observation->id, $pointid, 1);
-    } else {
-        // Unknown action.
-        throw new moodle_exception(
-            'invalidqueryparam',
-            'error',
-            null,
-            ['expected' => "'edit','delete','moveup' or 'movedown'", 'actual' => $action]);
+
+    switch ($action) {
+        case 'edit':
+            // Redirect to editor form page.
+            redirect(new moodle_url('/mod/observation/pointeditor.php', ['mode' => 'edit', 'pointid' => $pointid, 'id' => $id]));
+            break;
+
+        case 'delete':
+            \mod_observation\observation_manager::delete_observation_point($observation->id, $pointid);
+            break;
+
+        case 'moveup':
+            \mod_observation\observation_manager::reorder_observation_point($observation->id, $pointid, -1);
+            break;
+
+        case 'movedown':
+            \mod_observation\observation_manager::reorder_observation_point($observation->id, $pointid, 1);
+            break;
+
+        default:
+            // Unknown action.
+            throw new moodle_exception(
+                'invalidqueryparam',
+                'error',
+                null,
+                ['expected' => "'edit','delete','moveup' or 'movedown'", 'actual' => $action]);
     }
 
-    // Redirect back to this page but without params to avoid weird errors if user refreshes page.
+    // Redirect back to this page but without params after running action to avoid weird errors if user refreshes page.
     redirect($pageurl);
 }
 
