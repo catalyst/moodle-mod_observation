@@ -25,8 +25,6 @@
 
 namespace mod_observation;
 
-use coding_exception;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -39,6 +37,69 @@ defined('MOODLE_INTERNAL') || die();
  */
 class observation_manager {
     /**
+     * Gets observation, course and coursemodule from course module ID
+     * @param int $cmid Course module ID
+     * @param string $tablename database table name
+     * @return list List containing the observation instance, course and coursemodule (in that order)
+     */
+    public static function get_observation_course_cm_from_cmid(int $cmid, string $tablename = 'observation') {
+        global $DB;
+        list($course, $cm) = get_course_and_cm_from_cmid($cmid, $tablename);
+        $observationid = $cm->instance;
+        if (!$observation = $DB->get_record($tablename, ['id' => $observationid])) {
+            throw new \moodle_exception('moduleinstancedoesnotexist');
+        }
+        return [$observation, $course, $cm];
+    }
+
+    /**
+     * Gets observation, course and coursemodule from observation instance ID
+     * @param int $obid Observation instance ID
+     * @param string $tablename Database table name
+     * @return list List containing the observation instance, course and coursemodule (in that order)
+     */
+    public static function get_observation_course_cm_from_obid(int $obid, string $tablename = 'observation') {
+        global $DB;
+        if (!$cm = get_coursemodule_from_instance($tablename, $obid)) {
+            throw new \moodle_exception('invalidcoursemodule');
+        }
+        list($course, $cm) = get_course_and_cm_from_cmid($cm->id, 'observation');
+        if (!$observation = $DB->get_record($tablename, ['id' => $obid])) {
+            throw new \moodle_exception('moduleinstancedoesnotexist');
+        }
+        return [$observation, $course, $cm];
+    }
+
+    /**
+     * Modifies an instance of an observation by either creating a new one or updating existing one.
+     * Note that when updating an instance, an ID must be passed in the $data param array.
+     * @param mixed $data Data to be passed to the update or create DB function
+     * @param bool $newinstance If true creates new instance, else updates instance.
+     * @param string $tablename Name of database table to operate on.
+     * @return int If param $newinstance is true, returns ID of new instance. Else returns 1 if updated successfully, else 0.
+     */
+    public static function modify_instance($data, bool $newinstance = false, string $tablename = 'observation'): int {
+        global $DB;
+
+        // Editor data need to be checked to ensure empty strings are not added.
+        if ($data['observer_ins'] === "") {
+            $data['observer_ins'] = null;
+            $data['observer_ins_f'] = null;
+        }
+
+        if ($data['observee_ins'] === "") {
+            $data['observee_ins'] = null;
+            $data['observee_ins_f'] = null;
+        }
+
+        if ($newinstance) {
+            return $DB->insert_record($tablename, $data);
+        } else {
+            return (int)$DB->update_record($tablename, $data);
+        }
+    }
+
+    /**
      * Modifies or creates a new observation point in the database
      * @param mixed $data Data to pass to database function
      * @param bool $newinstance True if new instance, else false if editing
@@ -47,21 +108,20 @@ class observation_manager {
      * @return mixed True if successful. If $returnid is True and $newinstance is True, returns ID
      */
     public static function modify_observation_point($data, bool $newinstance = false, bool $returnid = false,
-        string $tablename = 'observation_points') {
+            string $tablename = 'observation_points') {
+        global $DB;
 
         $data = (object)$data;
-
-        global $DB;
 
         if (property_exists($data, 'max_grade')) {
             // Ensure maxgrade (if set) is an int.
             if (!is_int($data->max_grade)) {
-                throw new coding_exception("Property max_grade must be an int.");
+                throw new \coding_exception("Property max_grade must be an int.");
             }
 
             // Ensure maxgrade (if set) is not negative.
             if ($data->max_grade < 0) {
-                throw new coding_exception("Property max_grade cannot be negative");
+                throw new \coding_exception("Property max_grade cannot be negative");
             }
         }
 
@@ -100,8 +160,7 @@ class observation_manager {
      * @return object existing point data
      */
     public static function get_existing_point_data(int $observationid, int $pointid,
-        string $tablename = 'observation_points'): object {
-
+            string $tablename = 'observation_points'): object {
         global $DB;
         return $DB->get_record($tablename, ['id' => $pointid, 'obs_id' => $observationid], '*', MUST_EXIST);
     }
@@ -114,8 +173,7 @@ class observation_manager {
      * @return array array of database objects obtained from database
      */
     public static function get_observation_points(int $observationid, string $sortby='list_order',
-        string $tablename='observation_points'): array {
-
+            string $tablename='observation_points'): array {
         global $DB;
         return $DB->get_records($tablename, ['obs_id' => $observationid], $sortby);
     }
@@ -167,13 +225,12 @@ class observation_manager {
      * @param string $tablename database table name
      */
     public static function reorder_observation_point(int $observationid, int $obpointid, int $direction,
-        string $tablename='observation_points') {
-
+            string $tablename='observation_points') {
+        global $DB;
         if ($direction != 1 && $direction != -1) {
-            throw new coding_exception("direction must be -1 or 1.");
+            throw new \coding_exception("direction must be -1 or 1.");
         }
 
-        global $DB;
         // First get the ordering of the current point.
         $currentpoint = self::get_existing_point_data($observationid, $obpointid, $tablename);
 
@@ -182,7 +239,7 @@ class observation_manager {
         $alllistorders = array_column($allpoints, 'list_order');
 
         if (count($alllistorders) === 0) {
-            throw new coding_exception('No list orderings found for this observation instance, but expected at least one.');
+            throw new \coding_exception('No list orderings found for this observation instance, but expected at least one.');
         }
 
         $newordering = $currentpoint->list_order + $direction;

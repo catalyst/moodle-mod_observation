@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($dir . '../../config.php');
+require_once(__DIR__.'/../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
 $mode = required_param('mode', PARAM_TEXT); // Editor mode 'new' or 'edit'.
@@ -43,7 +43,7 @@ if ($mode === 'edit' && $pointid === null) {
     throw new moodle_exception('missingparam', 'error', null, $a = 'pointid');
 }
 
-list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($id);
+list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);

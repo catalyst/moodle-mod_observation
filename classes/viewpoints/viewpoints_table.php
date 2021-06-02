@@ -25,9 +25,6 @@
 
 namespace mod_observation\viewpoints;
 
-use html_writer;
-use moodle_url;
-
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -44,10 +41,10 @@ class viewpoints_table extends \table_sql implements \renderable {
     /**
      * Constructs the table and defines how the data from the SQL query is displayed
      * @param string $uniqueid ID that uniquely identifies this element on the HTML page
-     * @param moodle_url $callbackurl URL used for callback for action buttons in the table
+     * @param \moodle_url $callbackurl URL used for callback for action buttons in the table
      * @param int $perpage number of entries per page for the table
      */
-    public function __construct(string $uniqueid, moodle_url $callbackurl, int $perpage = 50) {
+    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $perpage = 50) {
         parent::__construct($uniqueid);
 
         $this->define_columns([
@@ -96,8 +93,8 @@ class viewpoints_table extends \table_sql implements \renderable {
      * @param string $text button text
      */
     private function action_button(string $url, int $obsid, int $pointid, string $action, string $text) {
-        return html_writer::link(
-            new moodle_url($url, ['id' => $obsid, 'action' => $action, 'pointid' => $pointid]),
+        return \html_writer::link(
+            new \moodle_url($url, ['id' => $obsid, 'action' => $action, 'pointid' => $pointid]),
             $text,
             ['class' => 'btn btn-secondary']
         );

@@ -246,6 +246,36 @@ class observation_point_test extends advanced_testcase {
     }
 
     /**
+     * Tests a string maxgrade.
+     */
+    public function test_string_maxgrade() {
+        $data = self::VALID_DATA;
+        $data['obs_id'] = $this->instance->id;
+
+        // Test string max grade.
+        $invalidmaxgrade = $data;
+        $invalidmaxgrade['max_grade'] = "test";
+
+        $this->expectException('coding_exception');
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
+    }
+
+    /**
+     * Tests a missing maxgrade.
+     */
+    public function test_missing_maxgrade() {
+        $data = self::VALID_DATA;
+        $data['obs_id'] = $this->instance->id;
+
+        // Test missing max grade.
+        $invalidmaxgrade = $data;
+        unset($invalidmaxgrade['max_grade']);
+
+        $this->expectException('dml_exception');
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
+    }
+
+    /**
      * Tests restype that doesn't exist.
      */
     public function test_invalid_restype() {
