@@ -221,18 +221,19 @@ class observation_manager {
      * Reorders an observation point in relation to the other observation points in this observation instance
      * @param int $observationid ID of the observation instance
      * @param int $obpointid ID of the observation point to reorder
-     * @param int $direction direction to reorder the point in, must be -1 or 1.
+     * @param int $direction direction and magnitude to reorder the point in
      * @param string $tablename database table name
      */
     public static function reorder_observation_point(int $observationid, int $obpointid, int $direction,
             string $tablename='observation_points') {
         global $DB;
-        if ($direction != 1 && $direction != -1) {
-            throw new \coding_exception("direction must be -1 or 1.");
+
+        if (!is_int($direction) || $direction == 0) {
+            throw new \coding_exception("direction must be an integer that is not zero");
         }
 
         // First get the ordering of the current point.
-        $currentpoint = self::get_existing_point_data($observationid, $obpointid, $tablename);
+        $targetpoint = self::get_existing_point_data($observationid, $obpointid, $tablename);
 
         // Get all the points to get the bounds.
         $allpoints = self::get_observation_points($observationid);
@@ -242,7 +243,7 @@ class observation_manager {
             throw new \coding_exception('No list orderings found for this observation instance, but expected at least one.');
         }
 
-        $newordering = $currentpoint->list_order + $direction;
+        $newordering = $targetpoint->list_order + $direction;
 
         // Is currently the minimum - do nothing.
         if ($newordering < min($alllistorders)) {
@@ -254,26 +255,45 @@ class observation_manager {
             return;
         }
 
-        // Else ordering is valid, get the ID of the point that currently has this ordering.
-        $pointtoswap = $DB->get_record(
-            $tablename,
-            ['obs_id' => $observationid, 'list_order' => $newordering],
-            'id',
-            MUST_EXIST
-        );
+        // Ordering is valid, so get the points that are affected by this reordering.
+        $affectedpoints = array_filter($allpoints, function($elem) use($newordering, $direction, $targetpoint) {
+            // Don't include the item being reordered.
+            if ($elem->id === $targetpoint->id) {
+                return false;
+            }
 
-        // Swap the orderings in a DB transaction.
+            // If shifting down, filter those 'above'.
+            if ($direction < 0) {
+                return $elem->list_order >= $newordering && $elem->list_order < $targetpoint->list_order;
+            }
+            // If shifting up, filter those 'below'.
+            if ($direction > 0) {
+                return $elem->list_order <= $newordering && $elem->list_order > $targetpoint->list_order;
+            }
+
+            return false;
+        });
+
         $transaction = $DB->start_delegated_transaction();
+
+        // Give the target point the new ordering.
         $DB->update_record($tablename,
+        [
+            'id' => $targetpoint->id,
+            'list_order' => $newordering
+        ]);
+
+        // Reduce the direction to a unit vector (e.g. 5 -> 1 and -5 -> -1).
+        $reductionamount = intdiv($direction, abs($direction));
+
+        array_walk($affectedpoints, function($elem) use($DB, $tablename, $reductionamount) {
+            $DB->update_record($tablename,
             [
-                'id' => $currentpoint->id,
-                'list_order' => $newordering
+                'id' => $elem->id,
+                'list_order' => $elem->list_order - $reductionamount
             ]);
-        $DB->update_record($tablename,
-            [
-                'id' => $pointtoswap->id,
-                'list_order' => $currentpoint->list_order
-            ]);
+        });
+
         $transaction->allow_commit();
     }
 }

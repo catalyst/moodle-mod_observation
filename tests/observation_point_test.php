@@ -215,6 +215,60 @@ class observation_point_test extends advanced_testcase {
     }
 
     /**
+     * Tests ordering when overstepping another point (i.e. |direction| > 1)
+     */
+    public function test_ordering_overstep() {
+        // Generate four valid points.
+        $point1 = self::create_valid_point($this->instance->id);
+        $point2 = self::create_valid_point($this->instance->id);
+        $point3 = self::create_valid_point($this->instance->id);
+        $point4 = self::create_valid_point($this->instance->id);
+
+        // Ensure their initial ordering is correct.
+        $this->assertEquals([1, 2, 3, 4], [$point1->list_order, $point2->list_order, $point3->list_order, $point4->list_order]);
+
+        // Move point 1 up to the second last position (where point 3 is), overstepping point 2 but not touching point 4.
+        \mod_observation\observation_manager::reorder_observation_point($this->instance->id, $point1->id, 2);
+
+        $point1 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point1->id);
+        $point2 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point2->id);
+        $point3 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point3->id);
+        $point4 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point4->id);
+
+        $this->assertEquals([1, 2, 3, 4], [$point2->list_order, $point3->list_order, $point1->list_order, $point4->list_order]);
+
+        // Attempt the inverse.
+        \mod_observation\observation_manager::reorder_observation_point($this->instance->id, $point1->id, -2);
+
+        $point1 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point1->id);
+        $point2 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point2->id);
+        $point3 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point3->id);
+        $point4 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point4->id);
+
+        $this->assertEquals([1, 2, 3, 4], [$point1->list_order, $point2->list_order, $point3->list_order, $point4->list_order]);
+
+        // Move the last one to the second last spot (overstepping point 3).
+        \mod_observation\observation_manager::reorder_observation_point($this->instance->id, $point4->id, -2);
+
+        $point1 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point1->id);
+        $point2 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point2->id);
+        $point3 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point3->id);
+        $point4 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point4->id);
+
+        $this->assertEquals([1, 2, 3, 4], [$point1->list_order, $point4->list_order, $point2->list_order, $point3->list_order]);
+
+        // Attempt the inverse.
+        \mod_observation\observation_manager::reorder_observation_point($this->instance->id, $point4->id, 2);
+
+        $point1 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point1->id);
+        $point2 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point2->id);
+        $point3 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point3->id);
+        $point4 = \mod_observation\observation_manager::get_existing_point_data($this->instance->id, $point4->id);
+
+        $this->assertEquals([1, 2, 3, 4], [$point1->list_order, $point2->list_order, $point3->list_order, $point4->list_order]);
+    }
+
+    /**
      * Test maxgrade input as float.
      */
     public function test_float_maxgrade() {
