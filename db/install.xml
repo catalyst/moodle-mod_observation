@@ -94,5 +94,16 @@
           <KEY NAME="obs_ses_id" TYPE="foreign" FIELDS="obs_ses_id" REFTABLE="observation_sessions" REFFIELDS="id"/>
         </KEYS>
       </TABLE>
+      <TABLE NAME="observation_res_type_map" COMMENT="Mappings of response type code to the lang string code">
+        <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
+        <FIELD NAME="res_type" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="res_type code" />
+        <FIELD NAME="lang_string" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="corresponding lang string" />
+        </FIELDS>
+          <KEYS>
+          <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        </KEYS>
+      </TABLE>
+     
   </TABLES>
 </XMLDB>

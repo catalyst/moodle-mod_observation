@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Observation activity version information.
+ * Generates data in the DB right after tables created (install.xml).
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -23,8 +23,17 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+ /**
+  * Function run on install of the database.
+  * Genereates response type mappings
+  */
+function xmldb_observation_install() {
+    global $DB;
 
-$plugin->version   = 2021052507;
-$plugin->requires  = 2021052500;
-$plugin->component = 'mod_observation';
+    // Generate res_type mappings.
+    $tablename = 'observation_res_type_map';
+    $mappings = [
+        ['res_type' => 0, 'lang_string' => 'textinputtype']
+    ];
+    $DB->insert_records($tablename, $mappings);
+}

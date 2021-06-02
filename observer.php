@@ -40,11 +40,11 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($observation->name, 2);
 
 // If user has permissions show observation point editor page link.
-if(has_capability('mod/observation:editobservationpoints', $PAGE->context)){
+if (has_capability('mod/observation:editobservationpoints', $PAGE->context)) {
     echo $OUTPUT->box_start();
     echo $OUTPUT->heading(get_string('actions', 'observation'), 3);
     echo $OUTPUT->single_button(
-        new moodle_url('/mod/observation/pointviewer.php', array('id' => $observation->id)), 
+        new moodle_url('/mod/observation/viewpoints.php', array('id' => $observation->id)),
         get_string('editobservationpoints', 'observation'),
         'get'
     );

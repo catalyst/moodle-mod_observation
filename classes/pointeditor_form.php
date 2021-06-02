@@ -30,8 +30,19 @@ require_once($CFG->libdir.'/formslib.php');
 
 use moodleform;
 
+/**
+ * Creates a moodle_form to edit observation points.
+ *
+ * @package   mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class pointeditor_form extends moodleform {
-    function definition(){
+    /**
+     * Defines the observation point form
+     */
+    public function definition() {
         $mform = $this->_form;
 
         $prefill = $this->_customdata;
@@ -39,7 +50,7 @@ class pointeditor_form extends moodleform {
         $mform->addElement('header', 'gradingsettings', get_string('grading', 'observation'));
 
         // Point type selection.
-        $radioarray=array();
+        $radioarray = array();
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('textinputtype', 'observation'), 0);
         $mform->addGroup($radioarray, 'radioar', get_string('obpointtype', 'observation'), array(' '), false);
         $mform->setDefault('type', 0);
