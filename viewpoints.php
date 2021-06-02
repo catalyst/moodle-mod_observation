@@ -26,14 +26,44 @@
 require_once($dir . '../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
+$pointid = optional_param('pointid', null, PARAM_INT); // Observation point ID.
+$action = optional_param('action', null, PARAM_TEXT); // Action.
+
 list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
 require_capability('mod/observation:editobservationpoints', $PAGE->context);
 
+$pageurl = new moodle_url('/mod/observation/viewpoints.php', array('id' => $id));
+
+// Check if action and pointid are present.
+if ($action !== null && $pointid !== null) {
+    if ($action == 'edit') {
+        // Redirect to editor form page.
+        redirect(new moodle_url('/mod/observation/pointeditor.php', ['mode' => 'edit', 'pointid' => $pointid, 'id' => $id]));
+    } else if ($action == 'delete') {
+        \mod_observation\observation_manager::delete_observation_point($observation->id, $pointid);
+    } else if ($action == 'moveup') {
+        \mod_observation\observation_manager::reorder_observation_point($observation->id, $pointid, -1);
+    } else if ($action == 'movedown') {
+        \mod_observation\observation_manager::reorder_observation_point($observation->id, $pointid, 1);
+    } else {
+        // Unknown action.
+        throw new moodle_exception(
+            'invalidqueryparam',
+            'error',
+            null,
+            ['expected' => "'edit','delete','moveup' or 'movedown'", 'actual' => $action]);
+    }
+
+    // Redirect back to this page but without params to avoid weird errors if user refreshes page.
+    redirect($pageurl);
+}
+
 // Render page.
-$PAGE->set_url(new moodle_url('/mod/observation/pointviewer.php', array('id' => $id)));
+$pageurl = new moodle_url('/mod/observation/viewpoints.php', array('id' => $id));
+$PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
@@ -41,15 +71,18 @@ echo $OUTPUT->heading(get_string('editingobservationpoints', 'observation'), 2);
 
 // Actions buttons.
 echo $OUTPUT->box_start();
+
+// Create new observation point.
 echo $OUTPUT->single_button(
-    new moodle_url('/mod/observation/pointeditor.php', array('mode' => 'new', 'id' => $observation->id)), 
+    new moodle_url('/mod/observation/pointeditor.php', array('mode' => 'new', 'id' => $observation->id)),
     get_string('createnew', 'observation'),
     'get'
 );
 echo $OUTPUT->box_end();
 
-// View observation points already created.
+// Observation Point Viewer (table).
 echo $OUTPUT->heading(get_string('currentpoints', 'observation'), 3);
-echo "point viewer table class here...";
+echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl);
 
+// Moodle footer.
 echo $OUTPUT->footer();

@@ -26,17 +26,21 @@
 require_once($dir . '../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
-$mode = required_param('mode', PARAM_TEXT); // Editor mode ('new' or 'edit').
+$mode = required_param('mode', PARAM_TEXT); // Editor mode 'new' or 'edit'.
 $pointid = optional_param('pointid', null, PARAM_INT); // Optional param - required if mode is 'edit'.
 
-// Ensure $mode param is allowed option
-if($mode !== 'new' && $mode !== 'edit'){
-    throw new moodle_exception('invalidqueryparam', 'error', null, $a=array('expected' => 'mode to be \'new\' or \'edit\'', 'actual' => $mode));
+// Ensure $mode param is allowed option.
+if ($mode !== 'new' && $mode !== 'edit') {
+    throw new moodle_exception(
+        'invalidqueryparam',
+        'error',
+        null,
+        $a = array('expected' => 'mode to be \'new\' or \'edit\'', 'actual' => $mode));
 }
 
-// Ensure pointID is given if mode is 'edit'
-if($mode === 'edit' && $pointid === null){
-    throw new moodle_exception('missingparam', 'error', null, $a='pointid');
+// Ensure pointID is given if mode is 'edit'.
+if ($mode === 'edit' && $pointid === null) {
+    throw new moodle_exception('missingparam', 'error', null, $a = 'pointid');
 }
 
 list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($id);
@@ -45,6 +49,7 @@ list($observation, $course, $cm) = \mod_observation\manager::get_observation_cou
 require_login($course, true, $cm);
 require_capability('mod/observation:editobservationpoints', $PAGE->context);
 
+// Prefill hidden data in form regardless of mode.
 $formprefill = array(
     'id' => $id,
     'mode' => $mode,
@@ -52,24 +57,22 @@ $formprefill = array(
 );
 
 // If editing, add prefill data from DB.
-if($mode === "edit"){
-    $point_data = \mod_observation\observation_manager::get_existing_point_data($id, $pointid);
-    
-    $formprefill['pointid'] = $point_data->id;
-    $formprefill['radioar'] = $point_data->res_type;
-    $formprefill['maxgrade'] = $point_data->max_grade;
-    $formprefill['title'] = $point_data->title;
-    $formprefill['ins']['text'] = $point_data->ins;
-    $formprefill['ins']['format'] = $point_data->ins_f;
+if ($mode === "edit") {
+    $pointdata = \mod_observation\observation_manager::get_existing_point_data($id, $pointid);
+    $formprefill['pointid'] = $pointdata->id;
+    $formprefill['radioar'] = $pointdata->res_type;
+    $formprefill['maxgrade'] = $pointdata->max_grade;
+    $formprefill['title'] = $pointdata->title;
+    $formprefill['ins']['text'] = $pointdata->ins;
+    $formprefill['ins']['format'] = $pointdata->ins_f;
 }
 
-// Load form
+// Load form.
 $pointeditorform = new \mod_observation\pointeditor_form(null, $formprefill);
 
-if($fromform = $pointeditorform->get_data()){
-    // Form submitted, save/edit the data.
-
-    $db_data = array(
+// Form submitted, save/edit the data.
+if ($fromform = $pointeditorform->get_data()) {
+    $dbdata = array(
         "obs_id" => $fromform->id,
         "title" => $fromform->title,
         "ins" => $fromform->ins['text'],
@@ -78,28 +81,30 @@ if($fromform = $pointeditorform->get_data()){
         "res_type" => $fromform->res_type,
     );
 
-    if ($fromform->mode === "new"){
+    if ($fromform->mode === "new") {
         // Creating new.
-        \mod_observation\observation_manager::modify_observation_point($db_data, true);
+        \mod_observation\observation_manager::modify_observation_point($dbdata, true);
     } else {
         // Editing existing.
-        $db_data['id'] = $fromform->pointid;
-        \mod_observation\observation_manager::modify_observation_point($db_data, false);
+        $dbdata['id'] = $fromform->pointid;
+        \mod_observation\observation_manager::modify_observation_point($dbdata, false);
     }
 
     // Redirect back to point viewer.
-    redirect(new moodle_url('pointviewer.php', array('id' => $id)));
+    redirect(new moodle_url('viewpoints.php', array('id' => $id)));
     die;
 }
 
 // Form not submitted, render form.
-$PAGE->set_url(new moodle_url('/mod/observation/pointeditor.php', array('mode' => $mode,'id' => $id)));
+$PAGE->set_url(new moodle_url('/mod/observation/pointeditor.php', array('mode' => $mode, 'id' => $id)));
 $PAGE->set_title(get_string('creatingobservationpoint', 'observation'));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-if ($mode === 'new'){
+if ($mode === 'new') {
     echo $OUTPUT->heading(get_string('creatingobservationpoint', 'observation'), 2);
+} else if ($mode === 'edit') {
+    echo $OUTPUT->heading(get_string('editingobservationpoint', 'observation'), 2);
 }
 
 $pointeditorform->display();
