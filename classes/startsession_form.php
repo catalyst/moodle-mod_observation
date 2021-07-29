@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form to begin an observation session
+ * Form to begin an observation
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team

@@ -45,47 +45,57 @@ class pointmarking_form extends \moodleform {
 
         $prefill = $this->_customdata;
 
+        $sep = '_';
+
+        $id = $prefill['id'];
+
         // TODO display username instead of id
-        $mform->addElement('header', 'general', $prefill['title']);
-
-        // Observation point information
-        $mform->addElement('text', 'res_type', get_string('obpointtype', 'observation'));
-        $mform->hardFreeze('res_type'); // TODO link to response type map to get text name for response type
-
-        // TODO break into own function ??
+        $mform->addElement('header', 'title');
         
+        // Observation point information
+        $instext = $prefill['ins'];
+        $insformat = $prefill['ins_f'];
+        
+        $mform->addElement('static', 'instructions', get_string('gradinginstructions', 'observation'), format_text($instext, $insformat));        
+        
+        // TODO break into own function ??
         // TODO add a break or line here to seperate components
         switch($prefill['res_type']){
             // Text input type
             case 0:
                 // TODO link the res_type with the lang string
-                $mform->addElement('textarea', 'response', get_string('textinputtype', 'observation'), ['rows' => 8, 'cols' => 100]);
-                $mform->setType('response', PARAM_RAW);
-                $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
+                $responseid = $id.$sep.'response';
+                $mform->addElement('textarea', $responseid, get_string('textinputtype', 'observation'), ['rows' => 3, 'cols' => 100]);
+                $mform->setType($responseid, PARAM_RAW);
+                $mform->addRule($responseid, get_string('required', 'observation'), 'required', null, 'client');
+                $mform->setDefault($responseid, $prefill['response']);
         }
 
-        $mform->addElement('text', 'max_grade', get_string('maxgrade', 'observation'));
-        $mform->setType('max_grade', PARAM_INT);
-        $mform->hardFreeze('max_grade');
+        $mform->addElement('static', 'max_grade_display', get_string('maxgrade', 'observation'), $prefill['max_grade']);
 
-        $mform->addElement('text', 'grade_given', get_string('gradegiven', 'observation'));
-        $mform->setType('grade_given', PARAM_INT);
-        $mform->addRule('grade_given', get_string('err_numeric', 'form'), 'numeric', null, 'client');
-        $mform->addRule('grade_given', get_string('required', 'observation'), 'required', null, 'client');
-        $mform->addRule('grade_given', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
+        $gradegivenid = $id.$sep.'grade_given';
+        $mform->addElement('text', $gradegivenid, get_string('gradegiven', 'observation'));
+        $mform->setType($gradegivenid, PARAM_INT);
+        $mform->addRule($gradegivenid, get_string('err_numeric', 'form'), 'numeric', null, 'client');
+        $mform->addRule($gradegivenid, get_string('required', 'observation'), 'required', null, 'client');
+        $mform->addRule($gradegivenid, get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
 
         // Extra comment block.
-        $mform->addElement('editor', 'ex_comment', get_string('extracomment', 'observation'));
-        $mform->setType('ex_comment', PARAM_RAW);
-
-        //$mform->addElement('text', 'observerid', get_string('observer', 'observation'));
-        
-        // TODO make this a dropdown with auto suggestions
-        //$mform->addElement('text', 'observeeid', get_string('observee', 'observation'));
+        $excommentid = $prefill['id'].$sep.'ex_comment';
+        $mform->addElement('textarea', $excommentid, get_string('extracomment', 'observation'), ['rows' => 3, 'cols' => 100]);
+        $mform->setType($excommentid, PARAM_RAW);
+        $mform->setDefault($excommentid, $prefill['ex_comment']);
 
         // Hidden form elements.
         $mform->addElement('hidden', 'sessionid', $prefill['sessionid']);
         $mform->setType('sessionid', PARAM_INT);
+
+        $mform->addElement('hidden', 'id', $id);
+        $mform->setType('id', PARAM_INT);
+
+        $maxgradeid = $id.$sep.'max_grade';
+        $mform->addElement('hidden', $maxgradeid, $prefill['max_grade']);
+        $mform->setType($maxgradeid, PARAM_INT);
 
         // Enforce validations.
         if ($mform->validate()) {
@@ -106,9 +116,12 @@ class pointmarking_form extends \moodleform {
     function validation($data, $files){
         $errors = [];
 
+        $sep = '_';
+        $prefix = $data['id'].$sep;
+
         // Ensure grade given <= max grade.
-        if($data['grade_given'] > $data['max_grade']){
-            $errors['grade_given'] = get_string('gradegivengreatermaxgrade', 'observation');
+        if($data[$prefix.'grade_given'] > $data[$prefix.'max_grade']){
+            $errors[$prefix.'grade_given'] = get_string('gradegivengreatermaxgrade', 'observation');
         }
 
         return $errors;

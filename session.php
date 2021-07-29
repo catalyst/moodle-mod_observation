@@ -37,16 +37,23 @@ require_login($course, true, $cm);
 require_capability('mod/observation:performobservation', $PAGE->context);
 
 // Load form.
-$observationpoints = \mod_observation\session_manager::get_session_data($sessionid);
+$observationpoints = (array)\mod_observation\session_manager::get_session_data($sessionid);
 
 // TODO turn into array of forms
-$formprefill = (array)$observationpoints[16];
-$formprefill['sessionid'] = $sessionid;
-$markingform = new \mod_observation\pointmarking_form(null, $formprefill);
 
-if ($fromform = $markingform->get_data()) {
-    echo print_object($fromform);
-    return;
+$obspointforms = [];
+
+foreach($observationpoints as $point) {
+    $formprefill = (array)$point;
+    $formprefill['sessionid'] = $sessionid;
+    $markingform = new \mod_observation\pointmarking_form(null, $formprefill);
+    
+    array_push($obspointforms, $markingform);
+
+    if ($fromform = $markingform->get_data()) {
+        echo print_object($fromform);
+        return;
+    }    
 }
 
 // Render page.
@@ -58,7 +65,10 @@ echo $OUTPUT->heading(get_string('markingobservation', 'observation'), 2);
 
 // Observation point table/list block
 echo $OUTPUT->container_start();
-$markingform->display();
+
+foreach($obspointforms as $form) {
+    $form->display();
+}
 
 echo print_object($observationpoints);
 
