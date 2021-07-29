@@ -37,8 +37,8 @@ defined('MOODLE_INTERNAL') || die();
 class mod_observation_generator extends testing_module_generator {
 
     /**
-     * Modify the creation of an instance of the observatio testing module generator
-     * @param null $record
+     * Creates instance of observation for testing.
+     * @param array|stdClass $record
      * @param array|null $options
      * @return stdClass
      * @throws coding_exception

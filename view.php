@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($dir . '../../config.php');
+require_once(__DIR__.'/../../config.php');
 
 $id = optional_param('id', null, PARAM_INT);// Course module ID.
 $observationid = optional_param('obid', null, PARAM_INT);// Observation instance ID.
@@ -55,4 +55,3 @@ if (has_capability('mod/observation:performobservation', $PAGE->context)) {
 // Else, redirect user to 'observee' view (default).
 $observeeurl = new moodle_url('/mod/observation/observee.php', array('id' => $observation->id));
 redirect($observeeurl);
-die;
