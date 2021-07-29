@@ -177,6 +177,21 @@ class observation_manager {
         global $DB;
         return $DB->get_records($tablename, ['obs_id' => $observationid], $sortby);
     }
+    
+    public static function get_points_responses(int $observationid, int $sessionid, string $sortby='list_order')
+    {
+        global $DB;
+
+        $sql = '
+        SELECT *, pts.id as point_id FROM mdl_observation_points as pts 
+        LEFT JOIN 
+        (SELECT *, id as resp_id FROM mdl_observation_point_responses) as resp 
+        ON pts.id = resp.obs_pt_id 
+        WHERE pts.obs_id = :observationid AND (resp.obs_ses_id IS NULL OR resp.obs_ses_id = :sessionid);
+        ';
+
+        return $DB->get_records_sql($sql, ['observationid' => $observationid, 'sessionid' => $sessionid]);
+    }
 
     /**
      * Deletes observation point
@@ -295,5 +310,18 @@ class observation_manager {
         });
 
         $transaction->allow_commit();
+    }
+
+    public static function submit_point_response($response, $tablename = "observation_point_responses") {
+        global $DB;
+        // TODO verify and check data
+
+        if($response['ex_comment'] == ''){
+            $response['ex_comment'] = NULL;
+        }
+
+        // TODO check if exists already, and update if does
+        $DB->insert_record($tablename, $response);
+        return;
     }
 }

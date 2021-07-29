@@ -37,22 +37,42 @@ require_login($course, true, $cm);
 require_capability('mod/observation:performobservation', $PAGE->context);
 
 // Load form.
-$observationpoints = (array)\mod_observation\session_manager::get_session_data($sessionid);
+$observationpoints = (array)\mod_observation\observation_manager::get_points_responses($obid, $sessionid);
 
-// TODO turn into array of forms
+// For each response, append it to the observation point data.
+//echo print_object($existingresponses);
 
 $obspointforms = [];
 
 foreach($observationpoints as $point) {
     $formprefill = (array)$point;
     $formprefill['sessionid'] = $sessionid;
+
     $markingform = new \mod_observation\pointmarking_form(null, $formprefill);
     
     array_push($obspointforms, $markingform);
 
+    // If form was submitted via POST
     if ($fromform = $markingform->get_data()) {
-        echo print_object($fromform);
-        return;
+        $prefix = $fromform->id.'_';
+
+        $fromform = (array)$fromform;
+
+        // Destructure the prefix.
+        $data = [
+            'response' => $fromform[$prefix.'response'],
+            'grade_given' => $fromform[$prefix.'grade_given'],
+            'ex_comment' => $fromform[$prefix.'ex_comment'],
+            'max_grade' => $fromform[$prefix.'max_grade'],
+            'obs_ses_id' => $fromform['sessionid'],
+            'obs_pt_id' => $fromform['id']
+        ];
+
+        \mod_observation\observation_manager::submit_point_response($data);
+
+        // Redirect to the same session page
+        redirect(new moodle_url('session.php', array('sessionid' => $sessionid)));
+        die;
     }    
 }
 

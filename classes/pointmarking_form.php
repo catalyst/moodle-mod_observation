@@ -79,6 +79,7 @@ class pointmarking_form extends \moodleform {
         $mform->addRule($gradegivenid, get_string('err_numeric', 'form'), 'numeric', null, 'client');
         $mform->addRule($gradegivenid, get_string('required', 'observation'), 'required', null, 'client');
         $mform->addRule($gradegivenid, get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
+        $mform->setDefault($gradegivenid, $prefill['grade_given']);
 
         // Extra comment block.
         $excommentid = $prefill['id'].$sep.'ex_comment';
