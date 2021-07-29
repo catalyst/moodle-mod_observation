@@ -66,6 +66,19 @@ echo \mod_observation\instructions::observation_instructions(
     $observation->observer_ins,
     $observation->observer_ins_f);
 
+// Start observation session block
+if (has_capability('mod/observation:performobservation', $PAGE->context)) {
+    echo $OUTPUT->box_start();
+    echo $OUTPUT->heading(get_string('performobservation', 'observation'), 3);
+
+    echo $OUTPUT->single_button(
+        new moodle_url('/mod/observation/sessionview.php', ['id' => $observation->id]),
+        get_string('startobservationsession', 'observation'),
+        'get'
+    );
+    echo $OUTPUT->box_end();
+}
+
 echo $OUTPUT->box_start();
 echo "Timeslots assigned placeholder";
 echo $OUTPUT->box_end();
