@@ -67,8 +67,12 @@ $sloteditorform = new \mod_observation\timeslot_form(null, $formprefill);
 
 // Form submitted, save/edit the data.
 if ($fromform = $sloteditorform->get_data()) {
+
     $dbdata = array(
         "obs_id" => $fromform->id,
+        "start_time" => $fromform->start_time,
+        "duration" => $fromform->duration,
+        "observer_id" => $fromform->observer_id
     );
 
     if ($fromform->mode === "new") {

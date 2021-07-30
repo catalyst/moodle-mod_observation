@@ -63,7 +63,6 @@ class timeslot_form extends \moodleform {
         $mform->addElement('text', 'observer_id', get_string('observer_id', 'observation'));
         $mform->addRule('observer_id', get_string('required', 'observation'), 'required', null, 'client');
 
-
         //Testing with dummy values to check if the error was occuring but unfilled database fields 
         //Didn't fix anything when was attempted still a error reading database 
         //$mform->addElement('text', 'observee_id', get_string('observer_id', 'observation'));
