@@ -35,12 +35,12 @@ if (empty($id) && empty($observationid) ) {
 
 // Access via observation instance id.
 if (!empty($observationid) ) {
-    list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($observationid);
+    list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
 }
 
 // Access via course module id.
 if (!empty($id)) {
-    list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_cmid($id);
+    list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_cmid($id);
 }
 
 require_login($course, true, $cm);

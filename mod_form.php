@@ -75,18 +75,6 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('autocomplete', 'observer', get_string('teacher', 'observation'),$finalusers, $options);
         
 
-        // Observation Points.
-        $mform->addElement('header', 'observationpoints', get_string('observationpoints', 'observation'));
-        // Actions.
-        // Observation points.
-        // TODO: replace.
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'),
-        'Example: Using correct PPE while handling chemicals');
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'),
-        'Example: Reading chemical safety information');
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'),
-        'Example: Choosing correct equipment');
-
         // Settings.
 
         // Footer.
