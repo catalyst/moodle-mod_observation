@@ -95,3 +95,5 @@ $string['observer_fullname'] = 'Observer Name';
 $string['observer_email'] = 'Observer Email';
 $string['markingsession'] = '{$a} Observation Session (Observer)';
 $string['assignedmarkingsession'] = 'You are assigned as an observer for the observation session at this time. Click Go to Activity below to view details.';
+
+$string['responsesaved'] = 'Response Saved';

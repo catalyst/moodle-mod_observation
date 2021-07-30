@@ -29,6 +29,8 @@ require_once(__DIR__.'/../../config.php');
 $sessionid = required_param('sessionid', PARAM_INT);
 $sessiondata = \mod_observation\session_manager::get_session_info($sessionid);
 
+$pointid = required_param('pointid', PARAM_INT);
+
 $obid = $sessiondata['obid'];
 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($obid);
 
@@ -37,44 +39,20 @@ require_login($course, true, $cm);
 require_capability('mod/observation:performobservation', $PAGE->context);
 
 // Load form.
-$observationpoints = (array)\mod_observation\observation_manager::get_points_responses($obid, $sessionid);
+$observationpoints = (array)\mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);
 
-// For each response, append it to the observation point data.
-//echo print_object($existingresponses);
+$selectedpointdata = $observationpoints[$pointid];
+$formprefill = (array)$selectedpointdata;
+$formprefill['sessionid'] = $sessionid;
 
-$obspointforms = [];
+$markingform = new \mod_observation\pointmarking_form(null, $formprefill);
 
-foreach($observationpoints as $point) {
-    $formprefill = (array)$point;
-    $formprefill['sessionid'] = $sessionid;
-
-    $markingform = new \mod_observation\pointmarking_form(null, $formprefill);
-    
-    array_push($obspointforms, $markingform);
-
-    // If form was submitted via POST
-    if ($fromform = $markingform->get_data()) {
-        $prefix = $fromform->id.'_';
-
-        $fromform = (array)$fromform;
-
-        // Destructure the prefix.
-        $data = [
-            'response' => $fromform[$prefix.'response'],
-            'grade_given' => $fromform[$prefix.'grade_given'],
-            'ex_comment' => $fromform[$prefix.'ex_comment'],
-            'max_grade' => $fromform[$prefix.'max_grade'],
-            'obs_ses_id' => $fromform['sessionid'],
-            'obs_pt_id' => $fromform['id']
-        ];
-
-        \mod_observation\observation_manager::submit_point_response($data);
-
-        // Redirect to the same session page
-        redirect(new moodle_url('session.php', array('sessionid' => $sessionid)));
-        die;
-    }    
-}
+// If form was submitted.
+if ($fromform = $markingform->get_data()) {
+    \mod_observation\observation_manager::submit_point_response($sessionid, $pointid, $fromform);
+    redirect(new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $pointid]), get_string('responsesaved', 'observation'), null, \core\output\notification::NOTIFY_SUCCESS);
+    return;
+}   
 
 // Render page.
 $PAGE->set_url(new moodle_url('/mod/observation/session.php', array('sessionid' => $sessionid)));
@@ -86,9 +64,9 @@ echo $OUTPUT->heading(get_string('markingobservation', 'observation'), 2);
 // Observation point table/list block
 echo $OUTPUT->container_start();
 
-foreach($obspointforms as $form) {
-    $form->display();
-}
+$markingform->display();
+
+echo print_object($formprefill);
 
 echo print_object($observationpoints);
 

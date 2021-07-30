@@ -177,21 +177,6 @@ class observation_manager {
         global $DB;
         return $DB->get_records($tablename, ['obs_id' => $observationid], $sortby);
     }
-    
-    public static function get_points_responses(int $observationid, int $sessionid, string $sortby='list_order')
-    {
-        global $DB;
-
-        $sql = '
-        SELECT *, pts.id as point_id FROM mdl_observation_points as pts 
-        LEFT JOIN 
-        (SELECT *, id as resp_id FROM mdl_observation_point_responses) as resp 
-        ON pts.id = resp.obs_pt_id 
-        WHERE pts.obs_id = :observationid AND (resp.obs_ses_id IS NULL OR resp.obs_ses_id = :sessionid);
-        ';
-
-        return $DB->get_records_sql($sql, ['observationid' => $observationid, 'sessionid' => $sessionid]);
-    }
 
     /**
      * Deletes observation point
@@ -312,16 +297,46 @@ class observation_manager {
         $transaction->allow_commit();
     }
 
-    public static function submit_point_response($response, $tablename = "observation_point_responses") {
+    public static function get_points_and_responses(int $observationid, int $sessionid) {
         global $DB;
-        // TODO verify and check data
 
-        if($response['ex_comment'] == ''){
-            $response['ex_comment'] = NULL;
+        // Selects all points for this observation,
+        // and attaches responses for the current session (if one exists).
+
+        $sql = 'SELECT pts.id as point_id, obs_id, title, list_order, ins, ins_f, max_grade, res_type, 
+        sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response, ex_comment 
+        FROM mdl_observation_points as pts 
+        LEFT JOIN 
+        (SELECT * FROM mdl_observation_point_responses as resp WHERE obs_ses_id = :sessionid) as sess_resp 
+        ON pts.id = sess_resp.obs_pt_id WHERE pts.obs_id = :observationid;';
+
+        $pointsandresponses = $DB->get_records_sql($sql, ['observationid' => $observationid, 'sessionid' => $sessionid]);
+
+        return $pointsandresponses;
+    }
+
+    public static function submit_point_response(int $sessionid, int $pointid, $data){
+        global $DB;
+
+        // See if a response already exists for this session and pointid
+        $existingresponse = $DB->get_record('observation_point_responses', ['obs_pt_id' => $pointid, 'obs_ses_id' => $sessionid]);
+        
+        // Clean data
+        $dbdata = [
+            'obs_pt_id' => $pointid,
+            'obs_ses_id' => $sessionid,
+            'grade_given' => $data->grade_given,
+            'response' => $data->response,
+            'ex_comment' => $data->ex_comment,
+        ];
+
+        if($existingresponse === false){
+            // Insert new.
+            $DB->insert_record('observation_point_responses', $dbdata);
+        } else {
+            // Update existing.
+            $dbdata['id'] = $existingresponse->id;
+            $DB->update_record('observation_point_responses', $dbdata);
         }
-
-        // TODO check if exists already, and update if does
-        $DB->insert_record($tablename, $response);
-        return;
     }
 }

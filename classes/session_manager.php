@@ -76,9 +76,7 @@ class session_manager {
         $obid = $sessioninfo['obid'];
 
         // Get all points
-        $observationpoints = \mod_observation\observation_manager::get_observation_points($obid);
-
-        // TODO get responses
+        $observationpoints = \mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);
         return $observationpoints;
     }
 }
