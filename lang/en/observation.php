@@ -40,6 +40,7 @@ $string['observation:view'] = 'View Observation';
 $string['defaultmessagenoinstructions'] = 'No instructions provided.';
 $string['timeslots'] = 'Timeslots';
 $string['observationpoints'] = 'Observation Points';
+$string['observationpoint'] = 'Observation Point';
 $string['placeholder'] = 'Placeholder';
 $string['selecting_observer'] = 'Selecting Observers';
 $string['observer'] = 'Observer';
@@ -97,3 +98,6 @@ $string['markingsession'] = '{$a} Observation Session (Observer)';
 $string['assignedmarkingsession'] = 'You are assigned as an observer for the observation session at this time. Click Go to Activity below to view details.';
 
 $string['responsesaved'] = 'Response Saved';
+$string['selectpoint'] = 'Select Point';
+$string['go'] = 'Go';
+$string['noobservationpoints'] = 'Could not start observation session as no observation points were found to assess.';
