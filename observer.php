@@ -23,10 +23,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($dir . '../../config.php');
+require_once(__DIR__.'/../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
-list($observation, $course, $cm) = \mod_observation\manager::get_observation_course_cm_from_obid($id);
+list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
@@ -39,13 +39,25 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($observation->name, 2);
 
+// If user has permissions show observation point editor page link.
+if (has_capability('mod/observation:editobservationpoints', $PAGE->context)) {
+    echo $OUTPUT->box_start();
+    echo $OUTPUT->heading(get_string('actions', 'observation'), 3);
+    echo $OUTPUT->single_button(
+        new moodle_url('/mod/observation/viewpoints.php', array('id' => $observation->id)),
+        get_string('editobservationpoints', 'observation'),
+        'get'
+    );
+    echo $OUTPUT->box_end();
+}
+
 echo \mod_observation\instructions::observation_instructions(
     get_string('instructions', 'observation'),
     $observation->observer_ins,
     $observation->observer_ins_f);
 
-echo $OUTPUT->container_start();
+echo $OUTPUT->box_start();
 echo "Timeslots assigned placeholder";
-echo $OUTPUT->container_end();
+echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();

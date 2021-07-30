@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library of functions and constants for module observation
+ * Dummy endpoint page, redirects to view.php.
  *
  * @package mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -23,21 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(__DIR__.'/../../config.php');
 
-global $CFG;
-global $DB;
+// Course module id.
+$cmid = required_param('id', PARAM_INT);
 
-// Course id.
-$id = required_param('id', PARAM_INT);
+require_login();
 
-// Ensure that the course specified is valid.
-if (!$course = $DB->get_record('course', array('id' => $id))) {
-    throw new moodle_exception('cannotfindcontext');
-}
-
-// Require login to this course.
-require_login($course);
-
-// Redirect to the view.php file to show this activity.
-redirect("$CFG->wwwroot . '/mod/observation/view.php?id=' . $id");
+// Redirect to view.php passing the course module id.
+redirect(new moodle_url('/mod/observation/view.php', ['id' => $cmid]));
