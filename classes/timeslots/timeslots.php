@@ -44,5 +44,13 @@ class timeslots {
      */
     public static function timeslots_table(int $observationid, \moodle_url $callbackurl) {
         $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
+        $sql = (object) [
+            'fields' => 'op.*, ortm.lang_string',
+            'from' => '{observation_timeslots} op LEFT JOIN {observation_res_type_map} ortm ON ortm.res_type = ortm.res_type',
+            'where' => 'obs_id = :obsid',
+            'params' => ['obsid' => $observationid]
+        ];
+        $table->sql = $sql;
+        return $table->out($table->pagesize, true);
     }
 }

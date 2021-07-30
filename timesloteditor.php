@@ -43,7 +43,7 @@ if ($mode === 'edit' && $slotid === null) {
     throw new moodle_exception('missingparam', 'error', null, $a = 'slotid');
 }
 
-list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
+list($observation, $course, $cm) = \mod_observation\timeslot_manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
@@ -58,7 +58,7 @@ $formprefill = array(
 
 // If editing, add prefill data from DB.
 if ($mode === "edit") {
-    $slotdata = \mod_observation\observation_manager::get_existing_slot_data($id, $slotid);
+    $slotdata = \mod_observation\timeslot_manager::get_existing_slot_data($id, $slotid);
     $formprefill['slotid'] = $slotdata->id;
 }
 
@@ -77,11 +77,11 @@ if ($fromform = $sloteditorform->get_data()) {
 
     if ($fromform->mode === "new") {
         // Creating new.
-        \mod_observation\observation_manager::modify_time_slot($dbdata, true);
+        \mod_observation\timeslot_manager::modify_time_slot($dbdata, true);
     } else {
         // Editing existing.
         $dbdata['id'] = $fromform->slotid;
-        \mod_observation\observation_manager::modify_time_slot($dbdata, false);
+        \mod_observation\timeslot_manager::modify_time_slot($dbdata, false);
     }
 
     // Redirect back to slot viewer.

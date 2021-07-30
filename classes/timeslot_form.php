@@ -57,11 +57,13 @@ class timeslot_form extends \moodleform {
         $mform->setType('duration', PARAM_INT);
         $mform->addRule('duration', get_string('err_numeric', 'form'), 'numeric', null, 'client');
         $mform->addRule('duration', get_string('required', 'observation'), 'required', null, 'client');
-        $mform->addRule('duration', get_string('intgreaterthanone', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
+        $mform->addRule('duration', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
 
         //Observer
         $mform->addElement('text', 'observer_id', get_string('observer_id', 'observation'));
+        $mform->setType('observer_id', PARAM_INT);
         $mform->addRule('observer_id', get_string('required', 'observation'), 'required', null, 'client');
+        $mform->addRule('observer_id', get_string('err_numeric', 'form'), 'numeric', null, 'client');
 
         //Testing with dummy values to check if the error was occuring but unfilled database fields 
         //Didn't fix anything when was attempted still a error reading database 

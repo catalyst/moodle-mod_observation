@@ -29,7 +29,7 @@ $id = required_param('id', PARAM_INT); // Observation instance ID.
 $slotid = optional_param('slotid', null, PARAM_INT); // Time slot ID.
 $action = optional_param('action', null, PARAM_TEXT); // Action.
 
-list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
+list($observation, $course, $cm) = \mod_observation\timeslot_manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
@@ -47,15 +47,15 @@ if ($action !== null && $slotid !== null) {
             break;
 
         case 'delete':
-            \mod_observation\observation_manager::delete_time_slot($observation->id, $slotid);
+            \mod_observation\timeslot_manager::delete_time_slot($observation->id, $slotid);
             break;
 
         case 'moveup':
-            \mod_observation\observation_manager::reorder_time_slot($observation->id, $slotid, -1);
+            \mod_observation\timeslot_manager::reorder_time_slot($observation->id, $slotid, -1);
             break;
 
         case 'movedown':
-            \mod_observation\observation_manager::reorder_time_slot($observation->id, $slotid, 1);
+            \mod_observation\timeslot_manager::reorder_time_slot($observation->id, $slotid, 1);
             break;
 
         default:
