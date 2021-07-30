@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Observation activity version information.
+ * Renderable to render the list of observation time slots
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -23,8 +23,26 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace mod_observation\timeslots;
 
-$plugin->version   = 2021052507;
-$plugin->requires  = 2021052500;
-$plugin->component = 'mod_observation';
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * Functions to view observation time slots
+ *
+ * @package   mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class timeslots {
+
+    /**
+     * Creates a table that displays all the observation time slots for a given observation
+     * @param int $observationid ID of the observation instance to get the observation time slots from.
+     * @param \moodle_url $callbackurl URL for action buttons in table to callback to
+     */
+    public static function timeslots_table(int $observationid, \moodle_url $callbackurl) {
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
+    }
+}
