@@ -41,6 +41,7 @@ class timeslot_form extends \moodleform {
      * Defines the time slot form
      */
     public function definition() {
+        global $PAGE;
         $mform = $this->_form;
 
         $prefill = $this->_customdata;
@@ -59,17 +60,22 @@ class timeslot_form extends \moodleform {
         $mform->addRule('duration', get_string('required', 'observation'), 'required', null, 'client');
         $mform->addRule('duration', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
 
-        //Observer
-        $mform->addElement('text', 'observer_id', get_string('observer_id', 'observation'));
+        //Selecting Observer
+        $context = $PAGE->context;
+        $finalusers = [];
+        $users = get_enrolled_users($context, 'mod/observation:performobservation');
+        foreach ($users as $user) {                                                                          
+            $finalusers[$user->id] = fullname($user);                                                               
+        }
+        $options = array(                                                                                                           
+            'multiple' => false,                                                  
+            'noselectionstring' => get_string('allareas', 'search'),                                                                
+        );                   
+        $mform->addElement('header', 'selecting_observer', get_string('selecting_observer', 'observation'));
+        $mform->addElement('autocomplete', 'observer_id', get_string('teacher', 'observation'),$finalusers, $options);
         $mform->setType('observer_id', PARAM_INT);
         $mform->addRule('observer_id', get_string('required', 'observation'), 'required', null, 'client');
         $mform->addRule('observer_id', get_string('err_numeric', 'form'), 'numeric', null, 'client');
-
-        //Testing with dummy values to check if the error was occuring but unfilled database fields 
-        //Didn't fix anything when was attempted still a error reading database 
-        //$mform->addElement('text', 'observee_id', get_string('observer_id', 'observation'));
-        //$mform->addElement('text', 'id', get_string('observer_id', 'observation'));
-        //$mform->addElement('text', 'obs_id', get_string('observer_id', 'observation'));
 
         // Hidden form elements.
         $mform->addElement('hidden', 'id', $prefill['id']);

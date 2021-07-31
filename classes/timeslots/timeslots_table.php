@@ -68,7 +68,7 @@ class timeslots_table extends \table_sql implements \renderable {
         $systemcontext = \context_system::instance();
         $this->context = $systemcontext;
         $this->collapsible(false);
-        //$this->sortable(false, 'list_order', SORT_ASC);
+        $this->sortable(false, 'list_order', SORT_ASC);
         $this->pageable(true);
         $this->is_downloadable(false);
         $this->define_baseurl($callbackurl);
