@@ -101,7 +101,11 @@ class pointmarking_form extends \moodleform {
         $this->set_data($prefill);
 
         // Action buttons.
+
+        // TODO find a way to put these buttons next to each other
         $this->add_action_buttons(false, get_string('save', 'observation'));
+        $this->add_action_buttons(false, get_string('saveandnext', 'observation'));
+        $this->add_action_buttons(false, get_string('submitobservation', 'observation'));
     }
 
     /**

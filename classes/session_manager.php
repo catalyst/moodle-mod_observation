@@ -69,8 +69,6 @@ class session_manager {
      * Returns the observation point data for a session, including any existing responses to the points
      */
     public static function get_session_data(int $sessionid){
-        global $DB;
-
         // Get the details for the session
         $sessioninfo = self::get_session_info($sessionid);
         $obid = $sessioninfo['obid'];
@@ -78,5 +76,37 @@ class session_manager {
         // Get all points
         $observationpoints = \mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);
         return $observationpoints;
+    }
+
+    /**
+     * Checks and finalises a session. Returns true if successful, else an error message.
+     */
+    public static function finish_session(int $sessionid){
+        global $DB;
+
+        $sessiondata = self::get_session_data($sessionid);
+        $incompletepoints = array_filter($sessiondata, function($point) {
+            return $point->response_id === null;
+        });
+
+        if(empty($incompletepoints)){
+            // Update status in DB.
+            $DB->update_record('observation_sessions', [
+                'id' => $sessionid,
+                'state' => 'complete',
+                'finish_time' => time(),
+            ]);
+
+            return true;
+        }
+
+        // Return error message with list of names of the incomplete points.
+        $incompletenames = array_column($incompletepoints, 'title');
+        $nameslist = json_encode($incompletenames);
+
+        $error = get_string('sessionincomplete', 'observation', count($incompletepoints));
+        $error = $error."\n".$nameslist;
+
+        return $error;
     }
 }
