@@ -25,6 +25,8 @@
 
 namespace mod_observation;
 
+use html_writer;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -338,5 +340,24 @@ class observation_manager {
             $dbdata['id'] = $existingresponse->id;
             $DB->update_record('observation_point_responses', $dbdata);
         }
+    }
+
+    public static function format_points_and_responses($observationid, $sessionid) {
+        $pointsandresponses = self::get_points_and_responses($observationid, $sessionid);
+
+        $table = new \html_table();
+        $table->head = ['Title', 'Response', 'Grade Given'];
+        $table->data = [];
+
+        // TODO format this nicely using classes
+        foreach($pointsandresponses as $item) {
+            array_push($table->data, [
+                $item->title,
+                $item->response,
+                $item->grade_given,
+            ]);
+        }
+
+        return html_writer::table($table);
     }
 }

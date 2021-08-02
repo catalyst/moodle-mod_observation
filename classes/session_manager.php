@@ -61,7 +61,8 @@ class session_manager {
         
         // TODO add more data returned as necessary
         return [
-            'obid' => $sessiondata->obs_id
+            'obid' => $sessiondata->obs_id,
+            'ex_comment' =>$sessiondata->ex_comment
         ];
     }
 
@@ -78,16 +79,46 @@ class session_manager {
         return $observationpoints;
     }
 
+    public static function get_incomplete_points(int $sessionid) {
+        $sessiondata = self::get_session_data($sessionid);
+        $incompletepoints = array_filter($sessiondata, function($point) {
+            return $point->response_id === null;
+        });
+        return $incompletepoints;
+    }
+
+    public static function calculate_grade(int $sessionid) {
+        $sessioninfo = self::get_session_info($sessionid);
+        $obid = $sessioninfo['obid'];
+        $observationpoints = \mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);
+
+        $totalmaxgrade = array_reduce($observationpoints, function($carry, $item) {
+            return $carry + $item->max_grade;
+        }, 0);
+
+        $totalgradegiven = array_reduce($observationpoints, function($carry, $item) {
+            return $carry + $item->grade_given;
+        }, 0);
+
+        return [
+            'total' => $totalgradegiven,
+            'max' => $totalmaxgrade
+        ];
+    }
+
+    public static function save_extra_comment(int $sessionid, string $extracomment) {
+        global $DB;
+        $DB->update_record('observation_sessions', ['id' => $sessionid, 'ex_comment' => $extracomment]);
+        return;
+    }
+
     /**
      * Checks and finalises a session. Returns true if successful, else an error message.
      */
     public static function finish_session(int $sessionid){
         global $DB;
 
-        $sessiondata = self::get_session_data($sessionid);
-        $incompletepoints = array_filter($sessiondata, function($point) {
-            return $point->response_id === null;
-        });
+        $incompletepoints = self::get_incomplete_points($sessionid);
 
         if(empty($incompletepoints)){
             // Update status in DB.

@@ -33,31 +33,31 @@ list($observation, $course, $cm) = \mod_observation\observation_manager::get_obs
 require_login($course, true, $cm);
 require_capability('mod/observation:performobservation', $PAGE->context);
 
+$pageurl = new moodle_url('/mod/observation/sessionview.php', ['id' => $id]);
+
 // Setup form
 $startsessionformprefill = array(
     'id' => $id,
     'observerid' => $USER->id,
 );
 $startsessionform = new \mod_observation\startsession_form(null, $startsessionformprefill);
+
 // If start session form was submitted, call function to start session
 if ($fromform = $startsessionform->get_data()) {
     $sessionid = \mod_observation\session_manager::start_session($fromform->id, $fromform->observerid, $fromform->observeeid);
-    // Navigate to the session page using this ID.
     redirect(new moodle_url('session.php', ['sessionid' => $sessionid]));
 }
 
-$PAGE->set_url(new moodle_url('/mod/observation/observationsession.php', array('id' => $id)));
+$PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('observationsessions', 'observation'), 2);
 
-// Start new form block.
+// Start new session form block.
 echo $OUTPUT->heading(get_string('startnew', 'observation'), 3);
 $startsessionform->display();
 
 // Current sessions block.
-echo $OUTPUT->heading(get_string('current', 'observation'), 3);
-// TODO check for ongoing sessions in DB that are not submitted, and allow to resume.
-// Maybe have a table, similar to the observation points ?
-echo "TODO";
+echo $OUTPUT->heading(get_string('previoussessions', 'observation'), 3);
+echo \mod_observation\viewsessions\viewsessions::ob_sess_table($observation->id, $pageurl);

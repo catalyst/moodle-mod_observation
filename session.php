@@ -86,15 +86,8 @@ $markingform = new \mod_observation\pointmarking_form(null, $formprefill);
 // If point marking form was submitted.
 if ($fromform = $markingform->get_data()) {
     if($fromform->submitbutton === get_string('submitobservation', 'observation')){
-        // Submit entire observation.
-        $sessionstatus = \mod_observation\session_manager::finish_session($sessionid);
-
-        if($sessionstatus === true){
-            redirect(new moodle_url('sessionview.php', ['id' => $obid]), get_string('sessioncomplete', 'observation'), null, \core\output\notification::NOTIFY_SUCCESS);
-        } else {
-            redirect(new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $pointid]), $sessionstatus, null, \core\output\notification::NOTIFY_ERROR);
-        }
-
+        // Redirect to final session page (summary, add final comments, etc.).
+        redirect(new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]));
         return;
     } else {
         // Submit only point.

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form to begin an observation
+ * Form to submit an observation point sesssion
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -29,32 +29,32 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
 
 /**
- * Creates a moodle_form to start an observation session.
+ * Creates a moodle_form to submit an observation point sesssion
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class startsession_form extends \moodleform {
+class sessionsubmit_form extends \moodleform {
     /**
-     * Defines the session creation form
+     * Defines the point marking form
      */
     public function definition() {
         $mform = $this->_form;
 
         $prefill = $this->_customdata;
 
-        // TODO display username instead of id
-        $mform->addElement('text', 'observerid', get_string('observer', 'observation'));
-        $mform->freeze('observerid');
-        
-        // TODO make this a dropdown with auto suggestions
-        $mform->addElement('text', 'observeeid', get_string('observee', 'observation'));
+        $mform->addElement('text', 'gradecalculated', get_string('overallgrade', 'observation'));
+        $mform->setType('gradecalculated', PARAM_RAW);
+        $mform->freeze('gradecalculated');
+
+        $mform->addElement('textarea', 'extracomment', get_string('extracomment', 'observation'), ['rows' => 3, 'cols' => 100]);
+        $mform->setType('extracomment', PARAM_RAW);
 
         // Hidden form elements.
-        $mform->addElement('hidden', 'id', $prefill['id']);
-        $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'sessionid', $prefill['session_id']); 
+        $mform->setType('sessionid', PARAM_INT);
 
         // Enforce validations.
         if ($mform->validate()) {
@@ -65,6 +65,6 @@ class startsession_form extends \moodleform {
         $this->set_data($prefill);
 
         // Action buttons.
-        $this->add_action_buttons(false, get_string('start', 'observation'));
+        $this->add_action_buttons(false, get_string('submitobservation', 'observation'));
     }
 }

@@ -73,7 +73,7 @@ if (has_capability('mod/observation:performobservation', $PAGE->context)) {
 
     echo $OUTPUT->single_button(
         new moodle_url('/mod/observation/sessionview.php', ['id' => $observation->id]),
-        get_string('startobservationsession', 'observation'),
+        get_string('observationsessions', 'observation'),
         'get'
     );
     echo $OUTPUT->box_end();
