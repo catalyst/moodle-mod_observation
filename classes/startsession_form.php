@@ -41,20 +41,42 @@ class startsession_form extends \moodleform {
      * Defines the session creation form
      */
     public function definition() {
+        global $PAGE;
+        global $USER;
+
         $mform = $this->_form;
 
         $prefill = $this->_customdata;
 
-        // TODO display username instead of id
-        $mform->addElement('text', 'observerid', get_string('observer', 'observation'));
-        $mform->freeze('observerid');
-        
-        // TODO make this a dropdown with auto suggestions
-        $mform->addElement('text', 'observeeid', get_string('observee', 'observation'));
+        $mform->addElement('header', 'startnewheading', 'Start New');
+
+        // Observer and Observee Selection.
+
+        // Get list of users full names .
+        $context = $PAGE->context;
+        $finalusers = [];
+        $users = get_enrolled_users($context);
+        foreach ($users as $u) {
+            $finalusers[$u->id] = fullname($u);
+        }
+
+        $options = array(
+            'multiple' => false,
+        );
+
+        $mform->addElement('text', 'observername', get_string('observer', 'observation'));
+        $mform->setDefault('observername', fullname($USER));
+        $mform->freeze('observername');
+
+        $mform->addElement('autocomplete', 'observeeid', get_string('observee', 'observation'), $finalusers, $options);
+        $mform->addRule('observeeid', get_string('required', 'observation'), 'required', null, 'client');
 
         // Hidden form elements.
         $mform->addElement('hidden', 'id', $prefill['id']);
         $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'observerid', $prefill['observerid']);
+        $mform->setType('observerid', PARAM_INT);
 
         // Enforce validations.
         if ($mform->validate()) {
@@ -65,6 +87,6 @@ class startsession_form extends \moodleform {
         $this->set_data($prefill);
 
         // Action buttons.
-        $this->add_action_buttons(false, get_string('start', 'observation'));
+        $mform->addElement('submit', 'submitbtn', get_string('start', 'observation'));
     }
 }

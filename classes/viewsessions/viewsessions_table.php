@@ -78,7 +78,7 @@ class viewsessions_table extends \table_sql implements \renderable {
         $this->no_sorting('action');
     }
 
-     /**
+    /**
      * Data converter for the state column
      * @param mixed $row current row
      */
@@ -86,27 +86,45 @@ class viewsessions_table extends \table_sql implements \renderable {
         return get_string($row->state, 'observation');
     }
 
+    /**
+     * Data converter for the finish_time column
+     * @param mixed $row current row
+     */
     public function col_finish_time($row) {
         return $this->format_as_date($row->finish_time);
     }
 
+    /**
+     * Data converter for the start_time column
+     * @param mixed $row current row
+     */
     public function col_start_time($row) {
         return $this->format_as_date($row->start_time);
     }
 
+    /**
+     * Formats UNIX epoch as date for date columns in table.
+     * @param mixed $epochs UNIX epoch time or null
+     */
     private function format_as_date($epochs) {
-        if(!is_null($epochs)){
+        if (!is_null($epochs)) {
             return date('r', $epochs);
         } else {
             return null;
         }
     }
 
-    private function action_button(\moodle_url $url, string $text) {
+    /**
+     * Creates an action button for the col_action function.
+     * @param \moodle_url $url URL for the button to link to
+     * @param string $text button text
+     * @param string $style button classes
+     */
+    private function action_button(\moodle_url $url, string $text, string $style = '') {
         return \html_writer::link(
             $url,
             $text,
-            ['class' => 'btn btn-secondary']
+            ['class' => 'btn mr-2 '.$style]
         );
     }
 
@@ -118,15 +136,27 @@ class viewsessions_table extends \table_sql implements \renderable {
         // Add action buttons.
         $htmlout = '';
 
-        if($row->state === 'complete' || $row->state === 'inprogress'){
-            $htmlout .= $this->action_button(
-                new \moodle_url('session.php', ['sessionid' => $row->id]), 
-                get_string('resume', 'observation'));
-
+        if ($row->state === 'complete') {
+            // View summary button.
             $htmlout .= $this->action_button(
                 new \moodle_url('sessionsummary.php', ['sessionid' => $row->id, 'mode' => 'viewing']),
-                get_string('viewsummary', 'observation'));
-        } 
+                get_string('viewsummary', 'observation'),
+                'btn-info');
+
+            // Re-open button.
+            $htmlout .= $this->action_button(
+                new \moodle_url('session.php', ['sessionid' => $row->id]),
+                get_string('reopen', 'observation'),
+                'btn-secondary');
+        }
+
+        if ($row->state === 'inprogress') {
+            // Resume Button.
+            $htmlout .= $this->action_button(
+                new \moodle_url('session.php', ['sessionid' => $row->id]),
+                get_string('resume', 'observation'),
+                'btn-primary');
+        }
 
         return $htmlout;
     }

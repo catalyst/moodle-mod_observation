@@ -66,7 +66,7 @@ echo \mod_observation\instructions::observation_instructions(
     $observation->observer_ins,
     $observation->observer_ins_f);
 
-// Start observation session block
+// Start observation session block.
 if (has_capability('mod/observation:performobservation', $PAGE->context)) {
     echo $OUTPUT->box_start();
     echo $OUTPUT->heading(get_string('performobservation', 'observation'), 3);

@@ -45,26 +45,28 @@ require_capability('mod/observation:performobservation', $PAGE->context);
 $grade = \mod_observation\session_manager::calculate_grade($sessionid);
 $gradeformatted = $grade['total'].'/'.$grade['max'];
 $formprefill = [
-    'gradecalculated' => $gradeformatted, 
+    'gradecalculated' => $gradeformatted,
     'sessionid' => $sessionid,
     'extracomment' => $sessioninfo['ex_comment']
 ];
 
 $submitform = new \mod_observation\sessionsubmit_form(null, $formprefill, 'post', '', null, !$isviewonly);
 
-// Submission form was submitted
-if($fromform = $submitform->get_data()){
-    // Save extra comment
+// Submission form was submitted.
+if ($fromform = $submitform->get_data()) {
+    // Save extra comment.
     \mod_observation\session_manager::save_extra_comment($sessionid, $fromform->extracomment);
 
-    // Submit observation
+    // Submit observation.
     $status = \mod_observation\session_manager::finish_session($sessionid);
 
-    if($status === true){
-        redirect(new moodle_url('sessionview.php', ['id' => $obid]), get_string('sessioncomplete', 'observation'), null, \core\output\notification::NOTIFY_SUCCESS);
+    if ($status === true) {
+        redirect(new moodle_url('sessionview.php', ['id' => $obid]), get_string('sessioncomplete', 'observation'),
+            null, \core\output\notification::NOTIFY_SUCCESS);
     } else {
-        // Error
-        redirect(new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]), $status, null, \core\output\notification::NOTIFY_ERROR);
+        // Error.
+        redirect(new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]), $status,
+            null, \core\output\notification::NOTIFY_ERROR);
     }
 }
 
@@ -77,28 +79,32 @@ $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-if($isviewonly){
+if ($isviewonly) {
     echo $OUTPUT->notification(get_string('sessionviewonly', 'observation'), \core\output\notification::NOTIFY_INFO);
 }
 
-if(!empty($incompletepoints)) {
+if (!empty($incompletepoints)) {
     echo $OUTPUT->notification(get_string('existsincompletepoints', 'observation'), \core\output\notification::NOTIFY_WARNING);
 }
 
 // Heading.
-if(!$isviewonly){
-    echo $OUTPUT->heading(get_string('markingobservation', 'observation'), 2);
-    echo $OUTPUT->single_button(new moodle_url('session.php', ['sessionid' => $sessionid]), get_string('returntosession', 'observation'));
+echo $OUTPUT->container_start('mb-3 p-3 border border-secondary');
+echo $OUTPUT->heading(get_string('actions', 'observation'), 4);
+if (!$isviewonly) {
+    echo $OUTPUT->single_button(new moodle_url('session.php', ['sessionid' => $sessionid]),
+        get_string('returntosession', 'observation'));
+} else {
+    echo $OUTPUT->single_button(new moodle_url('sessionview.php', ['id' => $obid]),
+        get_string('returntosessionlist', 'observation'));
 }
+echo $OUTPUT->container_end();
 
-echo $OUTPUT->heading(get_string('sessionsummary', 'observation'), 3);
+echo $OUTPUT->heading(get_string('sessionsummary', 'observation'), 2);
 
 // Summary of points and responses.
-echo $OUTPUT->heading(get_string('observationpoints', 'observation'), 4);
 echo \mod_observation\observation_manager::format_points_and_responses($obid, $sessionid);
 
 // Session submission form.
-echo $OUTPUT->heading(get_string('sesssiondata', 'observation'), 4);
 $submitform->display();
 
 echo $OUTPUT->footer();

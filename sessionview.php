@@ -35,14 +35,13 @@ require_capability('mod/observation:performobservation', $PAGE->context);
 
 $pageurl = new moodle_url('/mod/observation/sessionview.php', ['id' => $id]);
 
-// Setup form
 $startsessionformprefill = array(
     'id' => $id,
-    'observerid' => $USER->id,
+    'observerid' => $USER->id
 );
 $startsessionform = new \mod_observation\startsession_form(null, $startsessionformprefill);
 
-// If start session form was submitted, call function to start session
+// If start session form was submitted, call function to start session.
 if ($fromform = $startsessionform->get_data()) {
     $sessionid = \mod_observation\session_manager::start_session($fromform->id, $fromform->observerid, $fromform->observeeid);
     redirect(new moodle_url('session.php', ['sessionid' => $sessionid]));
@@ -55,9 +54,10 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('observationsessions', 'observation'), 2);
 
 // Start new session form block.
-echo $OUTPUT->heading(get_string('startnew', 'observation'), 3);
 $startsessionform->display();
 
 // Current sessions block.
 echo $OUTPUT->heading(get_string('previoussessions', 'observation'), 3);
 echo \mod_observation\viewsessions\viewsessions::ob_sess_table($observation->id, $pageurl);
+
+echo $OUTPUT->footer();

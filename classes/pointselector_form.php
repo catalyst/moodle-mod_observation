@@ -46,11 +46,11 @@ class pointselector_form extends \moodleform {
         $prefill = $this->_customdata;
 
         $mform->addElement('header', 'selector_header', get_string('selectpoint', 'observation'));
-        
-        // TODO make this display the titles maybe along with the ID
+
+        // TODO make this display the titles maybe along with the ID.
         $mform->addElement('select', 'pointid', get_string('observationpoint', 'observation'), $prefill['pointid_options']);
 
-        $mform->addElement('hidden', 'sessionid', $prefill['session_id']); 
+        $mform->addElement('hidden', 'sessionid', $prefill['session_id']);
         $mform->setType('sessionid', PARAM_INT);
 
         // Enforce validations.
@@ -63,20 +63,5 @@ class pointselector_form extends \moodleform {
 
         // Action buttons.
         $this->add_action_buttons(false, get_string('go', 'observation'));
-    }
-
-    /**
-     * Custom validations for the form.
-     * NOTE: these are only run server side when get_data() is called.
-     */
-    function validation($data, $files){
-        $errors = [];
-
-        // Ensure grade given <= max grade.
-        if($data['grade_given'] > $data['max_grade']){
-            $errors['grade_given'] = get_string('gradegivengreatermaxgrade', 'observation');
-        }
-
-        return $errors;
     }
 }

@@ -299,17 +299,23 @@ class observation_manager {
         $transaction->allow_commit();
     }
 
+    /**
+     * Returns a list of observation points with responses for a particular session
+     * @param int $observationid ID of the observation instance
+     * @param int $sessionid ID of the observation sesssion
+     * @return array array of observation points with responses for the given session
+     */
     public static function get_points_and_responses(int $observationid, int $sessionid) {
         global $DB;
 
         // Selects all points for this observation,
         // and attaches responses for the current session (if one exists).
 
-        $sql = 'SELECT pts.id as point_id, obs_id, title, list_order, ins, ins_f, max_grade, res_type, 
-        sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response, ex_comment 
-        FROM mdl_observation_points as pts 
-        LEFT JOIN 
-        (SELECT * FROM mdl_observation_point_responses as resp WHERE obs_ses_id = :sessionid) as sess_resp 
+        $sql = 'SELECT pts.id as point_id, obs_id, title, list_order, ins, ins_f, max_grade, res_type,
+        sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response, ex_comment
+        FROM mdl_observation_points as pts
+        LEFT JOIN
+        (SELECT * FROM mdl_observation_point_responses as resp WHERE obs_ses_id = :sessionid) as sess_resp
         ON pts.id = sess_resp.obs_pt_id WHERE pts.obs_id = :observationid;';
 
         $pointsandresponses = $DB->get_records_sql($sql, ['observationid' => $observationid, 'sessionid' => $sessionid]);
@@ -317,13 +323,19 @@ class observation_manager {
         return $pointsandresponses;
     }
 
-    public static function submit_point_response(int $sessionid, int $pointid, $data){
+    /**
+     * Submits a response to a particular observation point for a given sesssion.
+     * @param int $sessionid ID of the observation session
+     * @param int $pointid ID of the observation point this response is for
+     * @param mixed $data data object returned from the pointmarking_form
+     */
+    public static function submit_point_response(int $sessionid, int $pointid, $data) {
         global $DB;
 
-        // See if a response already exists for this session and pointid
+        // See if a response already exists for this session and pointid.
         $existingresponse = $DB->get_record('observation_point_responses', ['obs_pt_id' => $pointid, 'obs_ses_id' => $sessionid]);
-        
-        // Clean data
+
+        // Clean data.
         $dbdata = [
             'obs_pt_id' => $pointid,
             'obs_ses_id' => $sessionid,
@@ -332,7 +344,7 @@ class observation_manager {
             'ex_comment' => $data->ex_comment,
         ];
 
-        if($existingresponse === false){
+        if ($existingresponse === false) {
             // Insert new.
             $DB->insert_record('observation_point_responses', $dbdata);
         } else {
@@ -342,21 +354,25 @@ class observation_manager {
         }
     }
 
+    /**
+     * Generates a HTML table that summarises the observation points and their responses
+     * @param int $observationid ID of the observation instance
+     * @param int $sessionid ID of the observation session
+     * @return string HTML string
+     */
     public static function format_points_and_responses($observationid, $sessionid) {
         $pointsandresponses = self::get_points_and_responses($observationid, $sessionid);
 
         $table = new \html_table();
         $table->head = ['Title', 'Response', 'Grade Given'];
-        $table->data = [];
 
-        // TODO format this nicely using classes
-        foreach($pointsandresponses as $item) {
-            array_push($table->data, [
+        $table->data = array_map(function($item) {
+            return [
                 $item->title,
                 $item->response,
                 $item->grade_given,
-            ]);
-        }
+            ];
+        }, $pointsandresponses);
 
         return html_writer::table($table);
     }

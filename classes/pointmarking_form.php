@@ -45,21 +45,23 @@ class pointmarking_form extends \moodleform {
 
         $prefill = $this->_customdata;
 
-        $mform->addElement('header', 'title');
-        
-        // Observation point information
+        $mform->addElement('header', 'obpointheader', get_string('observationpoint', 'observation'));
+
+        // Title.
+        $mform->addElement('static', 'title', get_string('title', 'observation'));
+
+        // Observation point information.
         $instext = $prefill['ins'];
         $insformat = $prefill['ins_f'];
-        
-        $mform->addElement('static', 'instructions', get_string('gradinginstructions', 'observation'), format_text($instext, $insformat));        
-        
-        // TODO break into own function ??
-        // TODO add a break or line here to seperate components
-        switch($prefill['res_type']){
-            // Text input type
+
+        $mform->addElement('static', 'instructions', get_string('gradinginstructions', 'observation'),
+            format_text($instext, $insformat));
+
+        switch($prefill['res_type']) {
+            // Text input type.
             case 0:
-                // TODO link the res_type with the lang string
-                $mform->addElement('textarea', 'response', get_string('textinputtype', 'observation'), ['rows' => 3, 'cols' => 100]);
+                $mform->addElement('textarea', 'response', get_string('textinputtype', 'observation'),
+                    ['rows' => 3, 'cols' => 100]);
                 $mform->setType('response', PARAM_RAW);
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
         }
@@ -76,10 +78,28 @@ class pointmarking_form extends \moodleform {
         $mform->addElement('textarea', 'ex_comment', get_string('extracomment', 'observation'), ['rows' => 3, 'cols' => 100]);
         $mform->setType('ex_comment', PARAM_RAW);
 
+        // Action buttons.
+        $buttonarray = [];
+        $buttonarray[] = $mform->createElement('submit', 'save', get_string('save', 'observation'));
+        $buttonarray[] = $mform->createElement('submit', 'saveandnext', get_string('saveandnext', 'observation'));
+        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+
+        // Submit Observation.
+        $mform->addElement('header', 'submitheader', get_string('submitobservation', 'observation'));
+
+        $mform->registerNoSubmitButton('submitobservation');
+        $mform->addElement('submit', 'submitobservation', get_string('submitobservation', 'observation'));
+
+        // Cancel buttons.
+        $mform->addElement('header', 'cancelheader', get_string('abandonobservation', 'observation'));
+
+        $mform->registerNoSubmitButton('abandonbutton');
+        $mform->addElement('submit', 'abandonbutton', get_string('abandonobservation', 'observation'));
+
         // Hidden form elements.
 
         // Note this has to remove the underscore or else the required_param check fails.
-        $mform->addElement('hidden', 'sessionid', $prefill['session_id']); 
+        $mform->addElement('hidden', 'sessionid', $prefill['session_id']);
         $mform->setType('sessionid', PARAM_INT);
 
         $mform->addElement('hidden', 'pointid', $prefill['point_id']);
@@ -91,7 +111,6 @@ class pointmarking_form extends \moodleform {
         $mform->addElement('hidden', 'max_grade');
         $mform->setType('max_grade', PARAM_INT);
 
-
         // Enforce validations.
         if ($mform->validate()) {
             $mform->freeze();
@@ -99,24 +118,19 @@ class pointmarking_form extends \moodleform {
 
         // Set defaults.
         $this->set_data($prefill);
-
-        // Action buttons.
-
-        // TODO find a way to put these buttons next to each other
-        $this->add_action_buttons(false, get_string('save', 'observation'));
-        $this->add_action_buttons(false, get_string('saveandnext', 'observation'));
-        $this->add_action_buttons(false, get_string('submitobservation', 'observation'));
     }
 
     /**
      * Custom validations for the form.
      * NOTE: these are only run server side when get_data() is called.
+     * @param mixed $data form data
+     * @param mixed $files form files
      */
-    function validation($data, $files){
+    public function validation($data, $files) {
         $errors = [];
 
         // Ensure grade given <= max grade.
-        if($data['grade_given'] > $data['max_grade']){
+        if ($data['grade_given'] > $data['max_grade']) {
             $errors['grade_given'] = get_string('gradegivengreatermaxgrade', 'observation');
         }
 
