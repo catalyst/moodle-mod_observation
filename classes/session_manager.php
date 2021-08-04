@@ -36,6 +36,17 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class session_manager {
+
+    /**
+     * Returns all the sessions
+     * @return array of integer ids of observation sessions
+     */
+    private static function get_sessions() {
+        global $DB;
+        $sessions = $DB->get_records('observation_sessions');
+        return array_column($sessions, 'id');
+    }
+
     /**
      * Updates DB to begin observation session
      * @param int $obsid observation instance ID
@@ -66,11 +77,12 @@ class session_manager {
     public static function get_session_info(int $sessionid) {
         global $DB;
 
-        $sessiondata = $DB->get_record('observation_sessions', ['id' => $sessionid], '*', MUST_EXIST);
+        $sessiondata = $DB->get_record('observation_sessions', ['id' => $sessionid], 'obs_id, ex_comment, state', MUST_EXIST);
 
         return [
             'obid' => $sessiondata->obs_id,
-            'ex_comment' => $sessiondata->ex_comment
+            'ex_comment' => $sessiondata->ex_comment,
+            'state' => $sessiondata->state
         ];
     }
 
@@ -145,6 +157,13 @@ class session_manager {
     public static function finish_session(int $sessionid) {
         global $DB;
 
+        // Ensure session exists.
+        $sessions = self::get_sessions();
+
+        if (!in_array($sessionid, $sessions)) {
+            throw new \coding_exception('Session does not exist.');
+        }
+
         $incompletepoints = self::get_incomplete_points($sessionid);
 
         if (empty($incompletepoints)) {
@@ -174,9 +193,7 @@ class session_manager {
      */
     public static function cancel_session(int $sessionid) {
         global $DB;
-
         $DB->update_record('observation_sessions', ['id' => $sessionid, 'state' => 'cancelled', 'finish_time' => time()]);
-
         return;
     }
 }

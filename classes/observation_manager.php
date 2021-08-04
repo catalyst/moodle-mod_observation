@@ -313,9 +313,9 @@ class observation_manager {
 
         $sql = 'SELECT pts.id as point_id, obs_id, title, list_order, ins, ins_f, max_grade, res_type,
         sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response, ex_comment
-        FROM mdl_observation_points as pts
+        FROM {observation_points} pts
         LEFT JOIN
-        (SELECT * FROM mdl_observation_point_responses as resp WHERE obs_ses_id = :sessionid) as sess_resp
+        (SELECT * FROM {observation_point_responses} resp WHERE obs_ses_id = :sessionid) as sess_resp
         ON pts.id = sess_resp.obs_pt_id WHERE pts.obs_id = :observationid;';
 
         $pointsandresponses = $DB->get_records_sql($sql, ['observationid' => $observationid, 'sessionid' => $sessionid]);
@@ -331,6 +331,20 @@ class observation_manager {
      */
     public static function submit_point_response(int $sessionid, int $pointid, $data) {
         global $DB;
+
+        if ($data->grade_given < 0 || !is_int($data->grade_given)) {
+            throw new \coding_exception("Grade given must be an integer that is zero or more");
+        }
+
+        if (!isset($data->response)) {
+            throw new \coding_exception("No response was found in the data.");
+        }
+
+        $sessioninfo = \mod_observation\session_manager::get_session_info($sessionid);
+        $pointdata = self::get_existing_point_data($sessioninfo['obid'], $pointid);
+        if ($data->grade_given > $pointdata->max_grade) {
+            throw new \coding_exception("Grade given must be less than the max grade.");
+        }
 
         // See if a response already exists for this session and pointid.
         $existingresponse = $DB->get_record('observation_point_responses', ['obs_pt_id' => $pointid, 'obs_ses_id' => $sessionid]);
