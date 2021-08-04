@@ -33,7 +33,8 @@ function xmldb_observation_install() {
     // Generate res_type mappings.
     $tablename = 'observation_res_type_map';
     $mappings = [
-        ['res_type' => 0, 'lang_string' => 'textinputtype']
+        ['res_type' => 0, 'lang_string' => 'textinputtype'],
+        ['res_type' => 1, 'lang_string' => 'passfailtype']
     ];
     $DB->insert_records($tablename, $mappings);
 }
