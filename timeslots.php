@@ -50,14 +50,6 @@ if ($action !== null && $slotid !== null) {
             \mod_observation\timeslot_manager::delete_time_slot($observation->id, $slotid);
             break;
 
-        case 'moveup':
-            \mod_observation\timeslot_manager::reorder_time_slot($observation->id, $slotid, -1);
-            break;
-
-        case 'movedown':
-            \mod_observation\timeslot_manager::reorder_time_slot($observation->id, $slotid, 1);
-            break;
-
         default:
             // Unknown action.
             throw new moodle_exception(

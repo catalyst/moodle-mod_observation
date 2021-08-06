@@ -64,22 +64,11 @@ class timeslots_table extends \table_sql implements \renderable {
         ]);
 
         $this->pagesize = $perpage;
-
-        $systemcontext = \context_system::instance();
-        $this->context = $systemcontext;
         $this->collapsible(false);
-        $this->sortable(false, 'list_order', SORT_ASC);
+        $this->sortable(false);
         $this->pageable(true);
         $this->is_downloadable(false);
         $this->define_baseurl($callbackurl);
-    }
-
-    /**
-     * Data converter for the lang_string column
-     * @param mixed $row current row
-     */
-    public function col_lang_string($row) {
-        return(get_string($row->lang_string, 'observation'));
     }
 
     /**
@@ -106,8 +95,6 @@ class timeslots_table extends \table_sql implements \renderable {
         // Add action buttons.
         $htmlout = $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
         $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
-        $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'moveup', get_string('moveup', 'observation'));
-        $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'movedown', get_string('movedown', 'observation'));
         return $htmlout;
     }
 }
