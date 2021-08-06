@@ -25,6 +25,8 @@
 
 namespace mod_observation\timeslots;
 
+use DateTime;
+
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -85,6 +87,22 @@ class timeslots_table extends \table_sql implements \renderable {
             $text,
             ['class' => 'btn btn-secondary']
         );
+    }
+
+    /**
+     * Data converter for the start_time column
+     * @param mixed $row current row
+     */
+    public function col_start_time($row) {
+        return(date('H:i:s Y-m-d', $row->start_time));
+    }
+
+    /**
+     * Data converter for the duration column
+     * @param mixed $row current row
+     */
+    public function col_duration($row) {
+        return(sprintf('%.2f',$row->duration/60));
     }
 
     /**
