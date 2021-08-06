@@ -60,7 +60,7 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('static', 'description', get_string('placeholder', 'observation'),
         get_string('placeholder', 'observation')); // TODO: replace.
 
-        //Selecting Observer ***to be moved into Timeslots***.
+        // Selecting Observer ***to be moved into Timeslots***.
         $context = $PAGE->context;
         $finalusers = [];
         $users = get_enrolled_users($context, 'mod/observation:performobservation');
