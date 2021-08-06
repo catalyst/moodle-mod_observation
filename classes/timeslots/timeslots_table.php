@@ -102,7 +102,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_duration($row) {
-        return(sprintf('%.2f',$row->duration/60));
+        return(sprintf('%.2f', $row->duration / 60));
     }
 
     /**
