@@ -46,33 +46,33 @@ class timeslot_form extends \moodleform {
 
         $prefill = $this->_customdata;
 
-        //Timeslots
+        // Timeslots.
 
-        //Start Time
+        // Start Time.
         $mform->addElement('header', 'timeslots', get_string('timeslots', 'observation'));
         $mform->addElement('date_time_selector', 'start_time', get_string('starttime', 'observation'));
         $mform->addRule('start_time', get_string('required', 'observation'), 'required', null, 'client');
-        
-        //Duration
+
+        // Duration.
         $mform->addElement('text', 'duration', get_string('duration', 'observation'));
         $mform->setType('duration', PARAM_INT);
         $mform->addRule('duration', get_string('err_numeric', 'form'), 'numeric', null, 'client');
         $mform->addRule('duration', get_string('required', 'observation'), 'required', null, 'client');
         $mform->addRule('duration', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
 
-        //Selecting Observer
+        // Selecting Observer.
         $context = $PAGE->context;
         $finalusers = [];
         $users = get_enrolled_users($context, 'mod/observation:performobservation');
-        foreach ($users as $user) {                                                                          
-            $finalusers[$user->id] = fullname($user);                                                               
+        foreach ($users as $user) {
+            $finalusers[$user->id] = fullname($user);
         }
-        $options = array(                                                                                                           
-            'multiple' => false,                                                  
-            'noselectionstring' => get_string('allareas', 'search'),                                                                
-        );                   
+        $options = array(
+            'multiple' => false,
+            'noselectionstring' => get_string('allareas', 'search'),
+        );
         $mform->addElement('header', 'selecting_observer', get_string('selecting_observer', 'observation'));
-        $mform->addElement('autocomplete', 'observer_id', get_string('teacher', 'observation'),$finalusers, $options);
+        $mform->addElement('autocomplete', 'observer_id', get_string('teacher', 'observation'), $finalusers, $options);
         $mform->setType('observer_id', PARAM_INT);
         $mform->addRule('observer_id', get_string('required', 'observation'), 'required', null, 'client');
         $mform->addRule('observer_id', get_string('err_numeric', 'form'), 'numeric', null, 'client');

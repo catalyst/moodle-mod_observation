@@ -113,7 +113,7 @@ class timeslot_manager {
 
         $data = (object)$data;
 
-        //TODO - add more checks
+        // TODO - add more checks.
 
         if (property_exists($data, 'duration')) {
             // Ensure duration is an int.
@@ -138,7 +138,7 @@ class timeslot_manager {
     /**
      * Gets observation point data
      * @param int $observationid ID of observation instance
-     * @param int $pointid ID of the observation point
+     * @param int $slotid ID of the observation point
      * @param string $tablename database table name
      * @return object existing point data
      */
