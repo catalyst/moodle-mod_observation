@@ -60,6 +60,9 @@ $formprefill = array(
 if ($mode === "edit") {
     $slotdata = \mod_observation\timeslot_manager::get_existing_slot_data($id, $slotid);
     $formprefill['slotid'] = $slotdata->id;
+    $formprefill['duration'] = $slotdata->duration;
+    $formprefill['start_time'] = $slotdata->start_time;
+    $formprefill['observer_id'] = $slotdata->observer_id;
 }
 
 // Load form.
