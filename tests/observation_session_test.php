@@ -52,7 +52,7 @@ class observation_session_test extends advanced_testcase {
      * Valid response to an observation point
      */
     private const VALID_RESPONSE = [
-        'grade_given' => 1,
+        'grade_given' => 3,
         'response' => 'test response',
         'ex_comment' => 'extra comment'
     ];
@@ -153,9 +153,9 @@ class observation_session_test extends advanced_testcase {
         $this->assertNotContainsEquals($this->pointid1, $incompleteids);
         $this->assertContainsEquals($this->pointid2, $incompleteids);
 
-        // Current grade should be 1.
+        // Current grade should be 3.
         $currentgrade = \mod_observation\session_manager::calculate_grade($sessionid);
-        $this->assertEquals(1, $currentgrade['total']);
+        $this->assertEquals(3, $currentgrade['total']);
 
         // Submit response to second point.
         \mod_observation\observation_manager::submit_point_response($sessionid, $this->pointid2, $response);
@@ -164,9 +164,9 @@ class observation_session_test extends advanced_testcase {
         $incomplete = \mod_observation\session_manager::get_incomplete_points($sessionid);
         $this->assertEmpty($incomplete);
 
-        // Current grade should be 2.
+        // Current grade should be 6.
         $currentgrade = \mod_observation\session_manager::calculate_grade($sessionid);
-        $this->assertEquals(2, $currentgrade['total']);
+        $this->assertEquals(6, $currentgrade['total']);
 
         // Save an extra comment.
         $extracomment = "Extra comment";
@@ -230,4 +230,38 @@ class observation_session_test extends advanced_testcase {
     }
 
 
+    /**
+     * Tests a particular edge case where the observation points are
+     * modified before a session is submitted, causing the grade given to be invalid.
+     */
+    public function test_modified_before_submit() {
+        // Start a session as normal.
+        $obid = $this->instance->id;
+        $sessionid = $this->create_session();
+
+        // Submit valid data to the two points created in setup.
+        $response = (object)self::VALID_RESPONSE;
+        \mod_observation\observation_manager::submit_point_response($sessionid, $this->pointid1, $response);
+        \mod_observation\observation_manager::submit_point_response($sessionid, $this->pointid2, $response);
+
+        $responses = \mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);
+
+        // Ensure max grades and grades given are set.
+        $this->assertEquals([5, 5], array_column($responses, 'max_grade'));
+        $this->assertEquals([3, 3], array_column($responses, 'grade_given'));
+
+        // Modify the first observation point to have a lower max_grade than the grade given previously.
+        $lowermaxresponse = $response;
+        $lowermaxresponse->max_grade = 1;
+        $lowermaxresponse->id = $this->pointid1;
+        \mod_observation\observation_manager::modify_observation_point($lowermaxresponse, false);
+
+        // Ensure the max grades are now set correctly.
+        $responses = \mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);
+        $this->assertEquals([1, 5], array_column($responses, 'max_grade'));
+
+        // Try and submit a session.
+        $this->expectException('moodle_exception');
+        \mod_observation\session_manager::finish_session($sessionid);
+    }
 }

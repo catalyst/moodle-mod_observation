@@ -77,12 +77,15 @@ class session_manager {
     public static function get_session_info(int $sessionid) {
         global $DB;
 
-        $sessiondata = $DB->get_record('observation_sessions', ['id' => $sessionid], 'obs_id, ex_comment, state', MUST_EXIST);
+        $sessiondata = $DB->get_record('observation_sessions', ['id' => $sessionid],
+            'obs_id, ex_comment, state, observer_id, observee_id', MUST_EXIST);
 
         return [
             'obid' => $sessiondata->obs_id,
             'ex_comment' => $sessiondata->ex_comment,
-            'state' => $sessiondata->state
+            'state' => $sessiondata->state,
+            'observee' => $sessiondata->observee_id,
+            'observer' => $sessiondata->observer_id
         ];
     }
 
@@ -124,13 +127,19 @@ class session_manager {
         $obid = $sessioninfo['obid'];
         $observationpoints = \mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);
 
-        $totalmaxgrade = array_reduce($observationpoints, function($carry, $item) {
-            return $carry + $item->max_grade;
-        }, 0);
+        $maxgrades = array_column($observationpoints, 'max_grade');
+        $givengrades = array_column($observationpoints, 'grade_given');
 
-        $totalgradegiven = array_reduce($observationpoints, function($carry, $item) {
-            return $carry + $item->grade_given;
-        }, 0);
+        // Ensure for each grade given that it is less than the max_grade.
+        foreach ($givengrades as $index => $grade) {
+            if ($grade > $maxgrades[$index]) {
+                throw new \moodle_exception("One or more grades was greater than the max grade.
+                    This can happen when an observation point is editied before a session has been submitted.");
+            }
+        }
+
+        $totalmaxgrade = array_sum($maxgrades);
+        $totalgradegiven = array_sum($givengrades);
 
         return [
             'total' => $totalgradegiven,
@@ -166,25 +175,78 @@ class session_manager {
 
         $incompletepoints = self::get_incomplete_points($sessionid);
 
-        if (empty($incompletepoints)) {
-            // Update status in DB.
-            $DB->update_record('observation_sessions', [
-                'id' => $sessionid,
-                'state' => 'complete',
-                'finish_time' => time(),
-            ]);
+        if (!empty($incompletepoints)) {
+            // Return error message with list of names of the incomplete points.
+            $incompletenames = array_column($incompletepoints, 'title');
+            $nameslist = json_encode($incompletenames);
 
-            return true;
+            $error = get_string('sessionincomplete', 'observation', count($incompletepoints));
+            $error = $error."\n".$nameslist;
+
+            return $error;
         }
 
-        // Return error message with list of names of the incomplete points.
-        $incompletenames = array_column($incompletepoints, 'title');
-        $nameslist = json_encode($incompletenames);
+        // Update status in DB.
+        $DB->update_record('observation_sessions', [
+            'id' => $sessionid,
+            'state' => 'complete',
+            'finish_time' => time(),
+        ]);
 
-        $error = get_string('sessionincomplete', 'observation', count($incompletepoints));
-        $error = $error."\n".$nameslist;
+        // Update grade in gradebook.
+        $grades = self::calculate_grade($sessionid);
+        $errorcode = self::update_session_grade($sessionid, $grades['total'], $grades['max']);
 
-        return $error;
+        if ($errorcode !== 0) {
+            throw new \moodle_exception("Could not update grade in gradebook.");
+        }
+
+        return true;
+    }
+
+    /**
+     * Updates the grade in the Moodle gradebook for a particular observation session.
+     * @param int $sessionid ID of observation session
+     * @param int $gradegiven grade given for session
+     * @param int $maxgrade maximum grade for an observation session
+     * @param int $mingrade minimum grade for an observation session
+     * @return int error code, 0 = ok, anything else is error. Errors are defined in the gradebook API.
+     */
+    public static function update_session_grade(int $sessionid, int $gradegiven, int $maxgrade, int $mingrade = 0) {
+        global $CFG;
+
+        // Sanity checks.
+        if ($gradegiven < $mingrade || $gradegiven > $maxgrade) {
+            throw new \coding_exception("Grade given must be between the mingrade and the maxgrade specified");
+        }
+
+        $sessioninfo = self::get_session_info($sessionid);
+        $obid = $sessioninfo['obid'];
+        list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($obid);
+
+        $params = [
+            'gradetype' => 1,
+            'grademax' => $maxgrade,
+            'grademin' => $mingrade,
+            'itemname' => get_string('gradeitemname', 'observation', $cm->name),
+            'idnumber' => "",
+        ];
+
+        $grade = [
+            'rawgrade' => $gradegiven,
+            'userid' => $sessioninfo['observee'],
+            'usermodified' => $sessioninfo['observer'],
+            'datesubmitted' => null,
+            'dategraded' => time(),
+            'feedbackformat' => FORMAT_PLAIN,
+            'feedback' => $sessioninfo['ex_comment']
+        ];
+
+        if (!function_exists('grade_update')) {
+            require_once($CFG->libdir.'/gradelib.php');
+        }
+
+        return \grade_update('mod/observation', $course->id, 'mod', 'observation', $obid, 0, $grade, $params);
     }
 
     /**
