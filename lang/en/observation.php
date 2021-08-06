@@ -19,7 +19,6 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -38,7 +37,7 @@ $string['instructionsobservee'] = 'Instructions for Observees';
 $string['observation:performobservation'] = 'Perform Observation';
 $string['observation:view'] = 'View Observation';
 $string['defaultmessagenoinstructions'] = 'No instructions provided.';
-$string['timeslots'] = 'Timeslots';
+$string['timeslot'] = 'Timeslots';
 $string['observationpoints'] = 'Observation Points';
 $string['placeholder'] = 'Placeholder';
 $string['selecting_observer'] = 'Selecting Observers';

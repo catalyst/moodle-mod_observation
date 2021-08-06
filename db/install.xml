@@ -12,7 +12,8 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the instance of the observation. Displayed at the top of each page."/>
         <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The description of the observation. This field is used by feature MOD_INTRO."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the settings for this assign module instance were last modified."/>
-        
+        <FIELD NAME="starttime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The start time for the observation activity. Displayed to students."/>
+        <FIELD NAME="endtime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The end time for the observation activity. Displayed to students."/>
         <!-- Instructions Fields -->
         <FIELD NAME="observer_ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="string encoded observer instructions"/>
         <FIELD NAME="observer_ins_f" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observer instructions, 1 = 'html'"/>

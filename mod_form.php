@@ -75,6 +75,16 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('autocomplete', 'observer', get_string('teacher', 'observation'),$finalusers, $options);
         
 
+        // Setting up boxes to set time slots.
+        $mform->addElement('header', 'timeslot', get_string('timeslot', 'observation'));
+        $name = get_string('starttime', 'observation');
+        $mform->addElement('date_time_selector', 'starttime', $name, array('optional' => false));
+        $mform->addHelpButton('starttime', 'starttime', 'observation');
+
+        $name = get_string('endtime', 'observation');
+        $mform->addElement('date_time_selector', 'endtime', $name, array('optional' => false));
+        $mform->addHelpButton('endtime', 'endtime', 'observation');
+
         // Settings.
 
         // Footer.
