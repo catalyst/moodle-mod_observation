@@ -52,11 +52,6 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('editor', 'observeeins_editor', get_string('instructionsobservee', 'observation'));
         $mform->setType('observeeins_editor', PARAM_RAW);
 
-        // Timeslots.
-        $mform->addElement('header', 'timeslots', get_string('timeslots', 'observation'));
-        $mform->addElement('static', 'description', get_string('placeholder', 'observation'),
-        get_string('placeholder', 'observation')); // TODO: replace.
-
         // Settings.
 
         // Footer.

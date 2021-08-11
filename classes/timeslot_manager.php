@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains functions to get various observation data objects
+ * This file contains functions to manage timeslots for the observation assessment activity.
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,31 +28,14 @@ namespace mod_observation;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_observation observation management class
+ * mod_observation observation timeslot management class
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class timeslot_manager {
-    /**
-     * Gets observation, course and coursemodule from observation instance ID
-     * @param int $obid Observation instance ID
-     * @param string $tablename Database table name
-     * @return list List containing the observation instance, course and coursemodule (in that order)
-     */
-    public static function get_observation_course_cm_from_obid(int $obid, string $tablename = 'observation') {
-        global $DB;
-        if (!$cm = get_coursemodule_from_instance($tablename, $obid)) {
-            throw new \moodle_exception('invalidcoursemodule');
-        }
-        list($course, $cm) = get_course_and_cm_from_cmid($cm->id, 'observation');
-        if (!$observation = $DB->get_record($tablename, ['id' => $obid])) {
-            throw new \moodle_exception('moduleinstancedoesnotexist');
-        }
-        return [$observation, $course, $cm];
-    }
 
     /**
      * Modifies or creates a new time slot in the database
@@ -68,22 +51,23 @@ class timeslot_manager {
 
         $data = (object)$data;
 
-        // TODO - add more checks.
-
         if (property_exists($data, 'duration')) {
-            // Ensure duration is an int.
             if (!is_int($data->duration)) {
                 throw new \coding_exception("Property duration must be an int.");
             }
 
-            // Ensure maxgrade (if set) is not negative.
             if ($data->duration < 1) {
                 throw new \coding_exception("Property duration cannot be below one");
             }
         }
 
+        if (property_exists($data, 'start_time')) {
+            if (!is_int($data->start_time) || $data->start_time < 0) {
+                throw new \coding_exception("Start time must be an integer in Unix Epoch Format.");
+            }
+        }
+
         if ($newinstance) {
-            // Insert.
             return $DB->insert_record($tablename, $data, $returnid);
         } else {
             return $DB->update_record($tablename, $data);
@@ -91,7 +75,7 @@ class timeslot_manager {
     }
 
     /**
-     * Gets observation point data
+     * Gets observation timeslot data
      * @param int $observationid ID of observation instance
      * @param int $slotid ID of the observation point
      * @param string $tablename database table name
@@ -104,20 +88,20 @@ class timeslot_manager {
     }
 
     /**
-     * Get all observation points in an observation instance
+     * Get all observation timeslots in an observation instance
      * @param int $observationid ID of the observation instance
      * @param string $sortby column to sort by
      * @param string $tablename database tablename
      * @return array array of database objects obtained from database
      */
-    public static function get_time_slots(int $observationid, string $sortby='list_order',
+    public static function get_time_slots(int $observationid, string $sortby='',
             string $tablename='observation_timeslots'): array {
         global $DB;
         return $DB->get_records($tablename, ['obs_id' => $observationid], $sortby);
     }
 
     /**
-     * Deletes observation point
+     * Deletes timeslot
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the observation point to delete
      * @param string $tablename database table name

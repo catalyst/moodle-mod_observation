@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/tablelib.php');
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class timeslots_table extends \table_sql implements \renderable {
@@ -51,7 +51,8 @@ class timeslots_table extends \table_sql implements \renderable {
             'id',
             'start_time',
             'duration',
-            'observer_id',
+            'observer_fullname',
+            'observer_email',
             'action',
         ]);
 
@@ -59,16 +60,18 @@ class timeslots_table extends \table_sql implements \renderable {
             get_string('id', 'observation'),
             get_string('starttime', 'observation'),
             get_string('duration', 'observation'),
-            get_string('observer_id', 'observation'),
+            get_string('observer_fullname', 'observation'),
+            get_string('observer_email', 'observation'),
             get_string('actions', 'observation'),
         ]);
 
         $this->pagesize = $perpage;
         $this->collapsible(false);
-        $this->sortable(false);
+        $this->sortable(true);
         $this->pageable(true);
         $this->is_downloadable(false);
         $this->define_baseurl($callbackurl);
+        $this->no_sorting('action');
     }
 
     /**
@@ -92,15 +95,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_start_time($row) {
-        return(date('H:i:s Y-m-d', $row->start_time));
-    }
-
-    /**
-     * Data converter for the duration column
-     * @param mixed $row current row
-     */
-    public function col_duration($row) {
-        return(sprintf('%.2f', $row->duration / 60));
+        return(date('r', $row->start_time));
     }
 
     /**

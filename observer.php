@@ -51,7 +51,7 @@ if (has_capability('mod/observation:editobservationpoints', $PAGE->context)) {
 }
 
 // If user has permissions show time slot editor page link.
-if (has_capability('mod/observation:editobservationpoints', $PAGE->context)) {
+if (has_capability('mod/observation:edittimeslots', $PAGE->context)) {
     echo $OUTPUT->box_start();
     echo $OUTPUT->single_button(
         new moodle_url('/mod/observation/timeslots.php', array('id' => $observation->id)),

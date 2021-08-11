@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class timeslots {
@@ -45,8 +45,8 @@ class timeslots {
     public static function timeslots_table(int $observationid, \moodle_url $callbackurl) {
         $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
         $sql = (object) [
-            'fields' => 'op.*, ortm.lang_string',
-            'from' => '{observation_timeslots} op LEFT JOIN {observation_res_type_map} ortm ON ortm.res_type = ortm.res_type',
+            'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
+            'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
             'where' => 'obs_id = :obsid',
             'params' => ['obsid' => $observationid]
         ];
