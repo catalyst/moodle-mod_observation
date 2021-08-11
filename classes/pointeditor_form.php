@@ -55,6 +55,7 @@ class pointeditor_form extends \moodleform {
 
         // Title.
         $mform->addElement('text', 'title', get_string('title', 'observation'));
+        $mform->setType('title', PARAM_RAW);
         $mform->addRule('title', get_string('required', 'observation'), 'required', null, 'client');
 
         // Grading instructions.

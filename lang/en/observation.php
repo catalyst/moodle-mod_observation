@@ -19,6 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,18 +38,26 @@ $string['instructionsobservee'] = 'Instructions for Observees';
 $string['observation:performobservation'] = 'Perform Observation';
 $string['observation:view'] = 'View Observation';
 $string['defaultmessagenoinstructions'] = 'No instructions provided.';
-$string['timeslot'] = 'Timeslots';
+$string['timeslots'] = 'Timeslots';
 $string['observationpoints'] = 'Observation Points';
 $string['placeholder'] = 'Placeholder';
+$string['selecting_observer'] = 'Selecting Observers';
+$string['observer'] = 'Observer';
+$string['teacher'] = 'Observer';
 $string['observationpointtype'] = 'Observation Point Type';
 $string['editobservationpoints'] = 'Edit Observation Points';
+$string['edittimeslotss'] = 'Edit Timeslots';
 $string['openeditor'] = 'Open Editor';
 $string['editingobservationpoints'] = 'Editing Observation Points';
+$string['editingtimeslots'] = 'Editing Timeslots';
 $string['settings'] = 'Settings';
 $string['actions'] = 'Actions';
 $string['creatingobservationpoint'] = 'Creating Observation Point';
+$string['creatingtimeslot'] = 'Creating Timeslot';
 $string['editingobservationpoint'] = 'Editing Observation Point';
+$string['editingtimeslot'] = 'Editing Timeslot';
 $string['currentpoints'] = 'Current Observation Points';
+$string['currenttimeslots'] = 'Current Timeslots';
 $string['createnew'] = 'Create New';
 $string['edit'] = 'Edit';
 $string['gradinginstructions'] = 'Grading Instructions';
@@ -65,3 +74,9 @@ $string['movedown'] = 'Move Down';
 $string['id'] = 'ID';
 $string['order'] = 'Order';
 $string['intgreaterthanorzero'] = 'Must be an integer that is greater than or equal to zero';
+$string['intgreaterthanone'] = 'Must be an integer that is greater than or equal to one';
+$string['duration'] = 'Duration (minutes)';
+$string['starttime'] = 'Start Time';
+$string['observer_id'] = 'Observer';
+$string['observer_fullname'] = 'Observer Name';
+$string['observer_email'] = 'Observer Email';
