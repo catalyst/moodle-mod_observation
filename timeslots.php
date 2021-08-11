@@ -29,7 +29,7 @@ $id = required_param('id', PARAM_INT); // Observation instance ID.
 $slotid = optional_param('slotid', null, PARAM_INT); // Time slot ID.
 $action = optional_param('action', null, PARAM_TEXT); // Action.
 
-list($observation, $course, $cm) = \mod_observation\timeslot_manager::get_observation_course_cm_from_obid($id);
+list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);

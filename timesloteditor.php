@@ -43,7 +43,7 @@ if ($mode === 'edit' && $slotid === null) {
     throw new moodle_exception('missingparam', 'error', null, $a = 'slotid');
 }
 
-list($observation, $course, $cm) = \mod_observation\timeslot_manager::get_observation_course_cm_from_obid($id);
+list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
