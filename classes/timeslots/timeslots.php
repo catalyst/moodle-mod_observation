@@ -129,4 +129,23 @@ class timeslots {
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
     }
+
+    /**
+     * REMOVE IF DOESN'T WORK - another function to populate the timeslot table only with logged in user timeslots
+     * Creates a table that displays all the observation time slots for a given observation for the logged in user
+     * @param int $observationid ID of the observation instance to get the observation time slots from.
+     * @param int $observerid ID of the user to filter the timeslots displayed by.
+     * @param \moodle_url $callbackurl URL for action buttons in table to callback to
+     */
+    public static function assigned_timeslots_table(int $observationid, int $observerid, \moodle_url $callbackurl) {
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
+        $sql = (object) [
+            'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
+            'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
+            'where' => 'obs_id = :obsid, observer_id =: observerid',
+            'params' => ['obsid' => $observationid, 'observerid' => $observerid]
+        ];
+        $table->sql = $sql;
+        return $table->out($table->pagesize, true);
+    }
 }
