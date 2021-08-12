@@ -68,7 +68,6 @@ class timeslots {
     }
 
     /**
-     * REMOVE IF DOESN'T WORK - another function to populate the timeslot table only with logged in user timeslots
      * Creates a table that displays all the observation time slots for a given observation for the logged in user
      * @param int $observationid ID of the observation instance to get the observation time slots from.
      * @param int $observerid ID of the user to filter the timeslots displayed by.
