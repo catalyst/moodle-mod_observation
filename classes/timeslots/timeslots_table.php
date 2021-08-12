@@ -106,6 +106,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_action($row) {
+
         // If statement to determine editting or viewing.
 
         $htmlout = "";
@@ -119,6 +120,17 @@ class timeslots_table extends \table_sql implements \renderable {
             $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'join', get_string('join', 'observation'));
         }
 
+        // If viewing what they've been assigned
+        //$htmlout = $this->action_button('timesloteditor.php?mode=edit&', $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
+        //$htmlout .= $this->action_button('timesloteditor.php?', $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
+
         return $htmlout;
     }
 }
+
+// current:
+// timesloteditor.php?id=1&action=edit&slotid=1
+// needs to be:
+// timesloteditor.php?mode=edit&slotid=1&id=1
+
+// timesloteditor.php?mode=edit&id=1&action=edit&slotid=1
