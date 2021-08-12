@@ -35,7 +35,6 @@ require_capability('mod/observation:performobservation', $PAGE->context);
 // Render page.
 $pageurl = new moodle_url('/mod/observation/observer.php', array('id' => $id));
 $PAGE->set_url($pageurl);
-//$PAGE->set_url(new moodle_url('/mod/observation/observer.php', array('id' => $id)));
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
