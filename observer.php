@@ -83,7 +83,7 @@ if (has_capability('mod/observation:performobservation', $PAGE->context)) {
 echo $OUTPUT->box_start();
 
 // Table of timeslots the user has been assigned.
-echo $OUTPUT->heading(get_string('assignedtimeslots', 'observation'), 3); 
+echo $OUTPUT->heading(get_string('assignedtimeslots', 'observation'), 3);
 echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $USER->id, $pageurl);
 
 echo $OUTPUT->box_end();
