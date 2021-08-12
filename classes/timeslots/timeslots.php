@@ -131,10 +131,10 @@ class timeslots {
     }
 
     /**
-     * Creates a table that displays all the observation time slots for a given observation for the logged in user
+     * Creates a table that displays all the observation time slots for a given observation for the logged in user.
      * @param int $observationid ID of the observation instance to get the observation time slots from.
      * @param int $observerid ID of the user to filter the timeslots displayed by.
-     * @param \moodle_url $callbackurl URL for action buttons in table to callback to
+     * @param \moodle_url $callbackurl URL for action buttons in table to callback to.
      */
     public static function assigned_timeslots_table(int $observationid, int $userid, \moodle_url $callbackurl) {
         $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
