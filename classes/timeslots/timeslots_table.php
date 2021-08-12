@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/tablelib.php');
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class timeslots_table extends \table_sql implements \renderable {
@@ -106,6 +106,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_action($row) {
+
         // If statement to determine editting or viewing.
 
         $htmlout = "";
@@ -118,6 +119,10 @@ class timeslots_table extends \table_sql implements \renderable {
         if ($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP) {
             $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'join', get_string('join', 'observation'));
         }
+
+        // If viewing what they've been assigned
+        //$htmlout = $this->action_button('timesloteditor.php?mode=edit&', $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
+        //$htmlout .= $this->action_button('timesloteditor.php?', $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
 
         return $htmlout;
     }

@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class timeslots {
@@ -62,6 +62,24 @@ class timeslots {
             'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
             'where' => 'obs_id = :obsid',
             'params' => ['obsid' => $observationid]
+        ];
+        $table->sql = $sql;
+        return $table->out($table->pagesize, true);
+    }
+
+    /**
+     * Creates a table that displays all the observation time slots for a given observation for the logged in user
+     * @param int $observationid ID of the observation instance to get the observation time slots from.
+     * @param int $observerid ID of the user to filter the timeslots displayed by.
+     * @param \moodle_url $callbackurl URL for action buttons in table to callback to
+     */
+    public static function assigned_timeslots_table(int $observationid, int $userid, \moodle_url $callbackurl) {
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
+        $sql = (object) [
+            'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
+            'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
+            'where' => 'obs_id = :obsid AND observer_id = :userid', // Add OR observee_id = :userid here when students can select timeslots.
+            'params' => ['obsid' => $observationid, 'userid' => $userid]
         ];
         $table->sql = $sql;
         return $table->out($table->pagesize, true);

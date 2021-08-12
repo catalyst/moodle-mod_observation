@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -52,6 +52,7 @@ $string['editingobservationpoints'] = 'Editing observation points';
 $string['editingtimeslots'] = 'Editing timeslots';
 $string['settings'] = 'Settings';
 $string['actions'] = 'Actions';
+$string['assignedtimeslots'] = 'Assigned timeslots';
 $string['creatingobservationpoint'] = 'Creating observation point';
 $string['creatingtimeslot'] = 'Creating timeslot';
 $string['editingobservationpoint'] = 'Editing observation point';
