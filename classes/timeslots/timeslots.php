@@ -143,7 +143,7 @@ class timeslots {
             'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
             'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
             'where' => 'obs_id = :obsid AND observer_id = :observerid',
-            'params' => ['obsid' => $observationid, 'observerid' => $userid] // issue is here-ish and/or line above
+            'params' => ['obsid' => $observationid, 'observerid' => $userid]
         ];
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
