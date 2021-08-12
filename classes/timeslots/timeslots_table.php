@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/tablelib.php');
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class timeslots_table extends \table_sql implements \renderable {
@@ -127,10 +127,3 @@ class timeslots_table extends \table_sql implements \renderable {
         return $htmlout;
     }
 }
-
-// current:
-// timesloteditor.php?id=1&action=edit&slotid=1
-// needs to be:
-// timesloteditor.php?mode=edit&slotid=1&id=1
-
-// timesloteditor.php?mode=edit&id=1&action=edit&slotid=1
