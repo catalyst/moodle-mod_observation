@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -85,9 +85,7 @@ echo $OUTPUT->box_start();
 
 // Table of timeslots the user has been assigned.
 echo $OUTPUT->heading(get_string('assignedtimeslots', 'observation'), 3); 
-// Somewhere: get all the observations (id) in this observation activity (obs_id) with this user id (observer_id)
-echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $USER->id, $pageurl); // does user->id work?
-
+echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $USER->id, $pageurl);
 
 echo $OUTPUT->box_end();
 
