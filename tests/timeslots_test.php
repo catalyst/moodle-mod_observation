@@ -59,11 +59,13 @@ class timeslots_test extends advanced_testcase {
         // coordinator (editing teacher), observer (teacher), observee (student).
         $coordinator = $this->getDataGenerator()->create_user();
         $observer = $this->getDataGenerator()->create_user();
+        $observer2 = $this->getDataGenerator()->create_user();
         $observee = $this->getDataGenerator()->create_user();
 
         // Enrol all users to course with their roles.
         $this->getDataGenerator()->enrol_user($coordinator->id, $course->id, 'editingteacher');
         $this->getDataGenerator()->enrol_user($observer->id, $course->id, 'teacher');
+        $this->getDataGenerator()->enrol_user($observer2->id, $course->id, 'teacher');
         $this->getDataGenerator()->enrol_user($observee->id, $course->id, 'student');
 
         // Add data to the context.
@@ -72,21 +74,33 @@ class timeslots_test extends advanced_testcase {
 
         $this->coordinator = $coordinator;
         $this->observer = $observer;
+        $this->observer2 = $observer2;
         $this->observee = $observee;
+
+        $this->setUser($this->coordinator);
+    }
+
+    /**
+     * Creates a valid timeslot using the data created in the setUp() function.
+     */
+    private function create_valid_timeslot() {
+        $obid = $this->instance->id;
+        $data = self::VALID_DATA;
+        $data['observer_id'] = $this->observer->id;
+        $data['obs_id'] = $obid;
+
+        return $data;
     }
 
     /**
      * Tests basic CRUD actions for timeslots using valid data.
      */
     public function test_valid_crud () {
-        $obid = $this->instance->id;
-
         // Test create.
-        $data = self::VALID_DATA;
-        $data['observer_id'] = $this->observer->id;
-        $data['obs_id'] = $obid;
+        $obid = $this->instance->id;
+        $data = $this->create_valid_timeslot();
 
-        $timeslotid = \mod_observation\timeslot_manager::modify_time_slot($data, true, true);
+        $timeslotid = \mod_observation\timeslot_manager::modify_time_slot($data, true);
 
         // Test read.
         $thistimeslot = \mod_observation\timeslot_manager::get_existing_slot_data($obid, $timeslotid);
@@ -95,85 +109,84 @@ class timeslots_test extends advanced_testcase {
         $alltimeslots = \mod_observation\timeslot_manager::get_time_slots($obid);
         $this->assertContainsEquals($timeslotid, array_column($alltimeslots, 'id'));
 
+        // Ensure calendar event created.
+        $this->assertNotNull($thistimeslot->observer_event_id);
+
+        $event = \calendar_event::load($thistimeslot->observer_event_id);
+        // Note calendar events store duration in seconds.
+        $this->assertEquals($data['duration'] * MINSECS, $event->timeduration);
+        $this->assertEquals($data['start_time'], $event->timestart);
+
         // Test edit.
         $editedslot = $data;
         $editedslot['duration'] = 50;
         $editedslot['start_time'] += 200;
         $editedslot['id'] = $timeslotid;
+        $editedslot['observer_id'] = $this->observer2->id;
 
-        \mod_observation\timeslot_manager::modify_time_slot($editedslot, false, false);
+        \mod_observation\timeslot_manager::modify_time_slot($editedslot, false);
         $thistimeslot = \mod_observation\timeslot_manager::get_existing_slot_data($obid, $timeslotid);
         $this->assertEquals($editedslot['duration'], $thistimeslot->duration);
         $this->assertEquals($editedslot['start_time'], $thistimeslot->start_time);
+
+        // Ensure calendar event edited.
+        $event = \calendar_event::load($thistimeslot->observer_event_id);
+        // Note calendar events store duration in seconds.
+        $this->assertEquals($thistimeslot->duration * MINSECS, $event->timeduration);
+        $this->assertEquals($thistimeslot->start_time, $event->timestart);
+        $this->assertEquals($thistimeslot->observer_id, $event->userid);
 
         // Test delete.
         \mod_observation\timeslot_manager::delete_time_slot($obid, $timeslotid);
         $alltimeslots = \mod_observation\timeslot_manager::get_time_slots($obid);
         $this->assertEmpty($alltimeslots);
 
+        // Ensure calendar event deleted.
         $this->expectException('dml_exception');
-        \mod_observation\timeslot_manager::get_existing_slot_data($obid, $timeslotid);
+        $event = \calendar_event::load($thistimeslot->observer_event_id);
     }
 
     /**
      * Tests a negative duration.
      */
     public function test_negative_duration() {
-        $obid = $this->instance->id;
-
-        $data = self::VALID_DATA;
-        $data['observer_id'] = $this->observer->id;
-        $data['obs_id'] = $obid;
+        $data = $this->create_valid_timeslot();
         $data['duration'] = -1;
 
         $this->expectException('coding_exception');
-        \mod_observation\timeslot_manager::modify_time_slot($data, true, true);
+        \mod_observation\timeslot_manager::modify_time_slot($data, true);
     }
 
     /**
      * Tests a non-int duration.
      */
     public function test_float_duration() {
-        $obid = $this->instance->id;
-
-        $data = self::VALID_DATA;
-        $data['observer_id'] = $this->observer->id;
-        $data['obs_id'] = $obid;
+        $data = $this->create_valid_timeslot();
         $data['duration'] = 20.5;
 
         $this->expectException('coding_exception');
-        \mod_observation\timeslot_manager::modify_time_slot($data, true, true);
+        \mod_observation\timeslot_manager::modify_time_slot($data, true);
     }
 
     /**
      * Tests a string start time
      */
     public function test_string_start_time() {
-        $obid = $this->instance->id;
-
-        $data = self::VALID_DATA;
-        $data['observer_id'] = $this->observer->id;
-        $data['obs_id'] = $obid;
-
+        $data = $this->create_valid_timeslot();
         $data['start_time'] = 'Wed 5th July 10am';
 
         $this->expectException('coding_exception');
-        \mod_observation\timeslot_manager::modify_time_slot($data, true, true);
+        \mod_observation\timeslot_manager::modify_time_slot($data, true);
     }
 
     /**
      * Tests a negative start time
      */
     public function test_negative_start_time() {
-        $obid = $this->instance->id;
-
-        $data = self::VALID_DATA;
-        $data['observer_id'] = $this->observer->id;
-        $data['obs_id'] = $obid;
-
+        $data = $this->create_valid_timeslot();
         $data['start_time'] = -1000;
 
         $this->expectException('coding_exception');
-        \mod_observation\timeslot_manager::modify_time_slot($data, true, true);
+        \mod_observation\timeslot_manager::modify_time_slot($data, true);
     }
 }
