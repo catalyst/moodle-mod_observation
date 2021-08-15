@@ -95,7 +95,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_start_time($row) {
-        return(date('r', $row->start_time));
+        return(userdate($row->start_time));
     }
 
     /**

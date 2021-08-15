@@ -55,12 +55,12 @@ class pointeditor_form extends \moodleform {
 
         // Title.
         $mform->addElement('text', 'title', get_string('title', 'observation'));
-        $mform->setType('title', PARAM_RAW);
+        $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', get_string('required', 'observation'), 'required', null, 'client');
 
         // Grading instructions.
         $mform->addElement('editor', 'ins', get_string('gradinginstructions', 'observation'));
-        $mform->setType('ins', PARAM_RAW);
+        $mform->setType('ins', PARAM_TEXT);
         $mform->addRule('ins', get_string('required', 'observation'), 'required', null, 'client');
 
         // Max / default grade selection.
@@ -79,11 +79,6 @@ class pointeditor_form extends \moodleform {
 
         $mform->addElement('hidden', 'pointid', $prefill['pointid']);
         $mform->setType('pointid', PARAM_INT);
-
-        // Enforce validations.
-        if ($mform->validate()) {
-            $mform->freeze();
-        }
 
         // Set defaults.
         $this->set_data($prefill);

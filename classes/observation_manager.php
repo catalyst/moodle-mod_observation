@@ -36,6 +36,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observation_manager {
+
+    /**
+     * @var int Observation point text input type.
+     */
+    const INPUT_TEXT = 0;
+
     /**
      * Gets observation, course and coursemodule from course module ID
      * @param int $cmid Course module ID
@@ -295,5 +301,98 @@ class observation_manager {
         });
 
         $transaction->allow_commit();
+    }
+
+    /**
+     * Returns a list of observation points with responses for a particular session
+     * @param int $observationid ID of the observation instance
+     * @param int $sessionid ID of the observation sesssion
+     * @return array array of observation points with responses for the given session
+     */
+    public static function get_points_and_responses(int $observationid, int $sessionid) {
+        global $DB;
+
+        // Selects all points for this observation,
+        // and attaches responses for the current session (if one exists).
+
+        $sql = 'SELECT pts.id as point_id, obs_id, title, list_order, ins, ins_f, max_grade, res_type,
+                       sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response,
+                       ex_comment
+                  FROM {observation_points} pts
+             LEFT JOIN {observation_point_responses} sess_resp
+                    ON pts.id = sess_resp.obs_pt_id AND sess_resp.obs_ses_id = :sessionid
+                 WHERE pts.obs_id = :observationid;';
+
+        return $DB->get_records_sql($sql, ['observationid' => $observationid, 'sessionid' => $sessionid]);
+    }
+
+    /**
+     * Submits a response to a particular observation point for a given sesssion.
+     * @param int $sessionid ID of the observation session
+     * @param int $pointid ID of the observation point this response is for
+     * @param mixed $data data object returned from the pointmarking_form
+     */
+    public static function submit_point_response(int $sessionid, int $pointid, $data) {
+        global $DB;
+
+        if ($data->grade_given < 0 || !is_int($data->grade_given)) {
+            throw new \coding_exception("Grade given must be an integer that is zero or more");
+        }
+
+        if (!isset($data->response)) {
+            throw new \coding_exception("No response was found in the data.");
+        }
+
+        $sessioninfo = \mod_observation\session_manager::get_session_info($sessionid);
+        $pointdata = self::get_existing_point_data($sessioninfo['obid'], $pointid);
+        if ($data->grade_given > $pointdata->max_grade) {
+            throw new \coding_exception("Grade given must be less than the max grade.");
+        }
+
+        // See if a response already exists for this session and pointid.
+        $existingresponse = $DB->get_record('observation_point_responses', ['obs_pt_id' => $pointid, 'obs_ses_id' => $sessionid]);
+
+        // Clean data.
+        $dbdata = [
+            'obs_pt_id' => $pointid,
+            'obs_ses_id' => $sessionid,
+            'grade_given' => $data->grade_given,
+            'response' => $data->response,
+            'ex_comment' => $data->ex_comment,
+            'timemodified' => time()
+        ];
+
+        if ($existingresponse === false) {
+            // Insert new.
+            $dbdata['timecreated'] = time();
+            $DB->insert_record('observation_point_responses', $dbdata);
+        } else {
+            // Update existing.
+            $dbdata['id'] = $existingresponse->id;
+            $DB->update_record('observation_point_responses', $dbdata);
+        }
+    }
+
+    /**
+     * Generates a HTML table that summarises the observation points and their responses
+     * @param int $observationid ID of the observation instance
+     * @param int $sessionid ID of the observation session
+     * @return string HTML string
+     */
+    public static function format_points_and_responses($observationid, $sessionid) {
+        $pointsandresponses = self::get_points_and_responses($observationid, $sessionid);
+
+        $table = new \html_table();
+        $table->head = ['Title', 'Response', 'Grade Given'];
+
+        $table->data = array_map(function($item) {
+            return [
+                $item->title,
+                $item->response,
+                $item->grade_given,
+            ];
+        }, $pointsandresponses);
+
+        return \html_writer::table($table);
     }
 }

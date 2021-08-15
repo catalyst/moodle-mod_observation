@@ -87,11 +87,6 @@ class timeslot_form extends \moodleform {
         $mform->addElement('hidden', 'slotid', $prefill['slotid']);
         $mform->setType('slotid', PARAM_INT);
 
-        // Enforce validations.
-        if ($mform->validate()) {
-            $mform->freeze();
-        }
-
         // Set defaults.
         $this->set_data($prefill);
 
