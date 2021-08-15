@@ -89,6 +89,8 @@
           <FIELD NAME="grade_given" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Grade assigned by the observer for this observation point." />
           <FIELD NAME="response" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="String encoded response, originally formatted as defined by the FK observation_point_id.response_type." />
           <FIELD NAME="ex_comment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="String encoded optional extra comment given if needed." />
+          <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" COMMENT="Unix epoch time when item was created." />
+          <FIELD NAME="timemodified" TYPE="int" LENGTH="20" NOTNULL="true" COMMENT="Unix epoch time when item was last edited." />
         </FIELDS>
         <KEYS>
           <KEY NAME="primary" TYPE="primary" FIELDS="id" />

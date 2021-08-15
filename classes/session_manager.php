@@ -27,6 +27,8 @@ namespace mod_observation;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/gradelib.php');
+
 /**
  * mod_observation observation session management class
  *
@@ -38,13 +40,22 @@ defined('MOODLE_INTERNAL') || die();
 class session_manager {
 
     /**
+     * @var int Session has been completed at least once.
+     */
+    const SESSION_COMPLETE = 'complete';
+
+    /**
+     * @var int Session has been created, but not yet submitted.
+     */
+    const SESSION_INPROGRESS = 'inprogress';
+
+    /**
      * Returns all the sessions
      * @return array of integer ids of observation sessions
      */
     private static function get_sessions() {
         global $DB;
-        $sessions = $DB->get_records('observation_sessions');
-        return array_column($sessions, 'id');
+        return $DB->get_fieldset_select('observation_sessions', 'id', '');
     }
 
     /**
@@ -62,7 +73,7 @@ class session_manager {
             'obs_id' => $obsid,
             'observee_id' => $observeeid,
             'observer_id' => $observerid,
-            'state' => 'inprogress',
+            'state' => self::SESSION_INPROGRESS,
             'start_time' => time()
         ];
 
@@ -155,7 +166,6 @@ class session_manager {
     public static function save_extra_comment(int $sessionid, string $extracomment) {
         global $DB;
         $DB->update_record('observation_sessions', ['id' => $sessionid, 'ex_comment' => $extracomment]);
-        return;
     }
 
     /**
@@ -189,7 +199,7 @@ class session_manager {
         // Update status in DB.
         $DB->update_record('observation_sessions', [
             'id' => $sessionid,
-            'state' => 'complete',
+            'state' => self::SESSION_COMPLETE,
             'finish_time' => time(),
         ]);
 
@@ -241,10 +251,6 @@ class session_manager {
             'feedbackformat' => FORMAT_PLAIN,
             'feedback' => $sessioninfo['ex_comment']
         ];
-
-        if (!function_exists('grade_update')) {
-            require_once($CFG->libdir.'/gradelib.php');
-        }
 
         return \grade_update('mod/observation', $course->id, 'mod', 'observation', $obid, 0, $grade, $params);
     }

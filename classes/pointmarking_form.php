@@ -26,7 +26,7 @@
 namespace mod_observation;
 
 defined('MOODLE_INTERNAL') || die;
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Creates a moodle_form to mark an observation point.
@@ -37,6 +37,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pointmarking_form extends \moodleform {
+
     /**
      * Defines the point marking form
      */
@@ -59,10 +60,10 @@ class pointmarking_form extends \moodleform {
 
         switch($prefill['res_type']) {
             // Text input type.
-            case 0:
+            case \mod_observation\observation_manager::INPUT_TEXT:
                 $mform->addElement('textarea', 'response', get_string('textinputtype', 'observation'),
                     ['rows' => 3, 'cols' => 100]);
-                $mform->setType('response', PARAM_RAW);
+                $mform->setType('response', PARAM_TEXT);
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
         }
 
@@ -76,7 +77,7 @@ class pointmarking_form extends \moodleform {
 
         // Extra comment block.
         $mform->addElement('textarea', 'ex_comment', get_string('extracomment', 'observation'), ['rows' => 3, 'cols' => 100]);
-        $mform->setType('ex_comment', PARAM_RAW);
+        $mform->setType('ex_comment', PARAM_TEXT);
 
         // Action buttons.
         $buttonarray = [];
@@ -110,11 +111,6 @@ class pointmarking_form extends \moodleform {
 
         $mform->addElement('hidden', 'max_grade');
         $mform->setType('max_grade', PARAM_INT);
-
-        // Enforce validations.
-        if ($mform->validate()) {
-            $mform->freeze();
-        }
 
         // Set defaults.
         $this->set_data($prefill);

@@ -49,10 +49,16 @@ class viewsessions {
         $sql = (object) [
             'fields' => '*',
             'from' => '{observation_sessions} as os
-                LEFT JOIN (SELECT id as observer_id, username as observer_username from {user}) as observers
-                ON os.observer_id = observers.observer_id
-                LEFT JOIN (SELECT id as observee_id, username as observee_username from {user}) as observees
-                ON os.observee_id = observees.observee_id',
+             LEFT JOIN (
+                    SELECT id as observer_id, username as observer_username
+                    FROM {user}
+                 ) as observers
+             ON os.observer_id = observers.observer_id
+             LEFT JOIN (
+                    SELECT id as observee_id, username as observee_username
+                    FROM {user}
+                  ) as observees
+            ON os.observee_id = observees.observee_id',
             'where' => 'obs_id = :obsid',
             'params' => ['obsid' => $observationid]
         ];

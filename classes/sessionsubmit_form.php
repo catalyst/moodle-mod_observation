@@ -46,11 +46,11 @@ class sessionsubmit_form extends \moodleform {
         $prefill = $this->_customdata;
 
         $mform->addElement('text', 'gradecalculated', get_string('overallgrade', 'observation'));
-        $mform->setType('gradecalculated', PARAM_RAW);
+        $mform->setType('gradecalculated', PARAM_TEXT);
         $mform->freeze('gradecalculated');
 
-        $mform->addElement('textarea', 'extracomment', get_string('extracomment', 'observation'), ['rows' => 3, 'cols' => 100]);
-        $mform->setType('extracomment', PARAM_RAW);
+        $mform->addElement('textarea', 'extracomment', get_string('gradebookcomment', 'observation'), ['rows' => 3, 'cols' => 100]);
+        $mform->setType('extracomment', PARAM_TEXT);
 
         // Hidden form elements.
         $mform->addElement('hidden', 'sessionid', $prefill['session_id']);

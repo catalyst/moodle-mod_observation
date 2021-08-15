@@ -103,6 +103,7 @@ function observation_delete_instance($id) {
 /**
  * Defines what features this activity supports.
  * @param mixed $feature given feature enum
+ * @return mixed True is supports feature, else null.
  */
 function observation_supports($feature) {
     switch($feature) {

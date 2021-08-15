@@ -108,7 +108,7 @@ class viewsessions_table extends \table_sql implements \renderable {
      */
     private function format_as_date($epochs) {
         if (!is_null($epochs)) {
-            return date('r', $epochs);
+            return userdate($epochs);
         } else {
             return null;
         }
@@ -136,24 +136,24 @@ class viewsessions_table extends \table_sql implements \renderable {
         // Add action buttons.
         $htmlout = '';
 
-        if ($row->state === 'complete') {
+        if ($row->state === \mod_observation\session_manager::SESSION_COMPLETE) {
             // View summary button.
             $htmlout .= $this->action_button(
-                new \moodle_url('sessionsummary.php', ['sessionid' => $row->id, 'mode' => 'viewing']),
+                new \moodle_url('/mod/observation/sessionsummary.php', ['sessionid' => $row->id, 'mode' => 'viewing']),
                 get_string('viewsummary', 'observation'),
                 'btn-info');
 
             // Re-open button.
             $htmlout .= $this->action_button(
-                new \moodle_url('session.php', ['sessionid' => $row->id]),
+                new \moodle_url('/mod/observation/session.php', ['sessionid' => $row->id]),
                 get_string('reopen', 'observation'),
                 'btn-secondary');
         }
 
-        if ($row->state === 'inprogress') {
+        if ($row->state === \mod_observation\session_manager::SESSION_INPROGRESS) {
             // Resume Button.
             $htmlout .= $this->action_button(
-                new \moodle_url('session.php', ['sessionid' => $row->id]),
+                new \moodle_url('/mod/observation/session.php', ['sessionid' => $row->id]),
                 get_string('resume', 'observation'),
                 'btn-primary');
         }

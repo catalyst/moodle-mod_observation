@@ -25,8 +25,6 @@
 
 namespace mod_observation;
 
-use html_writer;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -38,6 +36,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observation_manager {
+
+    /**
+     * @var int Observation point text input type.
+     */
+    const INPUT_TEXT = 0;
+
     /**
      * Gets observation, course and coursemodule from course module ID
      * @param int $cmid Course module ID
@@ -312,15 +316,14 @@ class observation_manager {
         // and attaches responses for the current session (if one exists).
 
         $sql = 'SELECT pts.id as point_id, obs_id, title, list_order, ins, ins_f, max_grade, res_type,
-        sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response, ex_comment
-        FROM {observation_points} pts
-        LEFT JOIN
-        (SELECT * FROM {observation_point_responses} resp WHERE obs_ses_id = :sessionid) as sess_resp
-        ON pts.id = sess_resp.obs_pt_id WHERE pts.obs_id = :observationid;';
+                       sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response,
+                       ex_comment
+                  FROM {observation_points} pts
+             LEFT JOIN {observation_point_responses} sess_resp
+                    ON pts.id = sess_resp.obs_pt_id AND sess_resp.obs_ses_id = :sessionid
+                 WHERE pts.obs_id = :observationid;';
 
-        $pointsandresponses = $DB->get_records_sql($sql, ['observationid' => $observationid, 'sessionid' => $sessionid]);
-
-        return $pointsandresponses;
+        return $DB->get_records_sql($sql, ['observationid' => $observationid, 'sessionid' => $sessionid]);
     }
 
     /**
@@ -356,10 +359,12 @@ class observation_manager {
             'grade_given' => $data->grade_given,
             'response' => $data->response,
             'ex_comment' => $data->ex_comment,
+            'timemodified' => time()
         ];
 
         if ($existingresponse === false) {
             // Insert new.
+            $dbdata['timecreated'] = time();
             $DB->insert_record('observation_point_responses', $dbdata);
         } else {
             // Update existing.
@@ -388,6 +393,6 @@ class observation_manager {
             ];
         }, $pointsandresponses);
 
-        return html_writer::table($table);
+        return \html_writer::table($table);
     }
 }
