@@ -105,21 +105,21 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     // Add action buttons.
-    
+
     public function col_action($row) {
-        // if statement to determine editting or viewing.\
+        // If statement to determine editting or viewing.
 
         $htmlout = "";
 
-        if($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING) {
+        if ($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING) {
             $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
             $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
         }
 
-        if($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP) {
+        if ($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP) {
             $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'join', get_string('join', 'observation'));
         }
-        
+
         return $htmlout;
     }
 }

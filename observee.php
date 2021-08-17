@@ -45,7 +45,8 @@ echo \mod_observation\instructions::observation_instructions(get_string('instruc
 
 echo $OUTPUT->container_start();
 echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
-echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl, 0);
+echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
+\mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();

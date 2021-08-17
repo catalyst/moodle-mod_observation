@@ -84,7 +84,8 @@ echo $OUTPUT->box_end();
 
 // Time Slot Viewer (Table).
 echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
-echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl, \mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING);
+echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
+\mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING);
 
 // Moodle footer.
 echo $OUTPUT->footer();
