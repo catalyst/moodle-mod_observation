@@ -37,13 +37,17 @@ defined('MOODLE_INTERNAL') || die;
  */
 class timeslots {
 
+    const DISPLAY_MODE_EDITING = 0;
+    const DISPLAY_MODE_SIGNUP = 1;
+
     /**
      * Creates a table that displays all the observation time slots for a given observation
      * @param int $observationid ID of the observation instance to get the observation time slots from.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to
+     * @param int $displaymode display mode for table
      */
-    public static function timeslots_table(int $observationid, \moodle_url $callbackurl, int $userident) {
-        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
+    public static function timeslots_table(int $observationid, \moodle_url $callbackurl, int $displaymode) {
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
         $sql = (object) [
             'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
             'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',

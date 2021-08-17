@@ -44,7 +44,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param \moodle_url $callbackurl URL used for callback for action buttons in the table
      * @param int $perpage number of entries per page for the table
      */
-    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $perpage = 50) {
+    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $perpage = 50) {
         parent::__construct($uniqueid);
 
         $this->define_columns([
@@ -72,6 +72,8 @@ class timeslots_table extends \table_sql implements \renderable {
         $this->is_downloadable(false);
         $this->define_baseurl($callbackurl);
         $this->no_sorting('action');
+
+        $this->displaymode = $displaymode;
     }
 
     /**
@@ -105,14 +107,19 @@ class timeslots_table extends \table_sql implements \renderable {
     // Add action buttons.
     
     public function col_action($row) {
-        // if statement to determine editting or viewing.
-        if ($userident == 0){
-            $htmlout = $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
+        // if statement to determine editting or viewing.\
+
+        $htmlout = "";
+
+        if($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING) {
+            $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
             $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
         }
-        else if ($userident == 1){
-            $htmlout = $this->action_button($this->baseurl, $row->obs_id, $row->id, 'join', get_string('join', 'observation'));
+
+        if($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP) {
+            $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'join', get_string('join', 'observation'));
         }
+        
         return $htmlout;
     }
 }
