@@ -102,10 +102,17 @@ class timeslots_table extends \table_sql implements \renderable {
      * Data converter for the action column
      * @param mixed $row current row
      */
+    // Add action buttons.
+    
     public function col_action($row) {
-        // Add action buttons.
-        $htmlout = $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
-        $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
+        // if statement to determine editting or viewing.
+        if ($userident == 0){
+            $htmlout = $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
+            $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
+        }
+        else if ($userident == 1){
+            $htmlout = $this->action_button($this->baseurl, $row->obs_id, $row->id, 'join', get_string('join', 'observation'));
+        }
         return $htmlout;
     }
 }

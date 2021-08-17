@@ -80,3 +80,4 @@ $string['starttime'] = 'Start Time';
 $string['observer_id'] = 'Observer';
 $string['observer_fullname'] = 'Observer Name';
 $string['observer_email'] = 'Observer Email';
+$string['join'] = 'Join';

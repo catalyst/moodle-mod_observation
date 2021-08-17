@@ -42,7 +42,7 @@ class timeslots {
      * @param int $observationid ID of the observation instance to get the observation time slots from.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to
      */
-    public static function timeslots_table(int $observationid, \moodle_url $callbackurl) {
+    public static function timeslots_table(int $observationid, \moodle_url $callbackurl, int $userident) {
         $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
         $sql = (object) [
             'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",

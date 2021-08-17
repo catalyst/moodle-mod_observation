@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Jack Kepper <Jack@Kepper.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,8 @@ require_login($course, true, $cm);
 require_capability('mod/observation:view', $PAGE->context);
 
 // Render page.
-$PAGE->set_url(new moodle_url('/mod/observation/observee.php', array('id' => $id)));
+$pageurl = new moodle_url('/mod/observation/observee.php', array('id' => $id));
+$PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
@@ -43,7 +44,8 @@ echo \mod_observation\instructions::observation_instructions(get_string('instruc
     $observation->observee_ins, $observation->observee_ins_f);
 
 echo $OUTPUT->container_start();
-echo "Timeslot selection placeholder";
+echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
+echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl, 0);
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
