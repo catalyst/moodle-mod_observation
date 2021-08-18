@@ -41,6 +41,7 @@ class observation_manager {
      * @var int Observation point text input type.
      */
     const INPUT_TEXT = 0;
+    const PASSFAIL = 1;
 
     /**
      * Gets observation, course and coursemodule from course module ID

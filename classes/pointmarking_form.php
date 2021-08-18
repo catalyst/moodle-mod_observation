@@ -65,6 +65,11 @@ class pointmarking_form extends \moodleform {
                     ['rows' => 3, 'cols' => 100]);
                 $mform->setType('response', PARAM_TEXT);
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
+            // Pass/Fail type.
+            case \mod_observation\observation_manager::PASSFAIL:
+                // If an observation is of the Pass/Fail type, should you just select if they passed or failed?
+                // Radio Button input: Pass, Fail
+                
         }
 
         $mform->addElement('static', 'max_grade_display', get_string('maxgrade', 'observation'), $prefill['max_grade']);
