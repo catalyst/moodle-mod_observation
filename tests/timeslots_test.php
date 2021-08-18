@@ -189,4 +189,79 @@ class timeslots_test extends advanced_testcase {
         $this->expectException('coding_exception');
         \mod_observation\timeslot_manager::modify_time_slot($data, true);
     }
+
+    /**
+     * Creates data for valid interval timeslot
+     */
+    private function create_valid_interval_timeslot() {
+        $data = new stdClass();
+
+        $data->interval_amount = 30;
+        // In form the multiplier is a string, so simulate that here.
+        $data->interval_multiplier = (string) MINSECS; 
+        $data->start_time = time();
+        $data->interval_end = $data->start_time + HOURSECS * 1;
+        $data->id = $this->instance->id;
+        $data->duration = 10;
+        $data->observer_id = $this->observer->id;
+
+        return $data;
+    }
+
+    /**
+     * Tests valid creation of interval timeslot
+     */
+    public function test_interval() {
+        $data = $this->create_valid_interval_timeslot();
+
+        \mod_observation\timeslot_manager::create_timeslots_by_interval($data);
+
+        $alltimeslots = \mod_observation\timeslot_manager::get_time_slots($this->instance->id);
+
+        $this->assertEquals(2, count($alltimeslots));
+    }
+
+    /**
+     * Tests invalid interval amount
+     */
+    public function test_interval_invalid_amount() {
+        $data = $this->create_valid_interval_timeslot();
+        $data->interval_amount = -10;
+
+        $this->expectException('coding_exception');
+        \mod_observation\timeslot_manager::create_timeslots_by_interval($data);
+    }
+
+    /**
+     * Tests invalid interval multiplier
+     */
+    public function test_interval_invalid_multiplier() {
+        $data = $this->create_valid_interval_timeslot();
+        $data->interval_multiplier = "-2.5";
+
+        $this->expectException('coding_exception');
+        \mod_observation\timeslot_manager::create_timeslots_by_interval($data);
+    }
+
+    /**
+     * Tests interval end time before start time 
+     */
+    public function test_interval_end_before_start() {
+        $data = $this->create_valid_interval_timeslot();
+        $data->interval_end = $data->start_time - 20;
+
+        $this->expectException('coding_exception');
+        \mod_observation\timeslot_manager::create_timeslots_by_interval($data);
+    }
+
+    /**
+     * Tests interval invalid end time
+     */
+    public function test_interval_invalid_end() {
+        $data = $this->create_valid_interval_timeslot();
+        $data->interval_end = 0;
+
+        $this->expectException('coding_exception');
+        \mod_observation\timeslot_manager::create_timeslots_by_interval($data);
+    }
 }

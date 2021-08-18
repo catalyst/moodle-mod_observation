@@ -204,6 +204,56 @@ class timeslot_manager {
     }
 
     /**
+     * Creates timeslots by interval.
+     * @param object $formdata data from timeslot form
+     */
+    public static function create_timeslots_by_interval($formdata) {
+        global $DB;
+
+        $intamount = $formdata->interval_amount;
+        $intend = $formdata->interval_end;
+
+        // Multiplier on form is set via a select which passes value as string, so cast to int.
+        $intmultiplier = (int) $formdata->interval_multiplier;
+
+        // Parameter checks (these are also checked in the form itself client-side).
+        if (!is_int($intamount) || $intamount < 1) {
+            throw new \coding_exception("Interval amount must be an integer that is greater than or equal to 1");
+        }
+
+        if (!is_int($intmultiplier) || $intmultiplier < 1) {
+            throw new \coding_exception("Interval multiplier must be an integer that is greater than or equal to 1");
+        }
+
+        if (!is_int($intend) || $intend < 0) {
+            throw new \coding_exception("Interval end must be an integer that is greater than zero (Unix epoch format).");
+        }
+
+        if ($intend < $formdata->start_time) {
+            throw new \coding_exception("Interval end cannot be before the start time.");
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $dbdata = array(
+            "obs_id" => $formdata->id,
+            "start_time" => $formdata->start_time,
+            "duration" => $formdata->duration,
+            "observer_id" => $formdata->observer_id
+        );
+
+        // Keep creating timeslots until the start time is after the interval end.
+        while ($dbdata['start_time'] < $formdata->interval_end) {
+            self::modify_time_slot($dbdata, true);
+
+            // Shift the start time forward by the interval amount
+            $dbdata['start_time'] += $formdata->interval_amount * $formdata->interval_multiplier;
+        }
+
+        $transaction->allow_commit();
+    }
+
+    /**
      * Signs users up to timeslots after check if the class is taken, and the user isnt already
      * signed up for another class.
      * @param int $observationid is the obseravtion slot ID
