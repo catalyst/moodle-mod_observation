@@ -67,9 +67,15 @@ class pointmarking_form extends \moodleform {
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
             // Pass/Fail type.
             case \mod_observation\observation_manager::PASSFAIL:
-                // If an observation is of the Pass/Fail type, should you just select if they passed or failed?
-                // Radio Button input: Pass, Fail
-                
+                // Currently auto select fail. 
+                // Need to set the radio buttons to a type - probably int and 1 for pass and 0 for fail... but how?
+                $radioarray = array();
+                $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('pass', 'observation'), 0);
+                $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('fail', 'observation'), 1);
+                $mform->addGroup($radioarray, 'radioar', get_string('passfailtype', 'observation'), array(' '), false);
+                //$mform->setType('response', PARAM_INT); // ???
+                //$mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
+                $mform->setDefault('type', 0);
         }
 
         $mform->addElement('static', 'max_grade_display', get_string('maxgrade', 'observation'), $prefill['max_grade']);
