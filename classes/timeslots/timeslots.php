@@ -142,7 +142,7 @@ class timeslots {
         $sql = (object) [
             'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
             'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
-            'where' => 'obs_id = :obsid AND observer_id = :userid', // Add OR observee_id = :userid here when students can select timeslots.
+            'where' => 'obs_id = :obsid AND observer_id = :userid', // Add OR observee_id = :userid here when students can select.
             'params' => ['obsid' => $observationid, 'userid' => $userid]
         ];
         $table->sql = $sql;
