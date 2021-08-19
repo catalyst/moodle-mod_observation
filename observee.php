@@ -26,38 +26,10 @@
 require_once(__DIR__.'/../../config.php');
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
-$slotid = optional_param('slotid', null, PARAM_INT); // Used when joining timeslot.
 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
 require_login($course, true, $cm);
-require_capability('mod/observation:view', $PAGE->context);
-
-if ($action !== null) {
-
-    switch ($action) {
-        case 'join':
-            // Assign user to timeslot.
-            $dbdata = array(
-                "observee_id" => $USER->id,
-            );
-            // Editing existing.
-            $dbdata['id'] = $slotid;
-            \mod_observation\timeslot_manager::modify_time_slot($dbdata, false);
-            break;
-
-        default:
-            // Unknown action.
-            throw new moodle_exception(
-                'invalidqueryparam',
-                'error',
-                null,
-                ['expected' => "'join'", 'actual' => $action]);
-    }
-
-    // Redirect back to this page but without params after running action to avoid weird errors if user refreshes page.
-    redirect($pageurl);
-}
 
 // Render page.
 $pageurl = new moodle_url('/mod/observation/observee.php', array('id' => $id));
@@ -67,13 +39,14 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($observation->name, 2);
 
+echo $OUTPUT->box_start();
+echo $OUTPUT->single_button(
+    new moodle_url('/mod/observation/timeslotjoining.php', array('id' => $observation->id)),
+    get_string('selectingslot', 'observation')
+);
+echo $OUTPUT->box_end();
+
 echo \mod_observation\instructions::observation_instructions(get_string('instructions', 'observation'),
     $observation->observee_ins, $observation->observee_ins_f);
-
-echo $OUTPUT->container_start();
-echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
-echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
-\mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
-echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
