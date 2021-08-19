@@ -65,6 +65,7 @@ class pointmarking_form extends \moodleform {
                     ['rows' => 3, 'cols' => 100]);
                 $mform->setType('response', PARAM_TEXT);
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
+                break;
             // Pass/Fail type.
             case \mod_observation\observation_manager::PASSFAIL:
                 $radioarray = array();
@@ -73,7 +74,7 @@ class pointmarking_form extends \moodleform {
                 $mform->addGroup($radioarray, 'radioar', get_string('passfailtype', 'observation'), array(' '), false);
                 $mform->setType('response', PARAM_TEXT); // Response will be Pass or Fail.
                 //$mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client'); // Prints error to page lol.
-                //$mform->setDefault('type', 0);
+                break;
         }
 
         $mform->addElement('static', 'max_grade_display', get_string('maxgrade', 'observation'), $prefill['max_grade']);
