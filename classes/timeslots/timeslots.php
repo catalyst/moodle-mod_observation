@@ -78,6 +78,10 @@ class timeslots {
         'where' => 'obs_id = :obsid'
     ];
 
+     * helps with defining the actions that the list displays
+     * @param const edit and delte parameter for action button when viewed from observer.php
+     */
+    const DISPLAY_MODE_VIEW_ASSIGNED = 2;
 
     /**
      * Creates a table that displays all the observation time slots for a given observation
