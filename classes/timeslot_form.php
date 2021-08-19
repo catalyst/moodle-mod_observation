@@ -37,10 +37,10 @@ require_once($CFG->libdir.'/formslib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class timeslot_form extends \moodleform {
+
     /**
      * Defines the time slot form
      */
-
     public function definition() {
         global $PAGE;
         $mform = $this->_form;
@@ -62,9 +62,9 @@ class timeslot_form extends \moodleform {
         $mform->addRule('duration', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
 
         // Multiple timeslots (only shown when creating new timeslots).
-        if($prefill['mode'] === 'new') {
+        if ($prefill['mode'] === 'new') {
             $mform->addElement('header', 'multipletimeslots', get_string('multipletimeslots', 'observation'));
-        
+
             $mform->addElement('checkbox', 'enable_interval', '', get_string('useinterval', 'observation'));
 
             // Interval selector group.
@@ -73,7 +73,7 @@ class timeslot_form extends \moodleform {
                 HOURSECS => get_string('hours'),
                 DAYSECS => get_string('days'),
             ];
-            
+
             $intervalselector = [
                 $mform->createElement('text', 'interval_amount'),
                 $mform->createElement('select', 'interval_multiplier', '', $options)
@@ -88,12 +88,9 @@ class timeslot_form extends \moodleform {
             // Interval preview.
             $mform->addElement('static', 'preview_interval', get_string('previewinterval', 'observation'));
             $mform->addElement('submit', 'preview_submit', get_string('previewinterval', 'observation'));
-            $mform->registerNoSubmitButton('preview_submit');
             $mform->disabledIf('preview_submit', 'enable_interval');
         }
-            //TODO actually show preview
-        
-        
+
         // Selecting Observer.
         $context = $PAGE->context;
         $finalusers = [];
@@ -125,16 +122,26 @@ class timeslot_form extends \moodleform {
         // Set defaults.
         $this->set_data($prefill);
 
-        // Action buttons.
-        $this->add_action_buttons();
+        // Submit button.
+        $mform->addElement('submit', 'submit_form', get_string('create', 'observation'));
     }
 
-    function validation($data, $files) {
+    /**
+     * Additional form validations
+     * @param mixed $data data from form
+     * @param mixed $files files from form
+     * @return array array of errors.
+     */
+    public function validation($data, $files): array {
         $errors = [];
 
         if ($data['enable_interval'] === "1") {
-            if(!is_int($data['interval_amount']) || $data['interval_amount'] < 1){
+            if (!is_int($data['interval_amount']) || $data['interval_amount'] < 1) {
                 $errors['interval_select_group'] = get_string('intgreaterthanone', 'observation');
+            }
+
+            if ($data['interval_end'] < $data['start_time']) {
+                $errors['interval_end'] = get_string('endbeforestart', 'observation');
             }
         }
 

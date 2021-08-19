@@ -68,34 +68,39 @@ if ($mode === "edit") {
 // Load form.
 $sloteditorform = new \mod_observation\timeslot_form(null, $formprefill);
 
-// Form submitted, save/edit the data.
+// Form submitted.
 if ($fromform = $sloteditorform->get_data()) {
+    $dbdata = \mod_observation\timeslot_manager::transform_form_data($fromform);
 
-    $dbdata = array(
-        "obs_id" => $fromform->id,
-        "start_time" => $fromform->start_time,
-        "duration" => $fromform->duration,
-        "observer_id" => $fromform->observer_id
-    );
-
-    if ($fromform->mode === "new") {
-
-        // Interval or single ?
-        if ($fromform->enable_interval === "1") {
-            \mod_observation\timeslot_manager::create_timeslots_by_interval($fromform);
-        } else {
-            // Creating new single.
-            \mod_observation\timeslot_manager::modify_time_slot($dbdata, true);
-        }
-    } else {
-        // Editing existing.
-        $dbdata['id'] = $fromform->slotid;
-        \mod_observation\timeslot_manager::modify_time_slot($dbdata, false);
+    // Preview interval button pressed.
+    if (!empty($fromform->preview_submit)) {
+        $previewslots = \mod_observation\timeslot_manager::generate_interval_timeslots($dbdata,
+            $fromform->interval_amount, $fromform->interval_multiplier, $fromform->interval_end);
+        $formprefill['preview_interval'] = \mod_observation\timeslot_manager::generate_preview($previewslots);
+        $sloteditorform->set_data($formprefill);
     }
 
-    // Redirect back to slot viewer.
-    redirect(new moodle_url('timeslots.php', array('id' => $id)));
-    die;
+     // Submit button pressed.
+    if (!empty($fromform->submit_form)) {
+        if ($fromform->mode === "new") {
+
+            // Interval or single ?
+            if ($fromform->enable_interval === "1") {
+                \mod_observation\timeslot_manager::create_timeslots_by_interval($fromform);
+            } else {
+                // Creating new single.
+                \mod_observation\timeslot_manager::modify_time_slot($dbdata, true);
+            }
+        } else {
+            // Editing existing.
+            $dbdata['id'] = $fromform->slotid;
+            \mod_observation\timeslot_manager::modify_time_slot($dbdata, false);
+        }
+
+        // Redirect back to slot viewer.
+        redirect(new moodle_url('timeslots.php', array('id' => $id)));
+        die;
+    }
 }
 
 // Form not submitted, render form.

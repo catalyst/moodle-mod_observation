@@ -216,25 +216,6 @@ class timeslot_manager {
         // Multiplier on form is set via a select which passes value as string, so cast to int.
         $intmultiplier = (int) $formdata->interval_multiplier;
 
-        // Parameter checks (these are also checked in the form itself client-side).
-        if (!is_int($intamount) || $intamount < 1) {
-            throw new \coding_exception("Interval amount must be an integer that is greater than or equal to 1");
-        }
-
-        if (!is_int($intmultiplier) || $intmultiplier < 1) {
-            throw new \coding_exception("Interval multiplier must be an integer that is greater than or equal to 1");
-        }
-
-        if (!is_int($intend) || $intend < 0) {
-            throw new \coding_exception("Interval end must be an integer that is greater than zero (Unix epoch format).");
-        }
-
-        if ($intend < $formdata->start_time) {
-            throw new \coding_exception("Interval end cannot be before the start time.");
-        }
-
-        $transaction = $DB->start_delegated_transaction();
-
         $dbdata = array(
             "obs_id" => $formdata->id,
             "start_time" => $formdata->start_time,
@@ -242,15 +223,89 @@ class timeslot_manager {
             "observer_id" => $formdata->observer_id
         );
 
-        // Keep creating timeslots until the start time is after the interval end.
-        while ($dbdata['start_time'] < $formdata->interval_end) {
-            self::modify_time_slot($dbdata, true);
+        $intervalslots = self::generate_interval_timeslots($dbdata, $intamount, $intmultiplier, $intend);
 
-            // Shift the start time forward by the interval amount
-            $dbdata['start_time'] += $formdata->interval_amount * $formdata->interval_multiplier;
-        }
+        $transaction = $DB->start_delegated_transaction();
+
+        array_map(function($value) {
+            self::modify_time_slot($value, true);
+        }, $intervalslots);
 
         $transaction->allow_commit();
+    }
+
+    /**
+     * Generates timeslots using an interval
+     * @param mixed $data Initial data for timeslots. This function only modifies the start_time property
+     * @param int $interval The interval amount to shift the start_time by
+     * @param int $multiplier Multiplier to multiply the $interval (e.g. MINSECS)
+     * @param int $endtime Unix epoch format time to stop creating intervals for. Stops when start_time < endtime
+     * @return array array of generated timeslots
+     */
+    public static function generate_interval_timeslots($data, int $interval, int $multiplier, int $endtime): array {
+        // Parameter checks.
+        if (!is_int($interval) || $interval < 1) {
+            throw new \coding_exception("Interval amount must be an integer that is greater than or equal to 1");
+        }
+
+        if (!is_int($multiplier) || $multiplier < 1) {
+            throw new \coding_exception("Interval multiplier must be an integer that is greater than or equal to 1");
+        }
+
+        if (!is_int($endtime) || $endtime < 0) {
+            throw new \coding_exception("Interval end must be an integer that is greater than zero (Unix epoch format).");
+        }
+
+        if ($endtime < $data['start_time']) {
+            throw new \coding_exception("Interval end cannot be before the start time.");
+        }
+
+        $intervalslots = [];
+
+        // Keep creating timeslots until the start time is after the interval end.
+        while ($data['start_time'] < $endtime) {
+            array_push($intervalslots, $data);
+            $data['start_time'] += $interval * $multiplier;
+        }
+
+        return $intervalslots;
+    }
+
+    /**
+     * Transforms timeslot form data
+     * @param mixed $formdata Data from timeslots form
+     * @return array array of extracted data
+     */
+    public static function transform_form_data($formdata): array {
+        return [
+            "obs_id" => $formdata->id,
+            "start_time" => $formdata->start_time,
+            "duration" => $formdata->duration,
+            "observer_id" => $formdata->observer_id
+        ];
+    }
+
+    /**
+     * Generates a HTML list preview of timeslots.
+     * @param array $timeslots array of time slots, notably with the property 'start_time'.
+     * @return string HTML string of the preview.
+     */
+    public static function generate_preview(array $timeslots): string {
+        $out = \html_writer::start_div();
+
+        $out .= \html_writer::start_tag("b");
+        $out .= get_string('generatedtimeslots', 'observation', count($timeslots));
+        $out .= \html_writer::end_tag("b");
+
+        foreach ($timeslots as $timeslot) {
+            $out .= \html_writer::start_div();
+            $out .= userdate($timeslot['start_time']);
+            $out .= \html_writer::end_div();
+        }
+
+        $out .= \html_writer::end_div();
+
+        return $out;
     }
 
     /**

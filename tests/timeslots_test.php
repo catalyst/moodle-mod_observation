@@ -198,7 +198,7 @@ class timeslots_test extends advanced_testcase {
 
         $data->interval_amount = 30;
         // In form the multiplier is a string, so simulate that here.
-        $data->interval_multiplier = (string) MINSECS; 
+        $data->interval_multiplier = (string) MINSECS;
         $data->start_time = time();
         $data->interval_end = $data->start_time + HOURSECS * 1;
         $data->id = $this->instance->id;
@@ -244,7 +244,7 @@ class timeslots_test extends advanced_testcase {
     }
 
     /**
-     * Tests interval end time before start time 
+     * Tests interval end time before start time
      */
     public function test_interval_end_before_start() {
         $data = $this->create_valid_interval_timeslot();
