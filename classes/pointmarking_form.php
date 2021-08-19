@@ -67,7 +67,7 @@ class pointmarking_form extends \moodleform {
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
                 break;
             // Pass/Fail type.
-            case \mod_observation\observation_manager::PASSFAIL:
+            case \mod_observation\observation_manager::INPUT_PASSFAIL:
                 $radioarray = array();
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('pass', 'observation'), 'Pass');
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('fail', 'observation'), 'Fail');
