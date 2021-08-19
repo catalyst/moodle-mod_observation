@@ -78,6 +78,7 @@ class timeslots {
      * @param int $observationid ID of the observation instance to get the observation time slots from.
      * @param int $userid ID of the user to filter the timeslots displayed by.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to.
+     * @param int $displaymode display mode for table
      */
     public static function assigned_timeslots_table(int $observationid, int $userid, \moodle_url $callbackurl, int $displaymode) {
         $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
