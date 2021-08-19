@@ -141,6 +141,11 @@ class timeslots_table extends \table_sql implements \renderable {
             break;
         }
 
+        if ($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_VIEW_ASSIGNED) {
+            $htmlout = $this->action_button('timesloteditor.php?mode=edit&', $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
+            $htmlout .= $this->action_button('timesloteditor.php?', $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
+        }
+
         return $htmlout;
     }
 }
