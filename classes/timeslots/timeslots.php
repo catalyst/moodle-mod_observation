@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,6 +50,12 @@ class timeslots {
     const DISPLAY_MODE_SIGNUP = 1;
 
     /**
+     * helps with defining the actions that the list displays
+     * @param const edit and delte parameter for action button when viewed from observer.php
+     */
+    const DISPLAY_MODE_VIEW_ASSIGNED = 2;
+
+    /**
      * Creates a table that displays all the observation time slots for a given observation
      * @param int $observationid ID of the observation instance to get the observation time slots from.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to
@@ -73,8 +79,8 @@ class timeslots {
      * @param int $userid ID of the user to filter the timeslots displayed by.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to.
      */
-    public static function assigned_timeslots_table(int $observationid, int $userid, \moodle_url $callbackurl) {
-        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
+    public static function assigned_timeslots_table(int $observationid, int $userid, \moodle_url $callbackurl, int $displaymode) {
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
         $sql = (object) [
             'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
             'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
