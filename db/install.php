@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,8 @@ function xmldb_observation_install() {
     // Generate res_type mappings.
     $tablename = 'observation_res_type_map';
     $mappings = [
-        ['res_type' => 0, 'lang_string' => 'textinputtype']
+        ['res_type' => 0, 'lang_string' => 'textinputtype'],
+        ['res_type' => 1, 'lang_string' => 'passfailtype']
     ];
     $DB->insert_records($tablename, $mappings);
 }
