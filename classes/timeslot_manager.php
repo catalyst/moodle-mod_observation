@@ -68,7 +68,7 @@ class timeslot_manager {
         }
 
         if (property_exists($data, 'observee_id')) {
-            if ($data->observee_id != NULL) {
+            if ($data->observee_id !== NULL) {
                 throw new \coding_exception("Timeslot has been taken.");
             }
         }
