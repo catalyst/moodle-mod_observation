@@ -39,9 +39,11 @@ class observation_manager {
 
     /**
      * @var int Observation point text input type.
-     * @var int Observation point pass/fail input type.
      */
     const INPUT_TEXT = 0;
+    /**
+     * @var int Observation point pass/fail input type.
+     */
     const PASSFAIL = 1;
 
     /**
