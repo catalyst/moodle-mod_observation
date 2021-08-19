@@ -67,6 +67,12 @@ class timeslot_manager {
             }
         }
 
+        if (property_exists($data, 'observee_id')) {
+            if ($data->observee_id != null) {
+                throw new \coding_exception("Timeslot has been taken.");
+            }
+        }
+
         if ($newinstance) {
             $slotid = $DB->insert_record($tablename, $data, true);
             self::update_timeslot_calendar_events($data->obs_id, $slotid);
