@@ -26,6 +26,7 @@
 namespace mod_observation;
 
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/calendar/lib.php');
 
 /**
  * mod_observation observation timeslot management class
@@ -41,11 +42,10 @@ class timeslot_manager {
      * Modifies or creates a new time slot in the database
      * @param mixed $data Data to pass to database function
      * @param bool $newinstance True if new instance, else false if editing
-     * @param bool $returnid True if should return id (only when $newinstance = true)
      * @param string $tablename Tablename
-     * @return mixed True if successful. If $returnid is True and $newinstance is True, returns ID
+     * @return mixed True if updating and successful or ID if inserting and successful.
      */
-    public static function modify_time_slot($data, bool $newinstance = false, bool $returnid = false,
+    public static function modify_time_slot($data, bool $newinstance = false,
             string $tablename = 'observation_timeslots') {
         global $DB;
 
@@ -68,9 +68,15 @@ class timeslot_manager {
         }
 
         if ($newinstance) {
-            return $DB->insert_record($tablename, $data, $returnid);
+            $slotid = $DB->insert_record($tablename, $data, true);
+            self::update_timeslot_calendar_events($data->obs_id, $slotid);
+
+            return $slotid;
         } else {
-            return $DB->update_record($tablename, $data);
+
+            $dbreturn = $DB->update_record($tablename, $data);
+            self::update_timeslot_calendar_events($data->obs_id, $data->id);
+            return $dbreturn;
         }
     }
 
@@ -109,10 +115,90 @@ class timeslot_manager {
     public static function delete_time_slot(int $observationid, int $slotid, string $tablename='observation_timeslots') {
         global $DB;
 
-        $transaction = $DB->start_delegated_transaction();
+        // Get record to get the calendar event ID.
+        $timeslot = self::get_existing_slot_data($observationid, $slotid);
+
+        if (isset($timeslot->observer_event_id)) {
+            $event = \calendar_event::load($timeslot->observer_event_id);
+            $event->delete();
+        }
 
         $DB->delete_records($tablename, ['id' => $slotid, 'obs_id' => $observationid]);
+    }
 
-        $transaction->allow_commit();
+    /**
+     * Updates the calendar events for a particular timeslot.
+     * @param int $observationid ID of the observation instance
+     * @param int $slotid ID of the timeslot to update events for
+     */
+    public static function update_timeslot_calendar_events(int $observationid, int $slotid) {
+        global $DB;
+
+        $timeslot = self::get_existing_slot_data($observationid, $slotid);
+        list($observation, $c, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+
+        // If observer is assigned to timeslot, update observer calendar entry for observer.
+        if (isset($timeslot->observer_id)) {
+            // If there is no event ID for the observer, create new.
+            if (!isset($timeslot->observer_event_id)) {
+                $event = self::create_event($cm, $observation, $timeslot, $timeslot->observer_id);
+
+                $eventobj = \calendar_event::create($event);
+                if ($eventobj === false) {
+                    throw new \moodle_exception("Could not create event for the observer for the timeslot.");
+                }
+
+                // Update timeslot to add event ID.
+                $DB->update_record('observation_timeslots', ['id' => $slotid, 'observer_event_id' => $eventobj->id]);
+            } else {
+                // Else event ID exists for observer, so update the details.
+                $event = \calendar_event::load($timeslot->observer_event_id);
+                $newdata = self::update_event($event, $observation, $timeslot, $timeslot->observer_id);
+                $event->update($newdata);
+            }
+        }
+    }
+
+    /**
+     * Add event properties that are updateable.
+     * @param object $event current event object to update
+     * @param object $observation observation instance from DB
+     * @param object $slotdata time slot data from DB
+     * @param object $userid user to assign to the updated event
+     */
+    private static function update_event($event, $observation, $slotdata, $userid) {
+        $event->name = get_string('markingsession', 'observation', $observation->name);
+        $event->description = get_string('assignedmarkingsession', 'observation');
+        $event->timestart = $slotdata->start_time;
+        $event->timesort = $slotdata->start_time;
+        $event->timeduration = $slotdata->duration * MINSECS;
+        $event->userid = $userid;
+
+        return $event;
+    }
+
+    /**
+     * Creates an event object for the given parameters.
+     * @param object $cm Course module instance
+     * @param object $observation observation instance from DB
+     * @param object $slotdata time slot data from DB
+     * @param int $userid ID of user to assign this event to
+     */
+    private static function create_event($cm, $observation, $slotdata, $userid) {
+        // The properties below never change and are only set on event creation.
+        $event = new \stdClass();
+        $event->eventtype = 'observation';
+        $event->type = CALENDAR_EVENT_TYPE_STANDARD;
+        $event->format = FORMAT_HTML;
+        $event->courseid = $cm->course;
+        $event->groupid = 0;
+        $event->modulename = 'observation';
+        $event->instance = $cm->instance;
+        $event->visible = instance_is_visible('observation', $cm);
+
+        // Run update function to add data that does change.
+        $event = self::update_event($event, $observation, $slotdata, $userid);
+
+        return $event;
     }
 }

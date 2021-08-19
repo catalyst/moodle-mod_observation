@@ -37,6 +37,8 @@
 
             <FIELD NAME="observer_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="true" COMMENT="User id of the observer assigned to this timeslot" />
             <FIELD NAME="observee_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="User id of the observee if one has registered for this timeslot, else NULL" />
+
+            <FIELD NAME="observer_event_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Event id for the observer assigned to this timeslot" />
         </FIELDS>
         <KEYS>
             <KEY NAME="primary" TYPE="primary" FIELDS="id" />
@@ -70,6 +72,7 @@
           <FIELD NAME="state" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="Current state of the session. Either 'inprogress', 'cancelled' or 'completed'." />
           <FIELD NAME="start_time" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Start time of the session (unixtime format)" />
           <FIELD NAME="finish_time" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="Finish time of the session (unixtime format), or NULL if not finished" />
+          <FIELD NAME="ex_comment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="String encoded optional extra comment given if needed." />
         </FIELDS>
         <KEYS>
           <KEY NAME="primary" TYPE="primary" FIELDS="id" />
@@ -86,7 +89,8 @@
           <FIELD NAME="grade_given" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Grade assigned by the observer for this observation point." />
           <FIELD NAME="response" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="String encoded response, originally formatted as defined by the FK observation_point_id.response_type." />
           <FIELD NAME="ex_comment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="String encoded optional extra comment given if needed." />
-          <FIELD NAME="ex_comment_f" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Format for the extra_comment field, either 'html', 'markdown', or 'plaintext'." />
+          <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" COMMENT="Unix epoch time when item was created." />
+          <FIELD NAME="timemodified" TYPE="int" LENGTH="20" NOTNULL="true" COMMENT="Unix epoch time when item was last edited." />
         </FIELDS>
         <KEYS>
           <KEY NAME="primary" TYPE="primary" FIELDS="id" />
