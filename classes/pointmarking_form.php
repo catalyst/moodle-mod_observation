@@ -73,7 +73,7 @@ class pointmarking_form extends \moodleform {
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('fail', 'observation'), 'Fail');
                 $mform->addGroup($radioarray, 'radioar', get_string('passfailtype', 'observation'), array(' '), false);
                 $mform->setType('response', PARAM_TEXT); // Response will be Pass or Fail.
-                //$mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client'); // Prints error to page lol.
+                $mform->addRule('radioar', get_string('required', 'observation'), 'required', null, 'client');
                 break;
         }
 
