@@ -32,6 +32,29 @@ list($observation, $course, $cm) = \mod_observation\observation_manager::get_obs
 require_login($course, true, $cm);
 require_capability('mod/observation:view', $PAGE->context);
 
+if ($action !== null && $slotid !== null) {
+
+    switch ($action) {
+        case 'join':
+            // Assign user to timeslot.
+            $dbdata = array(
+                "observee_id" => $USER->id
+            );
+            break;
+
+        default:
+            // Unknown action.
+            throw new moodle_exception(
+                'invalidqueryparam',
+                'error',
+                null,
+                ['expected' => "'join'", 'actual' => $action]);
+    }
+
+    // Redirect back to this page but without params after running action to avoid weird errors if user refreshes page.
+    redirect($pageurl);
+}
+
 // Render page.
 $pageurl = new moodle_url('/mod/observation/observee.php', array('id' => $id));
 $PAGE->set_url($pageurl);
