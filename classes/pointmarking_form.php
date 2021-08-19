@@ -67,12 +67,11 @@ class pointmarking_form extends \moodleform {
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
             // Pass/Fail type.
             case \mod_observation\observation_manager::PASSFAIL:
-                // Need to set the radio buttons to a type - probably int and 1 for pass and 0 for fail... but how?
                 $radioarray = array();
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('pass', 'observation'), 'Pass');
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('fail', 'observation'), 'Fail');
                 $mform->addGroup($radioarray, 'radioar', get_string('passfailtype', 'observation'), array(' '), false);
-                $mform->setType('response', PARAM_TEXT); // ? this doesn't affect errors rn.
+                $mform->setType('response', PARAM_TEXT); // Response will be Pass or Fail.
                 //$mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client'); // Prints error to page lol.
                 //$mform->setDefault('type', 0);
         }
