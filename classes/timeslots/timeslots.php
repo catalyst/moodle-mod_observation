@@ -37,7 +37,16 @@ defined('MOODLE_INTERNAL') || die;
  */
 class timeslots {
 
+    /**
+     * helps with defining the actions that the list displays
+     * @param const editing parameter for action button
+     */
     const DISPLAY_MODE_EDITING = 0;
+
+    /**
+     * helps with defining the actions that the list displays
+     * @param const signup parameter for action button
+     */
     const DISPLAY_MODE_SIGNUP = 1;
 
     /**

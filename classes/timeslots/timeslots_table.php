@@ -42,6 +42,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * Constructs the table and defines how the data from the SQL query is displayed
      * @param string $uniqueid ID that uniquely identifies this element on the HTML page
      * @param \moodle_url $callbackurl URL used for callback for action buttons in the table
+     * @param int $displaymode to determine the action that will be displayed
      * @param int $perpage number of entries per page for the table
      */
     public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $perpage = 50) {
@@ -104,8 +105,6 @@ class timeslots_table extends \table_sql implements \renderable {
      * Data converter for the action column
      * @param mixed $row current row
      */
-    // Add action buttons.
-
     public function col_action($row) {
         // If statement to determine editting or viewing.
 
