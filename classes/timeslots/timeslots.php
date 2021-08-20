@@ -148,4 +148,8 @@ class timeslots {
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
     }
+
+    // In assigned_timeslots_table function,
+    // 'where' => 'obs_id = :obsid AND (observer_id = :userid' OR observee_id = :userid), 
+
 }

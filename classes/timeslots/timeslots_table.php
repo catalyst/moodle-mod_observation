@@ -148,6 +148,10 @@ class timeslots_table extends \table_sql implements \renderable {
             get_string('delete', 'observation'));
         }
 
+        // In display mode view assign or whatever, check permission: if student shows a view button.
+        // If observer, it shows usual edit and delete.
+        // Somewhere: if no timeslots, tells them to register.
+
         return $htmlout;
     }
 }
