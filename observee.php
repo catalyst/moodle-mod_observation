@@ -55,8 +55,8 @@ echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
 //\mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
 
 // Displays table of timeslots student has signed up to.
-//echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $USER->id, $pageurl,
-//\mod_observation\timeslots\timeslots::DISPLAY_MODE_VIEW_ASSIGNED);
+echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $USER->id, $pageurl,
+\mod_observation\timeslots\timeslots::DISPLAY_MODE_VIEW_ASSIGNED);
 
 echo $OUTPUT->container_end();
 

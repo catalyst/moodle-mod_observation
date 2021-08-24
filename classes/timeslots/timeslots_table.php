@@ -142,10 +142,19 @@ class timeslots_table extends \table_sql implements \renderable {
         }
 
         if ($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_VIEW_ASSIGNED) {
-            $htmlout = $this->action_button('timesloteditor.php?mode=edit&', $row->obs_id, $row->id, 'edit',
-            get_string('edit', 'observation'));
-            $htmlout .= $this->action_button('timesloteditor.php?', $row->obs_id, $row->id, 'delete',
-            get_string('delete', 'observation'));
+            // If user can perform observations, show edit and delete buttons
+
+            // $Page needs:
+            // $pageurl = new moodle_url('/mod/observation/observee.php', array('id' => $id));
+            // $PAGE->set_url($pageurl);
+            // $PAGE->set_title($course->shortname.': '.$observation->name);
+            // $PAGE->set_heading($course->fullname);
+
+            if (has_capability('mod/observation:performobservation', context)) {
+                $htmlout = $this->action_button('timesloteditor.php?mode=edit&', $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
+                $htmlout .= $this->action_button('timesloteditor.php?', $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
+            }
+            // Else, list any timeslots they have signed up to
         }
 
         // In display mode view assign or whatever, check permission: if student shows a view button.
