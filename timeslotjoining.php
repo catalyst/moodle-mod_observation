@@ -41,22 +41,11 @@ if ($action !== null) {
     switch ($action) {
         case 'join':
             // Assign user to timeslot.
-
             if ($slotid === null) {
                 throw new \coding_exception("Missing SlotID parameter");
             }
 
-            $row = $DB->get_record('observation_timeslots', ['obs_id' => $observation_id, 'id' => $slot_id], 'observee_id');
-            if($row->observee_id !== null) {
-                throw new \coding_exception("You have already signed up for a slot");
-            }
-
-            $dbdata = array(
-                "id" => $slotid,      
-                "observee_id" => $USER->id,
-            );
-            // Editing existing.
-            \mod_observation\timeslot_manager::modify_time_slot($dbdata, false);
+            \mod_observation\timeslot_manager::timeslot_signup($observation->id, $slotid, $USER->id);
             break;
 
         default:
@@ -80,10 +69,19 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('selectingslot', 'observation'), 2);
 
-// Time Slot Viewer (Table).
-echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
-echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
-\mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
+$signedupslot = \mod_observation\timeslot_manager::get_registered_timeslot($observation->id, $USER->id);
+
+// Not signed up yet
+if($signedupslot === false) {
+    // Time Slot Viewer (Table).
+    echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
+    echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
+} else {
+    // Already signed up - show details
+    echo $OUTPUT->heading(get_string('timeslotinfo', 'observation'), 3);
+    // TODO show details in nice format
+}
 
 // Moodle footer.
 echo $OUTPUT->footer();

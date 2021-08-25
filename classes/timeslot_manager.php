@@ -25,6 +25,8 @@
 
 namespace mod_observation;
 
+use moodle_exception;
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/calendar/lib.php');
 
@@ -66,8 +68,6 @@ class timeslot_manager {
                 throw new \coding_exception("Start time must be an integer in Unix Epoch Format.");
             }
         }
-
-        
 
         if ($newinstance) {
             $slotid = $DB->insert_record($tablename, $data, true);
@@ -202,5 +202,30 @@ class timeslot_manager {
         $event = self::update_event($event, $observation, $slotdata, $userid);
 
         return $event;
+    }
+
+    public static function timeslot_signup(int $observationid, int $slotid, int $userid) {
+        // Query the timeslot to find the signup status
+        $timeslot = self::get_existing_slot_data($observationid, $slotid);
+
+        if($timeslot->observee_id !== null) {
+            throw new moodle_exception("Could not signup to timeslot. Timeslot already taken.");
+        }
+
+        // Allow signup
+        $dbdata = [
+            'id' => $slotid,
+            'observee_id' => $userid
+        ];
+
+        self::modify_time_slot($dbdata, false);
+    }  
+
+    /**
+     * Determines timeslot signed up to, or false if not signed up (within a single observation instance)
+     */
+    public static function get_registered_timeslot($observationid, $userid) {
+        global $DB;
+        return $DB->get_record("observation_timeslots", ['obs_id' => $observationid, 'observee_id' => $userid], '*');
     }
 }
