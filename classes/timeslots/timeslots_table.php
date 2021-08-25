@@ -143,9 +143,11 @@ class timeslots_table extends \table_sql implements \renderable {
 
         if ($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_VIEW_ASSIGNED) {
             // If user can perform observations, show edit and delete buttons
+            $htmlout = $this->action_button('timesloteditor.php?mode=edit&', $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
+            $htmlout .= $this->action_button('timesloteditor.php?', $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
 
             // require_once(__DIR__.'/../../../../config.php');
-
+            /*
             // $context needs:
             // $context = context_module::instance($cm->id);
             // has_capability('mod/forum:replypost', $context)
@@ -159,7 +161,7 @@ class timeslots_table extends \table_sql implements \renderable {
                 $htmlout = $this->action_button('timesloteditor.php?mode=edit&', $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
                 $htmlout .= $this->action_button('timesloteditor.php?', $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
             }
-            // Else, list any timeslots they have signed up to
+            // Else, list any timeslots they have signed up to*/
         }
 
         // In display mode view assign or whatever, check permission: if student shows a view button.
