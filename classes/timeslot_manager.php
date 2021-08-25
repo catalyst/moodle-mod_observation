@@ -67,11 +67,7 @@ class timeslot_manager {
             }
         }
 
-        if (property_exists($data, 'observee_id')) {
-            if ($data->observee_id === null) {
-                throw new \coding_exception("User ID error");
-            }
-        }
+        
 
         if ($newinstance) {
             $slotid = $DB->insert_record($tablename, $data, true);
@@ -81,7 +77,7 @@ class timeslot_manager {
         } else {
 
             $dbreturn = $DB->update_record($tablename, $data);
-            self::update_timeslot_calendar_events($data->obs_id, $data->id);
+            // self::update_timeslot_calendar_events($data->obs_id, $data->id);
             return $dbreturn;
         }
     }

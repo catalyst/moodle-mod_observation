@@ -41,11 +41,21 @@ if ($action !== null) {
     switch ($action) {
         case 'join':
             // Assign user to timeslot.
+
+            if ($slotid === null) {
+                throw new \coding_exception("Missing SlotID parameter");
+            }
+
+            $row = $DB->get_record('observation_timeslots', ['obs_id' => $observation_id, 'id' => $slot_id], 'observee_id');
+            if($row->observee_id !== null) {
+                throw new \coding_exception("You have already signed up for a slot");
+            }
+
             $dbdata = array(
+                "id" => $slotid,      
                 "observee_id" => $USER->id,
             );
             // Editing existing.
-            $dbdata['id'] = $slotid;
             \mod_observation\timeslot_manager::modify_time_slot($dbdata, false);
             break;
 
