@@ -80,6 +80,8 @@ if($signedupslot === false) {
 } else {
     // Already signed up - show details
     echo $OUTPUT->heading(get_string('timeslotinfo', 'observation'), 3);
+    echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
     // TODO show details in nice format
 }
 
