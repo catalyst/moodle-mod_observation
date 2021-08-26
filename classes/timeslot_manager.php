@@ -124,6 +124,11 @@ class timeslot_manager {
             $event->delete();
         }
 
+        if (isset($timeslot->observee_event_id)) {
+            $event = \calendar_event::load($timeslot->observee_event_id);
+            $event->delete();
+        }
+
         $DB->delete_records($tablename, ['id' => $slotid, 'obs_id' => $observationid]);
     }
 
@@ -158,6 +163,27 @@ class timeslot_manager {
                 $event->update($newdata, false);
             }
         }
+
+        // If observee is assigned to timeslot, update observee calendar entry for observee.
+        if (isset($timeslot->observee_id)) {
+            // If there is no event ID for the observee, create new.
+            if (!isset($timeslot->observee_event_id)) {
+                $event = self::create_event_observee($cm, $observation, $timeslot, $timeslot->observee_id);
+
+                $eventobj = \calendar_event::create($event, false);
+                if ($eventobj === false) {
+                    throw new \moodle_exception("Could not create event for the observee for the timeslot.");
+                }
+
+                // Update timeslot to add event ID.
+                $DB->update_record('observation_timeslots', ['id' => $slotid, 'observee_event_id' => $eventobj->id]);
+            } else {
+                // Else event ID exists for observee, so update the details.
+                $event = \calendar_event::load($timeslot->observee_event_id);
+                $newdata = self::update_event_observee($event, $observation, $timeslot, $timeslot->observee_id);
+                $event->update($newdata, false);
+            }
+        }
     }
 
     /**
@@ -170,6 +196,24 @@ class timeslot_manager {
     private static function update_event($event, $observation, $slotdata, $userid) {
         $event->name = get_string('markingsession', 'observation', $observation->name);
         $event->description = get_string('assignedmarkingsession', 'observation');
+        $event->timestart = $slotdata->start_time;
+        $event->timesort = $slotdata->start_time;
+        $event->timeduration = $slotdata->duration * MINSECS;
+        $event->userid = $userid;
+
+        return $event;
+    }
+
+    /**
+     * Add event properties that are updateable.
+     * @param object $event current event object to update
+     * @param object $observation observation instance from DB
+     * @param object $slotdata time slot data from DB
+     * @param object $userid user to assign to the updated event
+     */
+    private static function update_event_observee($event, $observation, $slotdata, $userid) {
+        $event->name = get_string('observationsession', 'observation', $observation->name);
+        $event->description = get_string('assignedobservationsession', 'observation');
         $event->timestart = $slotdata->start_time;
         $event->timesort = $slotdata->start_time;
         $event->timeduration = $slotdata->duration * MINSECS;
@@ -199,6 +243,31 @@ class timeslot_manager {
 
         // Run update function to add data that does change.
         $event = self::update_event($event, $observation, $slotdata, $userid);
+
+        return $event;
+    }
+
+        /**
+     * Creates an event object for the given parameters.
+     * @param object $cm Course module instance
+     * @param object $observation observation instance from DB
+     * @param object $slotdata time slot data from DB
+     * @param int $userid ID of user to assign this event to
+     */
+    private static function create_event_observee($cm, $observation, $slotdata, $userid) {
+        // The properties below never change and are only set on event creation.
+        $event = new \stdClass();
+        $event->eventtype = 'observation';
+        $event->type = CALENDAR_EVENT_TYPE_STANDARD;
+        $event->format = FORMAT_HTML;
+        $event->courseid = $cm->course;
+        $event->groupid = 0;
+        $event->modulename = 'observation';
+        $event->instance = $cm->instance;
+        $event->visible = instance_is_visible('observation', $cm);
+
+        // Run update function to add data that does change.
+        $event = self::update_event_observee($event, $observation, $slotdata, $userid);
 
         return $event;
     }

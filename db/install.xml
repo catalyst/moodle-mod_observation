@@ -39,6 +39,7 @@
             <FIELD NAME="observee_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="User id of the observee if one has registered for this timeslot, else NULL" />
 
             <FIELD NAME="observer_event_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Event id for the observer assigned to this timeslot" />
+            <FIELD NAME="observee_event_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Event id for the observee registered to this timeslot" />
         </FIELDS>
         <KEYS>
             <KEY NAME="primary" TYPE="primary" FIELDS="id" />
