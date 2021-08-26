@@ -207,9 +207,13 @@ class timeslot_manager {
     public static function timeslot_signup(int $observationid, int $slotid, int $userid) {
         // Query the timeslot to find the signup status
         $timeslot = self::get_existing_slot_data($observationid, $slotid);
+        $signedupslot = self::get_registered_timeslot($observationid, $userid);
 
         if($timeslot->observee_id !== null) {
             throw new moodle_exception("Could not signup to timeslot. Timeslot already taken.");
+        }
+        else if($signedupslot === true) {
+            throw new moodle_exception("Could not signup to timeslot. You have already signed up for a timeslot.");
         }
 
         // Allow signup
