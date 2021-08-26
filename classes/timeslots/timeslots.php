@@ -25,6 +25,8 @@
 
 namespace mod_observation\timeslots;
 
+use function Complex\ln;
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -141,10 +143,8 @@ class timeslots {
         $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
         $sql = (object) [
             'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
-            //'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
-            //'where' => 'obs_id = :obsid AND observer_id = :userid', // Add OR observee_id = :userid here when students can select.
-            'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id AND op.observee_id = u.id', // not throwing an error?
-            'where' => '(observer_id = :userid OR observee_id = :userid) AND obs_id = :obsid', // observee_id = :userid
+            'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
+            'where' => ':userid IN (observee_id, observer_id) AND obs_id = :obsid',
             'params' => ['obsid' => $observationid, 'userid' => $userid]
         ];
         $table->sql = $sql;
