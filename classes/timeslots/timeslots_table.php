@@ -48,23 +48,32 @@ class timeslots_table extends \table_sql implements \renderable {
     public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $perpage = 50) {
         parent::__construct($uniqueid);
 
-        $this->define_columns([
+        $columns = [
             'id',
             'start_time',
             'duration',
             'observer_fullname',
             'observer_email',
             'action',
-        ]);
+        ];
 
-        $this->define_headers([
+        $headers = [
             get_string('id', 'observation'),
             get_string('starttime', 'observation'),
             get_string('duration', 'observation'),
             get_string('observer_fullname', 'observation'),
             get_string('observer_email', 'observation'),
             get_string('actions', 'observation'),
-        ]);
+        ];
+
+        if ($displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING) {
+            // Add observee details as the second last column.
+            array_splice($columns, count($columns) - 1, 0, 'observee_fullname');
+            array_splice($headers, count($headers) - 1, 0, get_string('observeename', 'observation'));
+        }
+
+        $this->define_columns($columns);
+        $this->define_headers($headers);
 
         $this->pagesize = $perpage;
         $this->collapsible(false);
@@ -111,13 +120,25 @@ class timeslots_table extends \table_sql implements \renderable {
 
         $htmlout = "";
 
-        if ($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING) {
-            $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
-            $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
-        }
+        switch($this->displaymode) {
+            case \mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING:
+                $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
+                $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete',
+                    get_string('delete', 'observation'));
+            break;
 
-        if ($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP) {
-            $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'join', get_string('join', 'observation'));
+            case \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP:
+                $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'join', get_string('join', 'observation'));
+            break;
+
+            case \mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING:
+                if ($row->observee_id !== null) {
+                    $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'startsession',
+                        get_string('startobservationsession', 'observation'));
+                } else {
+                    $htmlout .= get_string('noobservee', 'observation');
+                }
+            break;
         }
 
         // If viewing what they've been assigned

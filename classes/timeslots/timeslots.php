@@ -38,31 +38,56 @@ defined('MOODLE_INTERNAL') || die;
 class timeslots {
 
     /**
-     * helps with defining the actions that the list displays
+     * Display mode with editing buttons
      * @param const editing parameter for action button
      */
     const DISPLAY_MODE_EDITING = 0;
 
     /**
-     * helps with defining the actions that the list displays
+     * Display mode with signup buttons
      * @param const signup parameter for action button
      */
     const DISPLAY_MODE_SIGNUP = 1;
+
+    /**
+     * Display mode with start session buttons
+     * @param const upcoming display mode
+     */
+    const DISPLAY_MODE_UPCOMING = 2;
+
 
     /**
      * Creates a table that displays all the observation time slots for a given observation
      * @param int $observationid ID of the observation instance to get the observation time slots from.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to
      * @param int $displaymode display mode for table
+     * @param int $timefilter filter for the start time column, if 0 no filter is applied. Positive integers only.
      */
-    public static function timeslots_table(int $observationid, \moodle_url $callbackurl, int $displaymode) {
-        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
+    public static function timeslots_table(int $observationid, \moodle_url $callbackurl, int $displaymode, int $timefilter = 0) {
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode, $timefilter);
+
+        // Optional time filtering SQL query.
+        if ($timefilter < 0) {
+            throw new \coding_exception("Time filter cannot be negative.");
+        }
+
         $sql = (object) [
-            'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
-            'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
+            'fields' => "ot.*,
+                        CONCAT(u.firstname, ' ', u.lastname) as observer_fullname,
+                        u.email as observer_email,
+                        CONCAT(o.firstname, ' ', o.lastname) as observee_fullname",
+            'from' => '{observation_timeslots} ot
+                        LEFT JOIN {user} u ON ot.observer_id = u.id
+                        LEFT JOIN {user} o on ot.observee_id = o.id',
             'where' => 'obs_id = :obsid',
             'params' => ['obsid' => $observationid]
         ];
+
+        if ($timefilter !== 0) {
+            $sql->where = 'obs_id = :obsid AND start_time < :timefilter';
+            $sql->params = ['obsid' => $observationid, 'timefilter' => time() + $timefilter];
+        }
+
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
     }
