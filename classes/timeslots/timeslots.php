@@ -140,7 +140,7 @@ class timeslots {
      * @param int $displaymode display mode for table
      */
     public static function assigned_timeslots_table(int $observationid, int $userid, \moodle_url $callbackurl, int $displaymode) {
-        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode, $observationid);
         $sql = (object) [
             'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
             'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
