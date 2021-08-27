@@ -140,7 +140,6 @@ class timeslots_table extends \table_sql implements \renderable {
                 }
             break;
         }
-
         return $htmlout;
     }
 }

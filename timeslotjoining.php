@@ -71,16 +71,16 @@ echo $OUTPUT->heading(get_string('selectingslot', 'observation'), 2);
 
 $signedupslot = \mod_observation\timeslot_manager::get_registered_timeslot($observation->id, $USER->id);
 
-// Not signed up yet
-if($signedupslot === false) {
+// Not signed up yet.
+if ($signedupslot === false) {
     // Time Slot Viewer (Table).
     echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
     echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
     \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
 } else {
-    // Already signed up - show details
+    // Already signed up - show details.
     echo $OUTPUT->heading(get_string('timeslotinfo', 'observation'), 3);
-    // TODO show details in nice format
+    // TODO show details in nice format.
 }
 
 // Moodle footer.

@@ -77,7 +77,7 @@ class timeslot_manager {
         } else {
 
             $dbreturn = $DB->update_record($tablename, $data);
-            // self::update_timeslot_calendar_events($data->obs_id, $data->id);
+            // Self::update_timeslot_calendar_events($data->obs_id, $data->id);.
             return $dbreturn;
         }
     }
@@ -204,31 +204,40 @@ class timeslot_manager {
         return $event;
     }
 
+    /**
+     * Signs users up to timeslots after check if the class is taken, and the user isnt already
+     * signed up for another class.
+     * @param int $observationid is the obseravtion slot ID
+     * @param int $slotid is the observation timeslot ID
+     * @param int $userid is the user ID
+     */
     public static function timeslot_signup(int $observationid, int $slotid, int $userid) {
-        // Query the timeslot to find the signup status
+
+        // Query the timeslot to find the signup status.
         $timeslot = self::get_existing_slot_data($observationid, $slotid);
         $signedupslot = self::get_registered_timeslot($observationid, $userid);
 
-        if($timeslot->observee_id !== null) {
+        if ($timeslot->observee_id !== null) {
             throw new moodle_exception("Could not signup to timeslot. Timeslot already taken.");
-        }
-        else if($signedupslot === true) {
+        } else if ($signedupslot !== false) {
             throw new moodle_exception("Could not signup to timeslot. You have already signed up for a timeslot.");
         }
 
-        // Allow signup
+        // Allow signup.
         $dbdata = [
             'id' => $slotid,
             'observee_id' => $userid
         ];
 
         self::modify_time_slot($dbdata, false);
-    }  
+    }
 
     /**
      * Determines timeslot signed up to, or false if not signed up (within a single observation instance)
+     * @param int $observationid is the Observation ID
+     * @param int $userid is the User ID
      */
-    public static function get_registered_timeslot($observationid, $userid) {
+    public static function get_registered_timeslot(int $observationid, int $userid) {
         global $DB;
         return $DB->get_record("observation_timeslots", ['obs_id' => $observationid, 'observee_id' => $userid], '*');
     }
