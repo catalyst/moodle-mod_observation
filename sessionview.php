@@ -26,6 +26,10 @@
 require_once(__DIR__.'/../../config.php');
 
 $id = required_param('id', PARAM_INT);
+$action = optional_param('action', null, PARAM_TEXT);
+$slotid = optional_param('slotid', null, PARAM_INT);
+$interval = optional_param('interval', null, PARAM_INT);
+$intervalmultiplier = optional_param('period', null, PARAM_INT);
 
 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
@@ -35,15 +39,51 @@ require_capability('mod/observation:performobservation', $PAGE->context);
 
 $pageurl = new moodle_url('/mod/observation/sessionview.php', ['id' => $id]);
 
-$startsessionformprefill = array(
+// If actions is in URL args, action button on timeslots table was pressed.
+if ($action !== null && $slotid !== null) {
+    // Get timeslot data.
+    $timeslot = \mod_observation\timeslot_manager::get_existing_slot_data($id, $slotid);
+
+    if ($timeslot->observee_id === null) {
+        throw new \coding_exception("No observee assigned to this timeslot. Cannot start session.");
+    }
+
+    // Start session and redirect.
+    $sessionid = \mod_observation\session_manager::start_session($timeslot->obs_id, $USER->id, $timeslot->observee_id);
+    redirect(new moodle_url('session.php', ['sessionid' => $sessionid]));
+}
+
+$filterenabled = $interval !== null && $intervalmultiplier !== null;
+$upcomingprefill = [
+    'id' => $id,
+    'interval_amount' => $interval,
+    'interval_multiplier' => $intervalmultiplier,
+    'filter_enabled' => $filterenabled
+];
+
+$upcomingfilterform = new \mod_observation\upcomingfilter_form(null, $upcomingprefill);
+
+if ($fromform = $upcomingfilterform->get_data()) {
+    if ($fromform->filter_enabled) {
+        // Disable filter.
+        redirect($pageurl);
+    } else {
+        // Enable filter.
+        // Redirect, putting the filter into the URL args so the table and form can pick it up.
+        redirect(new moodle_url('/mod/observation/sessionview.php', ['id' => $id, 'interval' => $fromform->interval_amount,
+            'period' => $fromform->interval_multiplier]));
+    }
+}
+
+$startsessionformprefill = [
     'id' => $id,
     'observerid' => $USER->id
-);
+];
 $startsessionform = new \mod_observation\startsession_form(null, $startsessionformprefill);
 
 // If start session form was submitted, call function to start session.
 if ($fromform = $startsessionform->get_data()) {
-    $sessionid = \mod_observation\session_manager::start_session($fromform->id, $fromform->observerid, $fromform->observeeid);
+    $sessionid = \mod_observation\session_manager::start_session($fromform->id, $USER->id, $fromform->observeeid);
     redirect(new moodle_url('session.php', ['sessionid' => $sessionid]));
 }
 
@@ -53,10 +93,19 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('observationsessions', 'observation'), 2);
 
+// See upcoming assigned timeslots table and form.
+echo $OUTPUT->heading(get_string('upcomingtimeslots', 'observation'), 3);
+$upcomingfilterform->display();
+
+// If there are URL args from the filter form, calculate the filter amount to pass to the table.
+$filter = $filterenabled ? $interval * $intervalmultiplier : 0;
+echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
+\mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING, $USER->id, $filter);
+
 // Start new session form block.
 $startsessionform->display();
 
-// Current sessions block.
+// Session history block.
 echo $OUTPUT->heading(get_string('previoussessions', 'observation'), 3);
 echo \mod_observation\viewsessions\viewsessions::ob_sess_table($observation->id, $pageurl);
 

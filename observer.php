@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,8 @@ require_login($course, true, $cm);
 require_capability('mod/observation:performobservation', $PAGE->context);
 
 // Render page.
-$PAGE->set_url(new moodle_url('/mod/observation/observer.php', array('id' => $id)));
+$pageurl = new moodle_url('/mod/observation/observer.php', array('id' => $id));
+$PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
@@ -80,7 +81,12 @@ if (has_capability('mod/observation:performobservation', $PAGE->context)) {
 }
 
 echo $OUTPUT->box_start();
-echo "Timeslots assigned placeholder";
+
+// Table of timeslots the user has been assigned.
+echo $OUTPUT->heading(get_string('assignedtimeslots', 'observation'), 3);
+echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED, $USER->id);
+
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();

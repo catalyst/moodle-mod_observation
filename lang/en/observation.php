@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -52,6 +52,7 @@ $string['editingobservationpoints'] = 'Editing observation points';
 $string['editingtimeslots'] = 'Editing timeslots';
 $string['settings'] = 'Settings';
 $string['actions'] = 'Actions';
+$string['assignedtimeslots'] = 'Assigned timeslots';
 $string['creatingobservationpoint'] = 'Creating observation point';
 $string['creatingtimeslot'] = 'Creating timeslot';
 $string['editingobservationpoint'] = 'Editing observation point';
@@ -131,9 +132,16 @@ $string['reopen'] = 'Re-open';
 $string['moreactions'] = 'More actions';
 $string['returntosessionlist'] = 'Return to session list';
 $string['gradeitemname'] = '{$a} observation session';
-$string['observer_fullname'] = 'Observer Name';
-$string['observer_email'] = 'Observer Email';
+$string['observer_fullname'] = 'Observer name';
+$string['observer_email'] = 'Observer email';
 $string['timeslots'] = 'Timeslots';
-$string['createnew'] = 'Create New';
-$string['observationpoints'] = 'Observation Points';
+$string['createnew'] = 'Create new';
+$string['observationpoints'] = 'Observation points';
 $string['placeholder'] = 'Placeholder';
+$string['upcomingtimeslots'] = 'Upcoming timeslots';
+$string['noobservee'] = 'No observee';
+$string['observeename'] = 'Observee name';
+$string['filtertimeslots'] = 'Filter timeslots';
+$string['filterwithin'] = 'Filter within';
+$string['applyfilter'] = 'Apply filter';
+$string['resetfilter'] = 'Clear filter';
