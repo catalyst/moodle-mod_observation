@@ -72,12 +72,11 @@ class timeslot_manager {
         if ($newinstance) {
             $slotid = $DB->insert_record($tablename, $data, true);
             self::update_timeslot_calendar_events($data->obs_id, $slotid);
-
             return $slotid;
         } else {
 
             $dbreturn = $DB->update_record($tablename, $data);
-            // Self::update_timeslot_calendar_events($data->obs_id, $data->id);.
+            self::update_timeslot_calendar_events($data->obs_id, $data->id);
             return $dbreturn;
         }
     }
@@ -145,7 +144,7 @@ class timeslot_manager {
             if (!isset($timeslot->observer_event_id)) {
                 $event = self::create_event($cm, $observation, $timeslot, $timeslot->observer_id);
 
-                $eventobj = \calendar_event::create($event);
+                $eventobj = \calendar_event::create($event, false);
                 if ($eventobj === false) {
                     throw new \moodle_exception("Could not create event for the observer for the timeslot.");
                 }
@@ -156,7 +155,7 @@ class timeslot_manager {
                 // Else event ID exists for observer, so update the details.
                 $event = \calendar_event::load($timeslot->observer_event_id);
                 $newdata = self::update_event($event, $observation, $timeslot, $timeslot->observer_id);
-                $event->update($newdata);
+                $event->update($newdata, false);
             }
         }
     }
@@ -226,7 +225,8 @@ class timeslot_manager {
         // Allow signup.
         $dbdata = [
             'id' => $slotid,
-            'observee_id' => $userid
+            'observee_id' => $userid,
+            'obs_id' => $observationid
         ];
 
         self::modify_time_slot($dbdata, false);
