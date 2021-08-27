@@ -45,7 +45,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param int $displaymode to determine the action that will be displayed
      * @param int $perpage number of entries per page for the table
      */
-    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $perpage = 50) {
+    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $perpage = 10) {
         parent::__construct($uniqueid);
 
         $columns = [
@@ -140,10 +140,6 @@ class timeslots_table extends \table_sql implements \renderable {
                 }
             break;
         }
-
-        // If viewing what they've been assigned
-        //$htmlout = $this->action_button('timesloteditor.php?mode=edit&', $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
-        //$htmlout .= $this->action_button('timesloteditor.php?', $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
 
         return $htmlout;
     }

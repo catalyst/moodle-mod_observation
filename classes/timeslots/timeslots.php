@@ -39,21 +39,42 @@ class timeslots {
 
     /**
      * Display mode with editing buttons
-     * @param const editing parameter for action button
+     * @param const int
      */
     const DISPLAY_MODE_EDITING = 0;
 
     /**
      * Display mode with signup buttons
-     * @param const signup parameter for action button
+     * @param const int
      */
     const DISPLAY_MODE_SIGNUP = 1;
 
     /**
      * Display mode with start session buttons
-     * @param const upcoming display mode
+     * @param const int
      */
     const DISPLAY_MODE_UPCOMING = 2;
+
+    /**
+     * Display mode with action buttons disabled.
+     * @param const int
+     */
+    const DISPLAY_MODE_ASSIGNED = 3;
+
+    /**
+     * Common SQL for timeslot tables
+     * @param const int
+     */
+    private const COMMON_SQL = [
+        'fields' => "ot.*,
+                    CONCAT(u.firstname, ' ', u.lastname) as observer_fullname,
+                    u.email as observer_email,
+                    CONCAT(o.firstname, ' ', o.lastname) as observee_fullname",
+        'from' => '{observation_timeslots} ot
+                    LEFT JOIN {user} u ON ot.observer_id = u.id
+                    LEFT JOIN {user} o on ot.observee_id = o.id',
+        'where' => 'obs_id = :obsid'
+    ];
 
 
     /**
@@ -61,51 +82,50 @@ class timeslots {
      * @param int $observationid ID of the observation instance to get the observation time slots from.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to
      * @param int $displaymode display mode for table
-     * @param int $timefilter filter for the start time column, if 0 no filter is applied. Positive integers only.
      */
-    public static function timeslots_table(int $observationid, \moodle_url $callbackurl, int $displaymode, int $timefilter = 0) {
-        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode, $timefilter);
+    public static function timeslots_table(int $observationid, \moodle_url $callbackurl, int $displaymode) {
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
 
-        // Optional time filtering SQL query.
-        if ($timefilter < 0) {
-            throw new \coding_exception("Time filter cannot be negative.");
-        }
+        $sql = (object) self::COMMON_SQL;
 
-        $sql = (object) [
-            'fields' => "ot.*,
-                        CONCAT(u.firstname, ' ', u.lastname) as observer_fullname,
-                        u.email as observer_email,
-                        CONCAT(o.firstname, ' ', o.lastname) as observee_fullname",
-            'from' => '{observation_timeslots} ot
-                        LEFT JOIN {user} u ON ot.observer_id = u.id
-                        LEFT JOIN {user} o on ot.observee_id = o.id',
-            'where' => 'obs_id = :obsid',
-            'params' => ['obsid' => $observationid]
-        ];
-
-        if ($timefilter !== 0) {
-            $sql->where = 'obs_id = :obsid AND start_time < :timefilter';
-            $sql->params = ['obsid' => $observationid, 'timefilter' => time() + $timefilter];
-        }
+        $sql->params['obsid'] = $observationid;
 
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
     }
 
     /**
-     * Creates a table that displays all the observation time slots for a given observation for the logged in user
+     * Creates a table that displays all the observation timeslots assigned to a person as an observer, with optional time filter.
      * @param int $observationid ID of the observation instance to get the observation time slots from.
-     * @param int $observerid ID of the user to filter the timeslots displayed by.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to
+     * @param int $displaymode display mode for table
+     * @param int $userid ID of the user who is an observer for a given timeslot
+     * @param int $timefilter filter for the start time column, if 0 no filter is applied. Positive integers only.
      */
-    public static function assigned_timeslots_table(int $observationid, int $userid, \moodle_url $callbackurl) {
-        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl);
-        $sql = (object) [
-            'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
-            'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
-            'where' => 'obs_id = :obsid AND observer_id = :userid', // Add OR observee_id = :userid here when students can select timeslots.
-            'params' => ['obsid' => $observationid, 'userid' => $userid]
-        ];
+    public static function assigned_timeslots_table(int $observationid, \moodle_url $callbackurl, int $displaymode, int $userid,
+        int $timefilter = 0) {
+
+        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
+
+        // Optional time filtering SQL query.
+        if ($timefilter < 0) {
+            throw new \coding_exception("Time filter cannot be negative.");
+        }
+
+        $sql = (object) self::COMMON_SQL;
+        $sql->params['obsid'] = $observationid;
+
+        // Add observer ID filter.
+        $sql->where .= ' AND observer_id = :observerid';
+        $sql->params['observerid'] = $userid;
+
+        if ($timefilter !== 0) {
+            // Add timefilter filter.
+
+            $sql->where .= ' AND start_time < :timefilter';
+            $sql->params['timefilter'] = time() + $timefilter;
+        }
+
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
     }

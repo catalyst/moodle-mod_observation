@@ -28,7 +28,8 @@ require_once(__DIR__.'/../../config.php');
 $id = required_param('id', PARAM_INT);
 $action = optional_param('action', null, PARAM_TEXT);
 $slotid = optional_param('slotid', null, PARAM_INT);
-$filter = optional_param('filter', 0, PARAM_INT);
+$interval = optional_param('interval', null, PARAM_INT);
+$intervalmultiplier = optional_param('period', null, PARAM_INT);
 
 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
@@ -52,18 +53,26 @@ if ($action !== null && $slotid !== null) {
     redirect(new moodle_url('session.php', ['sessionid' => $sessionid]));
 }
 
-$upcomingprefill = ['id' => $id, 'current_filter' => $filter];
+$filterenabled = $interval !== null && $intervalmultiplier !== null;
+$upcomingprefill = [
+    'id' => $id,
+    'interval_amount' => $interval,
+    'interval_multiplier' => $intervalmultiplier,
+    'filter_enabled' => $filterenabled
+];
+
 $upcomingfilterform = new \mod_observation\upcomingfilter_form(null, $upcomingprefill);
 
-// Redirect back to $pageurl if cancelled, removing the filter parameter.
-if ($upcomingfilterform->is_cancelled()) {
-    redirect($pageurl);
-}
-
 if ($fromform = $upcomingfilterform->get_data()) {
-    // Redirect, putting the filter into the URL args.
-    $filteramount = $fromform->interval_amount * (int) $fromform->interval_multiplier;
-    redirect(new moodle_url('/mod/observation/sessionview.php', ['id' => $id, 'filter' => $filteramount]));
+    if ($fromform->filter_enabled) {
+        // Disable filter.
+        redirect($pageurl);
+    } else {
+        // Enable filter.
+        // Redirect, putting the filter into the URL args so the table and form can pick it up.
+        redirect(new moodle_url('/mod/observation/sessionview.php', ['id' => $id, 'interval' => $fromform->interval_amount,
+            'period' => $fromform->interval_multiplier]));
+    }
 }
 
 $startsessionformprefill = [
@@ -87,8 +96,11 @@ echo $OUTPUT->heading(get_string('observationsessions', 'observation'), 2);
 // See upcoming assigned timeslots table and form.
 echo $OUTPUT->heading(get_string('upcomingtimeslots', 'observation'), 3);
 $upcomingfilterform->display();
-echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
-\mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING, $filter);
+
+// If there are URL args from the filter form, calculate the filter amount to pass to the table.
+$filter = $filterenabled ? $interval * $intervalmultiplier : 0;
+echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
+\mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING, $USER->id, $filter);
 
 // Start new session form block.
 $startsessionform->display();

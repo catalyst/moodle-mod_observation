@@ -51,29 +51,50 @@ class upcomingfilter_form extends \moodleform {
             DAYSECS => get_string('days'),
         ];
 
+        // Change the button text depending on if the filter is enabled.
+        $buttontext = $prefill['filter_enabled'] === true ? get_string('resetfilter', 'observation')
+            : get_string('applyfilter', 'observation');
+
         $intervalselector = [
             $mform->createElement('text', 'interval_amount'),
             $mform->createElement('select', 'interval_multiplier', '', $options),
-            $mform->createElement('submit', 'submit_btn', get_string('applyfilter', 'observation'))
+            $mform->createElement('submit', 'submit_btn', $buttontext)
         ];
 
+        // Interval selector block.
         $mform->addGroup($intervalselector, 'interval_select_group', get_string('filterwithin', 'observation'), null, false);
-        $mform->disabledIf('interval_select_group', 'enable_interval');
+        $mform->disabledIf('interval_amount', 'enable_interval');
         $mform->setType('interval_amount', PARAM_INT);
 
+        // Hidden Elements.
         $mform->addElement('hidden', 'id', $prefill['id']);
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'current_filter', $prefill['current_filter']);
-        $mform->setType('current_filter', PARAM_INT);
+        $mform->addElement('hidden', 'filter_enabled', $prefill['filter_enabled']);
+        $mform->setType('filter_enabled', PARAM_BOOL);
 
-        if ($prefill['current_filter'] !== 0) {
-            $mform->addElement('cancel', 'reset_filter', get_string('resetfilter', 'observation'));
-        }
-
-        $mform->disabledIf('interval_select_group', 'current_filter', 'neq', 0);
+        // Disable all filter elements except the cancel button if the filter is applied.
+        $mform->disabledIf('interval_amount', 'filter_enabled', 'eq', true);
+        $mform->disabledIf('interval_multiplier', 'filter_enabled', 'eq', true);
 
         // Set defaults.
         $this->set_data($prefill);
+    }
+
+    /**
+     * Custom validations for the form.
+     * NOTE: these are only run server side when get_data() is called.
+     * @param mixed $data form data
+     * @param mixed $files form files
+     */
+    public function validation($data, $files) {
+        $errors = [];
+
+        // Ensure interval amount is >= 0.
+        if (!is_int($data['interval_amount']) || $data['interval_amount'] < 0) {
+            $errors['interval_select_group'] = get_string('intgreaterthanorzero', 'observation');
+        }
+
+        return $errors;
     }
 }
