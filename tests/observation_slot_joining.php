@@ -124,7 +124,6 @@ class observation_slot_joining_test extends advanced_testcase {
         // First observee joining.
         $jointedimeslot1 = \mod_observation\timeslot_manager::timeslot_signup($obid, $timeslotid1, $this->observee->id);
 
-        // Testing second user trying to join timeslot
-        
+        // Testing second user trying to join timeslot.
     }
 }
