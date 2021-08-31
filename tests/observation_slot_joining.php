@@ -25,17 +25,28 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-class observation_session_test extends advanced_testcase {
+/**
+ * Unit tests for the observation timeslot joining.
+ *
+ * @package    mod_observation
+ * @category   test
+ * @copyright  2021 Endurer Solutions Team
+ * @author Jack Kepper <Jack@Kepper.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class observation_slot_joining_test extends advanced_testcase {
 
     /**
-     * Valid data point to use for testing.
+     * First valid data point to use for testing.
      */
     private const VALID_DATA1 = [
         'start_time' => 1528656920,
         'duration' => 60,
     ];
 
+    /**
+     * Second valid data point to use for testing.
+     */
     private const VALID_DATA2 = [
         'start_time' => 1628656920,
         'duration' => 20,
@@ -114,7 +125,6 @@ class observation_session_test extends advanced_testcase {
         // First observee joining.
         $jointedimeslot1 = \mod_observation\timeslot_manager::timeslot_signup($obid, $timeslotid1, $this->observee->id);
 
-        // Testing second user trying to join timeslot
-        
+        // Testing second user trying to join timeslot.
     }
 }
