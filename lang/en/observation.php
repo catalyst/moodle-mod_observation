@@ -158,3 +158,7 @@ $string['cannotpreviewslots'] = 'Could not preview timeslots: {$a}.';
 $string['formincomplete'] = 'Form incomplete';
 $string['endbeforestart'] = 'End time must be after the start time.';
 $string['create'] = 'Create';
+$string['messageprovider:confirmsignup'] = 'Confirmation of your observation signup';
+$string['viewsignup'] = 'View time slot signup';
+$string['signupconfirm'] = '{$a} - Timeslot registration confirmation';
+$string['signuptime'] = 'Signup time';
