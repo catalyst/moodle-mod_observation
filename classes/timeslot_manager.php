@@ -25,6 +25,8 @@
 
 namespace mod_observation;
 
+use moodle_exception;
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/calendar/lib.php');
 
@@ -70,7 +72,6 @@ class timeslot_manager {
         if ($newinstance) {
             $slotid = $DB->insert_record($tablename, $data, true);
             self::update_timeslot_calendar_events($data->obs_id, $slotid);
-
             return $slotid;
         } else {
 
@@ -143,7 +144,7 @@ class timeslot_manager {
             if (!isset($timeslot->observer_event_id)) {
                 $event = self::create_event($cm, $observation, $timeslot, $timeslot->observer_id);
 
-                $eventobj = \calendar_event::create($event);
+                $eventobj = \calendar_event::create($event, false);
                 if ($eventobj === false) {
                     throw new \moodle_exception("Could not create event for the observer for the timeslot.");
                 }
@@ -154,7 +155,7 @@ class timeslot_manager {
                 // Else event ID exists for observer, so update the details.
                 $event = \calendar_event::load($timeslot->observer_event_id);
                 $newdata = self::update_event($event, $observation, $timeslot, $timeslot->observer_id);
-                $event->update($newdata);
+                $event->update($newdata, false);
             }
         }
     }
@@ -200,5 +201,44 @@ class timeslot_manager {
         $event = self::update_event($event, $observation, $slotdata, $userid);
 
         return $event;
+    }
+
+    /**
+     * Signs users up to timeslots after check if the class is taken, and the user isnt already
+     * signed up for another class.
+     * @param int $observationid is the obseravtion slot ID
+     * @param int $slotid is the observation timeslot ID
+     * @param int $userid is the user ID
+     */
+    public static function timeslot_signup(int $observationid, int $slotid, int $userid) {
+
+        // Query the timeslot to find the signup status.
+        $timeslot = self::get_existing_slot_data($observationid, $slotid);
+        $signedupslot = self::get_registered_timeslot($observationid, $userid);
+
+        if ($timeslot->observee_id !== null) {
+            throw new moodle_exception("Could not signup to timeslot. Timeslot already taken.");
+        } else if ($signedupslot !== false) {
+            throw new moodle_exception("Could not signup to timeslot. You have already signed up for a timeslot.");
+        }
+
+        // Allow signup.
+        $dbdata = [
+            'id' => $slotid,
+            'observee_id' => $userid,
+            'obs_id' => $observationid
+        ];
+
+        self::modify_time_slot($dbdata, false);
+    }
+
+    /**
+     * Determines timeslot signed up to, or false if not signed up (within a single observation instance)
+     * @param int $observationid is the Observation ID
+     * @param int $userid is the User ID
+     */
+    public static function get_registered_timeslot(int $observationid, int $userid) {
+        global $DB;
+        return $DB->get_record("observation_timeslots", ['obs_id' => $observationid, 'observee_id' => $userid], '*');
     }
 }

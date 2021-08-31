@@ -30,7 +30,6 @@ list($observation, $course, $cm) = \mod_observation\observation_manager::get_obs
 
 // Check permissions.
 require_login($course, true, $cm);
-require_capability('mod/observation:view', $PAGE->context);
 
 // Render page.
 $pageurl = new moodle_url('/mod/observation/observee.php', array('id' => $id));
@@ -40,13 +39,14 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($observation->name, 2);
 
+echo $OUTPUT->box_start();
+echo $OUTPUT->single_button(
+    new moodle_url('/mod/observation/timeslotjoining.php', array('id' => $observation->id)),
+    get_string('selectingslot', 'observation')
+);
+echo $OUTPUT->box_end();
+
 echo \mod_observation\instructions::observation_instructions(get_string('instructions', 'observation'),
     $observation->observee_ins, $observation->observee_ins_f);
-
-echo $OUTPUT->container_start();
-echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
-echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
-\mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
-echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();

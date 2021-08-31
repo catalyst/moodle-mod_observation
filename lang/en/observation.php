@@ -145,3 +145,5 @@ $string['filtertimeslots'] = 'Filter timeslots';
 $string['filterwithin'] = 'Filter within';
 $string['applyfilter'] = 'Apply filter';
 $string['resetfilter'] = 'Clear filter';
+$string['selectingslot'] = 'Select Time Slot';
+$string['timeslotinfo'] = 'Time slot information';
