@@ -34,21 +34,14 @@ defined('MOODLE_INTERNAL') || die();
  * @author Jack Kepper <Jack@Kepper.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class observation_slot_joining_test extends advanced_testcase {
+class timeslot_joining_test extends advanced_testcase {
 
     /**
      * First valid data point to use for testing.
      */
-    private const VALID_DATA1 = [
+    private const VALID_DATA = [
         'start_time' => 1528656920,
         'duration' => 60,
-    ];
-    /**
-     * Second valid data point to use for testing.
-     */
-    private const VALID_DATA2 = [
-        'start_time' => 1628656920,
-        'duration' => 20,
     ];
 
     /**
@@ -61,15 +54,12 @@ class observation_slot_joining_test extends advanced_testcase {
         $obgenerator = $this->getDataGenerator()->get_plugin_generator('mod_observation');
         $obinstance = $obgenerator->create_instance(['course' => $course->id]);
 
-        // Create three users with roles:
-        // coordinator (editing teacher), observer (teacher), observee (student).
-        $coordinator = $this->getDataGenerator()->create_user();
+        // Create two observees and a single observer.
         $observer = $this->getDataGenerator()->create_user();
         $observee = $this->getDataGenerator()->create_user();
         $observee2 = $this->getDataGenerator()->create_user();
 
         // Enrol all users to course with their roles.
-        $this->getDataGenerator()->enrol_user($coordinator->id, $course->id, 'editingteacher');
         $this->getDataGenerator()->enrol_user($observer->id, $course->id, 'teacher');
         $this->getDataGenerator()->enrol_user($observee->id, $course->id, 'student');
         $this->getDataGenerator()->enrol_user($observee2->id, $course->id, 'student');
@@ -78,36 +68,26 @@ class observation_slot_joining_test extends advanced_testcase {
         $this->course = $course;
         $this->instance = $obinstance;
 
-        $this->coordinator = $coordinator;
         $this->observer = $observer;
         $this->observee = $observee;
         $this->observee2 = $observee2;
+
+        $this->slot1id = $this->create_valid_timeslot();
+        $this->slot2id = $this->create_valid_timeslot();
 
         $this->setUser($this->observee);
     }
 
     /**
-     * Creates a valid timeslot using the data created in the setUp() function.
+     * Creates a valid timeslot and returns its ID.
      */
-    private function create_valid_timeslot1() {
+    private function create_valid_timeslot() {
         $obid = $this->instance->id;
-        $data = self::VALID_DATA1;
+        $data = self::VALID_DATA;
         $data['observer_id'] = $this->observer->id;
         $data['obs_id'] = $obid;
 
-        return $data;
-    }
-
-    /**
-     * Creates a valid timeslot using the data created in the setUp() function.
-     */
-    private function create_valid_timeslot2() {
-        $obid = $this->instance->id;
-        $data = self::VALID_DATA2;
-        $data['observer_id'] = $this->observer->id;
-        $data['obs_id'] = $obid;
-
-        return $data;
+        return \mod_observation\timeslot_manager::modify_time_slot($data, true);
     }
 
     /**
@@ -115,15 +95,42 @@ class observation_slot_joining_test extends advanced_testcase {
      */
     public function test_joining_function () {
         $obid = $this->instance->id;
-        $data1 = $this->create_valid_timeslot1();
-        $data2 = $this->create_valid_timeslot2();
 
-        $timeslotid1 = \mod_observation\timeslot_manager::modify_time_slot($data1, true);
-        $timeslotid2 = \mod_observation\timeslot_manager::modify_time_slot($data2, true);
+        // Observee 1 joins timeslot 1, Observee 2 joins timeslot 2.
+        \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slot1id, $this->observee->id);
+        \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slot2id, $this->observee2->id);
 
-        // First observee joining.
-        $jointedimeslot1 = \mod_observation\timeslot_manager::timeslot_signup($obid, $timeslotid1, $this->observee->id);
+        $timeslot1 = \mod_observation\timeslot_manager::get_existing_slot_data($obid, $this->slot1id);
+        $timeslot2 = \mod_observation\timeslot_manager::get_existing_slot_data($obid, $this->slot2id);
 
-        // Testing second user trying to join timeslot.
+        $this->assertEquals($this->observee->id, $timeslot1->observee_id);
+        $this->assertEquals($this->observee2->id, $timeslot2->observee_id);
+    }
+
+    /**
+     * Tests if students are not allowed to join multiple timeslots.
+     */
+    public function test_double_joining () {
+        $obid = $this->instance->id;
+
+        // Observee 1 tries to join both timeslots 1 and 2 (not allowed).
+        \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slot1id, $this->observee->id);
+
+        $this->expectException('moodle_exception');
+        \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slot2id, $this->observee->id);
+    }
+
+    /**
+     * Tests if two students are not allowed to join same timeslot.
+     */
+    public function test_join_filled () {
+        $obid = $this->instance->id;
+
+        // Observee 1 joins timeslot 1.
+        \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slot1id, $this->observee->id);
+
+        // Observee 2 tries to join timeslot 1.
+        $this->expectException('moodle_exception');
+        \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slot1id, $this->observee2->id);
     }
 }
