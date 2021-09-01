@@ -78,11 +78,6 @@ class timeslots {
         'where' => 'obs_id = :obsid'
     ];
 
-     * helps with defining the actions that the list displays
-     * @param const edit and delte parameter for action button when viewed from observer.php
-     */
-    const DISPLAY_MODE_VIEW_ASSIGNED = 2;
-
     /**
      * Creates a table that displays all the observation time slots for a given observation
      * @param int $observationid ID of the observation instance to get the observation time slots from.
@@ -143,6 +138,7 @@ class timeslots {
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to.
      * @param int $displaymode display mode for table
      */
+    /*
     public static function assigned_timeslots_table(int $observationid, int $userid, \moodle_url $callbackurl, int $displaymode) {
         $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode, $observationid);
         $sql = (object) [
@@ -153,7 +149,7 @@ class timeslots {
         ];
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
-    }
+    }*/
 
     // In assigned_timeslots_table function,
     // 'where' => 'obs_id = :obsid AND (observer_id = :userid' OR observee_id = :userid), 

@@ -49,15 +49,16 @@ echo $OUTPUT->box_end();
 echo \mod_observation\instructions::observation_instructions(get_string('instructions', 'observation'),
     $observation->observee_ins, $observation->observee_ins_f);
 
+/*
 echo $OUTPUT->container_start();
 echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
-//echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
-//\mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
-
 // Displays table of timeslots student has signed up to.
-echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $USER->id, $pageurl,
-\mod_observation\timeslots\timeslots::DISPLAY_MODE_VIEW_ASSIGNED);
+echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
+\mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
 
-echo $OUTPUT->container_end();
+echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $USER->id,
+\mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED);
+
+echo $OUTPUT->container_end();*/
 
 echo $OUTPUT->footer();
