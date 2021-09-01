@@ -83,11 +83,7 @@ if ($signedupslot === false) {
     echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
     \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED, $USER->id);
     // Show the timeslots observation points?
-    // for each:
-    // Title
-    // Instructions
-    // Max Grade
-    
+    echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl); // TODO: create new in viewpoints.
 }
 
 // Moodle footer.

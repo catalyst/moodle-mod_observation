@@ -54,4 +54,6 @@ class viewpoints {
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
     }
+
+    // Create another function that returns the observation point Title, Response Type and Maximum Grade in normal text for Observees.
 }
