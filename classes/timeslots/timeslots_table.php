@@ -86,7 +86,8 @@ class timeslots_table extends \table_sql implements \renderable {
         $this->no_sorting('action');
 
         $this->displaymode = $displaymode;
-        $this->cm = \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+        list($observation, $course, $cm)= \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+        $this->cmId = $cm->id;
     }
 
     /**
@@ -145,12 +146,13 @@ class timeslots_table extends \table_sql implements \renderable {
         }
 
         if ($this->displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_VIEW_ASSIGNED) {
-            // If user can perform observations, show edit and delete buttons
-            $context = context_course::instance($this->cm);
+            // If user can perform observations, show edit and delete buttons.
+            $context = context_course::instance($this->cmId);
             if (has_capability('mod/observation:performobservation', $context)){
                 $htmlout = $this->action_button('timesloteditor.php?mode=edit&', $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
                 $htmlout .= $this->action_button('timesloteditor.php?', $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
             }
+            // Else, view.
         }
 
         // In display mode view assign or whatever, check permission: if student shows a view button.
