@@ -116,9 +116,9 @@ class timeslots {
         $sql = (object) self::COMMON_SQL;
         $sql->params['obsid'] = $observationid;
 
-        // Add observer ID filter.
-        $sql->where .= ' AND observer_id = :observerid';
-        $sql->params['observerid'] = $userid;
+        // Add observer/observee ID filter.
+        $sql->where .= ' AND :userid IN (observee_id, observer_id)';
+        $sql->params['userid'] = $userid;
 
         if ($timefilter !== 0) {
             // Add timefilter filter.
@@ -130,28 +130,4 @@ class timeslots {
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
     }
-
-    /**
-     * Creates a table that displays all the observation time slots for a given observation for the logged in user.
-     * @param int $observationid ID of the observation instance to get the observation time slots from.
-     * @param int $userid ID of the user to filter the timeslots displayed by.
-     * @param \moodle_url $callbackurl URL for action buttons in table to callback to.
-     * @param int $displaymode display mode for table
-     */
-    /*
-    public static function assigned_timeslots_table(int $observationid, int $userid, \moodle_url $callbackurl, int $displaymode) {
-        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode, $observationid);
-        $sql = (object) [
-            'fields' => "op.*, CONCAT(u.firstname, ' ', u.lastname) as observer_fullname, u.email as observer_email",
-            'from' => '{observation_timeslots} op LEFT JOIN {user} u ON op.observer_id = u.id',
-            'where' => ':userid IN (observee_id, observer_id) AND obs_id = :obsid',
-            'params' => ['obsid' => $observationid, 'userid' => $userid]
-        ];
-        $table->sql = $sql;
-        return $table->out($table->pagesize, true);
-    }*/
-
-    // In assigned_timeslots_table function,
-    // 'where' => 'obs_id = :obsid AND (observer_id = :userid' OR observee_id = :userid), 
-
 }

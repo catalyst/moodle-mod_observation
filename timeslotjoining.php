@@ -82,6 +82,12 @@ if ($signedupslot === false) {
     echo $OUTPUT->heading(get_string('timeslotinfo', 'observation'), 3);
     echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
     \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED, $USER->id);
+    // Show the timeslots observation points?
+    // for each:
+    // Title
+    // Instructions
+    // Max Grade
+    
 }
 
 // Moodle footer.
