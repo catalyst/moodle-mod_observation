@@ -25,8 +25,6 @@
 
 namespace mod_observation\timeslots;
 
-use function Complex\ln;
-
 defined('MOODLE_INTERNAL') || die;
 
 /**
