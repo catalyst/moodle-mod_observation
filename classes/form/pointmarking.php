@@ -75,6 +75,8 @@ class pointmarking extends \moodleform {
                 $mform->setType('response', PARAM_TEXT); // Response will be Pass or Fail.
                 $mform->addRule('radioar', get_string('required', 'observation'), 'required', null, 'client');
                 break;
+            case \mod_observation\observation_manager::INPUT_IMAGE:
+                break;
         }
 
         $mform->addElement('static', 'max_grade_display', get_string('maxgrade', 'observation'), $prefill['max_grade']);

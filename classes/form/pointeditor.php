@@ -51,6 +51,7 @@ class pointeditor extends \moodleform {
         $radioarray = array();
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('textinputtype', 'observation'), 0);
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('passfailtype', 'observation'), 1);
+        $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('imagetype', 'observation'), 2);
         $mform->addGroup($radioarray, 'radioar', get_string('obpointtype', 'observation'), array(' '), false);
         $mform->setDefault('type', 0);
 
