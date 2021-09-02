@@ -64,6 +64,7 @@ $string['edit'] = 'Edit';
 $string['gradinginstructions'] = 'Grading Instructions';
 $string['textinputtype'] = 'Text Input';
 $string['passfailtype'] = 'Pass/Fail';
+$string['imagetype'] = 'Image';
 $string['pass'] = 'Pass';
 $string['fail'] = 'Fail';
 $string['obpointtype'] = 'Response Type';
