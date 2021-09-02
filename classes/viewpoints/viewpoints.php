@@ -43,7 +43,7 @@ class viewpoints {
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to
      * @param int $displaymode display mode for table
      */
-    public static function ob_point_table(int $observationid, \moodle_url $callbackurl, int $displaymode) {
+    public static function ob_point_table(int $observationid, \moodle_url $callbackurl, int $displaymode = 0) {
         $table = new \mod_observation\viewpoints\viewpoints_table('obpointviewtable', $callbackurl, $displaymode);
         // Left join the res type map table to get the corresponding lang string for the response type.
         $sql = (object) [

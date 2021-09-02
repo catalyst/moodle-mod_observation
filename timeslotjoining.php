@@ -83,10 +83,10 @@ if ($signedupslot === false) {
     echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
     \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED, $USER->id);
 
-    // Show the timeslots observation points
+    // Show the timeslots observation points.
     echo $OUTPUT->heading(get_string('observationpoints', 'observation'), 3);
-    echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl, 
-    \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED); // TODO: remove action buttons
+    echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl,
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED);
 }
 
 // Moodle footer.
