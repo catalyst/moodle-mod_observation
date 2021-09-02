@@ -76,6 +76,11 @@ class pointmarking extends \moodleform {
                 $mform->addRule('radioar', get_string('required', 'observation'), 'required', null, 'client');
                 break;
             case \mod_observation\observation_manager::INPUT_IMAGE:
+                // Image upload here.
+                $maxbytes = 5; // TODO: this restricts the size of each individual file.
+                $mform->addElement('filemanager', 'response', get_string('imageupload', 'observation'), null,
+                    array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
+                          'accepted_types' => array('jpg', 'jpeg', 'png'), 'return_types'=> FILE_INTERNAL | FILE_EXTERNAL));
                 break;
         }
 

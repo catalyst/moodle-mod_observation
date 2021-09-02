@@ -67,6 +67,7 @@ $string['passfailtype'] = 'Pass/Fail';
 $string['imagetype'] = 'Image';
 $string['pass'] = 'Pass';
 $string['fail'] = 'Fail';
+$string['imageupload'] = 'Image upload';
 $string['obpointtype'] = 'Response Type';
 $string['grading'] = 'Grading';
 $string['maxgrade'] = 'Maximum grade';
