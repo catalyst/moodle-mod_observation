@@ -79,11 +79,14 @@ if ($signedupslot === false) {
     \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
 } else {
     // Already signed up - show details.
-    echo $OUTPUT->heading(get_string('timeslotinfo', 'observation'), 3);
+    echo $OUTPUT->heading(get_string('yourtimeslot', 'observation'), 3);
     echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
     \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED, $USER->id);
-    // Show the timeslots observation points?
-    echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl); // TODO: create new in viewpoints.
+
+    // Show the timeslots observation points
+    echo $OUTPUT->heading(get_string('observationpoints', 'observation'), 3);
+    echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl, 
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED); // TODO: remove action buttons
 }
 
 // Moodle footer.

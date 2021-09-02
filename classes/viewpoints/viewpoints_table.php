@@ -42,9 +42,10 @@ class viewpoints_table extends \table_sql implements \renderable {
      * Constructs the table and defines how the data from the SQL query is displayed
      * @param string $uniqueid ID that uniquely identifies this element on the HTML page
      * @param \moodle_url $callbackurl URL used for callback for action buttons in the table
+     * @param int $displaymode display mode for table
      * @param int $perpage number of entries per page for the table
      */
-    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $perpage = 50) {
+    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $perpage = 50) {
         parent::__construct($uniqueid);
 
         $this->define_columns([
@@ -74,6 +75,8 @@ class viewpoints_table extends \table_sql implements \renderable {
         $this->pageable(true);
         $this->is_downloadable(false);
         $this->define_baseurl($callbackurl);
+
+        $this->displaymode = $displaymode;
     }
 
     /**
@@ -105,6 +108,10 @@ class viewpoints_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_action($row) {
+        if($this->displaymode == \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED){
+            $htmlout = "";
+            return $htmlout;
+        }
         // Add action buttons.
         $htmlout = $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
         $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));

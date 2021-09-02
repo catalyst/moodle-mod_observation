@@ -152,6 +152,7 @@ $string['applyfilter'] = 'Apply filter';
 $string['resetfilter'] = 'Clear filter';
 $string['selectingslot'] = 'Select Time Slot';
 $string['timeslotinfo'] = 'Time slot information';
+$string['yourtimeslot'] = 'Your time slot';
 $string['useinterval'] = 'Create multiple timeslots using intervals';
 $string['generatedtimeslots'] = 'Generated {$a} timeslots';
 $string['cannotpreviewslots'] = 'Could not preview timeslots: {$a}.';

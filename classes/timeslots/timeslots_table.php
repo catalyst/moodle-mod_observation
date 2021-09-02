@@ -86,8 +86,6 @@ class timeslots_table extends \table_sql implements \renderable {
         $this->no_sorting('action');
 
         $this->displaymode = $displaymode;
-        //list($observation, $course, $cm)= \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
-        //$this->cmId = $cm->id;
     }
 
     /**
