@@ -108,7 +108,7 @@ class viewpoints_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_action($row) {
-        if($this->displaymode == \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED){
+        if($this->displaymode == \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED) {
             $htmlout = "";
             return $htmlout;
         };

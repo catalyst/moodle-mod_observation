@@ -47,8 +47,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param int $displaymode to determine the action that will be displayed
      * @param int $perpage number of entries per page for the table
      */
-    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $observationid = null,
-    int $perpage = 50) {
+    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $perpage = 50) {
         parent::__construct($uniqueid);
 
         $columns = [
