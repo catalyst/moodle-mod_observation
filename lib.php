@@ -115,3 +115,17 @@ function observation_supports($feature) {
         }
     }
 }
+
+/**
+ * Determines if a calendar event is visible.
+ * @param calendar_event $event event to determine visibility for.
+ */
+function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
+    global $USER;
+
+    // For some archaic reason, $event->userid is NOT the userID of the event in the database,
+    // but is instead the caller of this function (i.e. the same as $USER->id).
+    // To deal with this, we store the userid in the description of the event (hacky, but this means no extra $DB calls).
+    $eventuserid = (int)explode(']', $event->description)[0][1];
+    return (int)$USER->id === $eventuserid;
+}
