@@ -20,7 +20,7 @@
  * @package    mod_observation
  * @category   test
  * @copyright  2021 Endurer Solutions Team
- * @author Jack Kepper <Jack@Kepper.net>
+ * @author Jack Kepper <Jack@Kepper.net>, Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package    mod_observation
  * @category   test
  * @copyright  2021 Endurer Solutions Team
- * @author Jack Kepper <Jack@Kepper.net>
+ * @author Jack Kepper <Jack@Kepper.net>, Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class timeslot_joining_test extends advanced_testcase {
@@ -132,5 +132,20 @@ class timeslot_joining_test extends advanced_testcase {
         // Observee 2 tries to join timeslot 1.
         $this->expectException('moodle_exception');
         \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slot1id, $this->observee2->id);
+    }
+
+     /**
+      * Tests notifications on timeslot signup
+      */
+    public function test_signup_notification() {
+        $obid = $this->instance->id;
+
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slot1id, $this->observee->id);
+
+        $messages = $sink->get_messages();
+        $this->assertEquals(1, count($messages));
     }
 }

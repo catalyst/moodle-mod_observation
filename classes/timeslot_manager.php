@@ -335,6 +335,7 @@ class timeslot_manager {
         ];
 
         self::modify_time_slot($dbdata, false);
+        self::send_signup_confirmation_message($observationid, $slotid, $userid);
     }
 
     /**
@@ -345,5 +346,65 @@ class timeslot_manager {
     public static function get_registered_timeslot(int $observationid, int $userid) {
         global $DB;
         return $DB->get_record("observation_timeslots", ['obs_id' => $observationid, 'observee_id' => $userid], '*');
+    }
+
+    /**
+     * Sends the signup confirmation message to the desired user.
+     * @param int $observationid id of the observation instance.
+     * @param int $slotid id of the timeslot the user signed up to.
+     * @param int $userid id of the user to send the message to.
+     */
+    public static function send_signup_confirmation_message(int $observationid, int $slotid, int $userid) {
+        global $DB;
+        $user = $DB->get_record('user', ['id' => $userid]);
+
+        list($observation, $course, $cm) =
+            \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+
+        $contexturl =
+            (new \moodle_url('/mod/observation/timeslotjoining.php', ['id' => $observation->id]))->out(false);
+
+        $eventdata = new \core\message\message();
+
+        $eventdata->courseid          = $course->id;
+        $eventdata->component         = 'mod_observation';
+        $eventdata->name              = 'confirmsignup';
+        $eventdata->notification      = 1;
+
+        $eventdata->userfrom          = \core_user::get_noreply_user();
+        $eventdata->userto            = $user;
+        $eventdata->subject           = get_string('signupconfirm', 'observation', $observation->name);
+        $eventdata->fullmessage       = "";
+        $eventdata->fullmessageformat = FORMAT_HTML;
+        $eventdata->fullmessagehtml   = self::timeslot_html($observationid, $slotid);
+
+        $eventdata->smallmessage      = "";
+        $eventdata->contexturl        = $contexturl;
+        $eventdata->contexturlname    = get_string('viewsignup', 'observation');
+
+        return message_send($eventdata);
+    }
+
+    /**
+     * Generates timeslot HTML message used in signup message notification.
+     * @param int $observationid ID of the observation instance
+     * @param int $slotid ID of the timeslot
+     */
+    public static function timeslot_html(int $observationid, int $slotid) {
+        global $OUTPUT;
+
+        list($observation, $course, $cm) =
+            \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+
+        $slotdata = self::get_existing_slot_data($observationid, $slotid);
+
+        $data = (object) [
+            "timeslot" => $slotdata,
+            "observation" => $observation,
+            "current_time_formatted" => userdate(time()),
+            "start_time_formatted" => userdate($slotdata->start_time)
+        ];
+
+        return $OUTPUT->render_from_template('mod_observation/confirm_message', $data);
     }
 }
