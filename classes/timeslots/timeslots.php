@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
+ * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -76,7 +76,6 @@ class timeslots {
         'where' => 'obs_id = :obsid'
     ];
 
-
     /**
      * Creates a table that displays all the observation time slots for a given observation
      * @param int $observationid ID of the observation instance to get the observation time slots from.
@@ -115,9 +114,9 @@ class timeslots {
         $sql = (object) self::COMMON_SQL;
         $sql->params['obsid'] = $observationid;
 
-        // Add observer ID filter.
-        $sql->where .= ' AND observer_id = :observerid';
-        $sql->params['observerid'] = $userid;
+        // Add observer/observee ID filter.
+        $sql->where .= ' AND :userid IN (observee_id, observer_id)';
+        $sql->params['userid'] = $userid;
 
         if ($timefilter !== 0) {
             // Add timefilter filter.

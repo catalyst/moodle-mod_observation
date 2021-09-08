@@ -41,9 +41,10 @@ class viewpoints {
      * Creates a table that displays all the observation points for a given observation
      * @param int $observationid ID of the observation instance to get the observation points from.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to
+     * @param int $displaymode display mode for table
      */
-    public static function ob_point_table(int $observationid, \moodle_url $callbackurl) {
-        $table = new \mod_observation\viewpoints\viewpoints_table('obpointviewtable', $callbackurl);
+    public static function ob_point_table(int $observationid, \moodle_url $callbackurl, int $displaymode = 0) {
+        $table = new \mod_observation\viewpoints\viewpoints_table('obpointviewtable', $callbackurl, $displaymode);
         // Left join the res type map table to get the corresponding lang string for the response type.
         $sql = (object) [
             'fields' => 'op.*, ortm.lang_string',

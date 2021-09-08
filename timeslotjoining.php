@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Jack Kepper <Jack@Kepper.net>
+ * @author Jack Kepper <Jack@Kepper.net>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -74,13 +74,18 @@ $signedupslot = \mod_observation\timeslot_manager::get_registered_timeslot($obse
 // Not signed up yet.
 if ($signedupslot === false) {
     // Time Slot Viewer (Table).
+    echo $OUTPUT->container_start('p-3 mb-2 bg-warning');
+    echo get_string('noslotsignedup', 'observation');
+    echo $OUTPUT->container_end();
+
     echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
     echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
     \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
 } else {
     // Already signed up - show details.
-    echo $OUTPUT->heading(get_string('timeslotinfo', 'observation'), 3);
-    // TODO show details in nice format.
+    echo $OUTPUT->heading(get_string('yourtimeslot', 'observation'), 3);
+    echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED, $USER->id);
 }
 
 // Moodle footer.

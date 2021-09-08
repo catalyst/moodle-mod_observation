@@ -25,6 +25,8 @@
 
 namespace mod_observation\timeslots;
 
+use context_course;
+
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -45,7 +47,7 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param int $displaymode to determine the action that will be displayed
      * @param int $perpage number of entries per page for the table
      */
-    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $perpage = 10) {
+    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode, int $perpage = 50) {
         parent::__construct($uniqueid);
 
         $columns = [
@@ -116,7 +118,7 @@ class timeslots_table extends \table_sql implements \renderable {
      */
     public function col_action($row) {
 
-        // If statement to determine editting or viewing.
+        // If statement to determine editing or viewing.
 
         $htmlout = "";
 
