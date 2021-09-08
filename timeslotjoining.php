@@ -74,6 +74,10 @@ $signedupslot = \mod_observation\timeslot_manager::get_registered_timeslot($obse
 // Not signed up yet.
 if ($signedupslot === false) {
     // Time Slot Viewer (Table).
+    echo $OUTPUT->container_start('p-3 mb-2 bg-warning');
+    echo get_string('noslotsignedup', 'observation');
+    echo $OUTPUT->container_end();
+
     echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
     echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
     \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
@@ -82,11 +86,6 @@ if ($signedupslot === false) {
     echo $OUTPUT->heading(get_string('yourtimeslot', 'observation'), 3);
     echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
     \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED, $USER->id);
-
-    // Show the timeslots observation points.
-    echo $OUTPUT->heading(get_string('observationpoints', 'observation'), 3);
-    echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl,
-    \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED);
 }
 
 // Moodle footer.
