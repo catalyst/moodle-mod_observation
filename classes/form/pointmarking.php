@@ -85,7 +85,11 @@ class pointmarking extends \moodleform {
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
                           'accepted_types' => array('jpg', 'jpeg', 'png'), 'return_types'=> FILE_INTERNAL | FILE_EXTERNAL)); // Other than this end bit(?), the rest is fine.
 
-                
+                // Below is an attempt to prepare the draft area.
+                $context = context_system::instance();
+                $id = optional_param('id', 0, PARAM_INT);
+                $draftitemid = file_get_submitted_draft_itemid('response');
+                file_prepare_draft_area($draftitemid, $context->id, 'block_carousel', 'response', $id);
 
                 break;
         }
@@ -147,6 +151,36 @@ class pointmarking extends \moodleform {
      */
     public function validation($data, $files) {
         $errors = [];
+
+        // Save submitted image.
+        // file_save_draft_area_files($fromform->content, $context->id, 'block_carousel', 'content', $recordid);
+        // $draftitemid, $contextid, $component, $filearea, $itemid
+        file_save_draft_area_files($data->content, $data->context->id, 'observation', 'response', $files);
+
+        if (!empty($files)){
+            $itemid = empty($files->get_itemid()) ? null : $files->get_itemid();
+            $data['link'] = \moodle_url::make_pluginfile_url(
+                $files->get_contextid(),
+                $files->get_component(),
+                $files->get_filearea(),
+                $itemid,
+                $files->get_filepath(),
+                $files->get_filename()
+            );
+        } else {
+            $data['link'] = '';
+        }
+
+        // Below from: https://github.com/catalyst/moodle-block_carousel/blob/master/classes/cache/slide_cache.php#L121
+        // $itemid = empty($selectedfile->get_itemid()) ? null : $selectedfile->get_itemid();
+        // $data['link'] = \moodle_url::make_pluginfile_url(
+        //     $selectedfile->get_contextid(),
+        //     $selectedfile->get_component(),
+        //     $selectedfile->get_filearea(),
+        //     $itemid,
+        //     $selectedfile->get_filepath(),
+        //     $selectedfile->get_filename()
+        // );
 
         // Ensure grade given <= max grade.
         if ($data['grade_given'] > $data['max_grade']) {
