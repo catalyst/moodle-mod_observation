@@ -24,6 +24,7 @@
  */
 
 require_once(__DIR__.'/../../config.php');
+global $DB;
 
 $id = required_param('id', PARAM_INT); // Observation instance ID.
 $slotid = optional_param('slotid', null, PARAM_INT); // Time slot ID.
@@ -84,8 +85,16 @@ echo $OUTPUT->box_end();
 
 // Time Slot Viewer (Table).
 echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
-echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
-\mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING);
+
+// See if a timeslot already exists for this session.
+$slotexist = $DB->get_record('observation_timeslots', array('obs_id' => $id));
+
+if ($slotexist !== false) {
+    echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
+    \mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING);
+} else if ($slotexist === false) {
+    echo "Nothing to display";
+}
 
 // Moodle footer.
 echo $OUTPUT->footer();

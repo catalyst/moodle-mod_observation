@@ -87,6 +87,7 @@ class timeslots_test extends advanced_testcase {
         $obid = $this->instance->id;
         $data = self::VALID_DATA;
         $data['observer_id'] = $this->observer->id;
+        $data['observee_id'] = $this->observee->id;
         $data['obs_id'] = $obid;
 
         return $data;
@@ -109,10 +110,19 @@ class timeslots_test extends advanced_testcase {
         $alltimeslots = \mod_observation\timeslot_manager::get_time_slots($obid);
         $this->assertContainsEquals($timeslotid, array_column($alltimeslots, 'id'));
 
-        // Ensure calendar event created.
+        // Ensure calendar event created for observer.
         $this->assertNotNull($thistimeslot->observer_event_id);
+        // Ensure calendar event created for observee.
+        $this->assertNotNull($thistimeslot->observee_event_id);
 
+        // Load timeslot for observer.
         $event = \calendar_event::load($thistimeslot->observer_event_id);
+        // Note calendar events store duration in seconds.
+        $this->assertEquals($data['duration'] * MINSECS, $event->timeduration);
+        $this->assertEquals($data['start_time'], $event->timestart);
+
+        // Load timeslot for observee.
+        $event = \calendar_event::load($thistimeslot->observee_event_id);
         // Note calendar events store duration in seconds.
         $this->assertEquals($data['duration'] * MINSECS, $event->timeduration);
         $this->assertEquals($data['start_time'], $event->timestart);
@@ -129,21 +139,32 @@ class timeslots_test extends advanced_testcase {
         $this->assertEquals($editedslot['duration'], $thistimeslot->duration);
         $this->assertEquals($editedslot['start_time'], $thistimeslot->start_time);
 
-        // Ensure calendar event edited.
+        // Ensure calendar event edited for observer.
         $event = \calendar_event::load($thistimeslot->observer_event_id);
         // Note calendar events store duration in seconds.
         $this->assertEquals($thistimeslot->duration * MINSECS, $event->timeduration);
         $this->assertEquals($thistimeslot->start_time, $event->timestart);
         $this->assertEquals($thistimeslot->observer_id, $event->userid);
 
+        // Ensure calendar event edited for observee.
+        $event = \calendar_event::load($thistimeslot->observee_event_id);
+        // Note calendar events store duration in seconds.
+        $this->assertEquals($thistimeslot->duration * MINSECS, $event->timeduration);
+        $this->assertEquals($thistimeslot->start_time, $event->timestart);
+        $this->assertEquals($thistimeslot->observee_id, $event->userid);
+
         // Test delete.
         \mod_observation\timeslot_manager::delete_time_slot($obid, $timeslotid);
         $alltimeslots = \mod_observation\timeslot_manager::get_time_slots($obid);
         $this->assertEmpty($alltimeslots);
 
-        // Ensure calendar event deleted.
+        // Ensure calendar event deleted for observer.
         $this->expectException('dml_exception');
         $event = \calendar_event::load($thistimeslot->observer_event_id);
+
+        // Ensure calendar event deleted for observee.
+        $this->expectException('dml_exception');
+        $event = \calendar_event::load($thistimeslot->observee_event_id);
     }
 
     /**

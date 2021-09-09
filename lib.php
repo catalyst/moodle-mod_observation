@@ -115,3 +115,31 @@ function observation_supports($feature) {
         }
     }
 }
+
+/**
+ * Determines if a calendar event is visible.
+ * @param calendar_event $event event to determine visibility for.
+ */
+function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
+    global $USER;
+    global $DB;
+
+    // For some archaic reason, $event->userid is NOT the userID of the event in the database,
+    // but is instead the caller of this function (i.e. the same as $USER->id).
+    // We have no choice but to query the $DB again.
+    $sql = 'SELECT *
+              FROM {observation_timeslots}
+             WHERE (observer_event_id = :observerevent AND observer_id = :observer)
+                OR (observee_event_id = :observeeevent AND observee_id = :observee)';
+
+    $params = [
+        "observerevent" => $event->id,
+        "observeeevent" => $event->id,
+        "observer" => $USER->id,
+        "observee" => $USER->id
+    ];
+
+    $matchingevent = $DB->get_records_sql($sql, $params);
+
+    return !empty($matchingevent);
+}

@@ -92,7 +92,15 @@ echo $OUTPUT->box_end();
 
 // Observation Point Viewer (table).
 echo $OUTPUT->heading(get_string('currentpoints', 'observation'), 3);
-echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl);
+
+// See if a observation point already exists for this session.
+$pointexist = $DB->get_record('observation_points', array('obs_id' => $id));
+
+if ($pointexist !== false) {
+    echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl);
+} else if ($pointexist === false) {
+    echo "Nothing to display";
+}
 
 // Moodle footer.
 echo $OUTPUT->footer();
