@@ -29,6 +29,7 @@ use context_system;
 
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/formslib.php');
+require_once(__DIR__.'/../../../config.php');
 
 /**
  * Creates a moodle_form to mark an observation point.
@@ -85,11 +86,22 @@ class pointmarking extends \moodleform {
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
                           'accepted_types' => array('jpg', 'jpeg', 'png'), 'return_types'=> FILE_INTERNAL | FILE_EXTERNAL)); // FILE section, should this be something else?
 
-                // Below is an attempt to prepare the draft area.
+                // Below is an attempt to prepare the draft area. 
+                // Should this be placed somewhere else?
                 $context = context_system::instance();
-                $id = optional_param('id', 0, PARAM_INT);
+                $id = optional_param('id', 0, PARAM_INT); // I don't think this is getting what I need it to. 
+
+                global $DB;
+                $data = $DB->get_record('observation', ['id' => $id]); // Why does $DB have an issue here but not in the catalyst file?
+
                 $draftitemid = file_get_submitted_draft_itemid('response');
                 file_prepare_draft_area($draftitemid, $context->id, 'observation', 'response', $id); // I think the context might be wrong/causing issues.
+
+                $data->response = $draftitemid;
+                //$form->set_data($data); // set_data issue
+
+                //$data->response = $draftitemid;
+                //$data->modal = ['text' => $data->modalcontent, 'format' => FORMAT_HTML];
 
                 break;
         }
@@ -153,10 +165,7 @@ class pointmarking extends \moodleform {
         $errors = [];
 
         // Save submitted image.
-        
-        // file_save_draft_area_files($fromform->content, $context->id, 'block_carousel', 'content', $recordid);
-        // $draftitemid, $contextid, $component, $filearea, $itemid
-        file_save_draft_area_files($data->content, $data->context->id, 'observation', 'response', $files);
+        //file_save_draft_area_files($data->content, $data->context->id, 'observation', 'response', $files);
 
         if (!empty($files)){
             $itemid = empty($files->get_itemid()) ? null : $files->get_itemid();
