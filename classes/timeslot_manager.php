@@ -214,10 +214,8 @@ class timeslot_manager {
      * @param string $text description of event
      */
     private static function update_event($event, $slotdata, int $userid, string $title, string $text) {
-        $userprefix = "[".$userid."] ";
-
         $event->name = $title;
-        $event->description = $userprefix.$text;
+        $event->description = $text;
         $event->timestart = $slotdata->start_time;
         $event->timesort = $slotdata->start_time;
         $event->timeduration = $slotdata->duration * MINSECS;
