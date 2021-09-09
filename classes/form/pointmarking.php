@@ -83,13 +83,13 @@ class pointmarking extends \moodleform {
                 $maxbytes = 5; // TODO: this restricts the size of each individual file.
                 $mform->addElement('filemanager', 'response', get_string('imageupload', 'observation'), null,
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
-                          'accepted_types' => array('jpg', 'jpeg', 'png'), 'return_types'=> FILE_INTERNAL | FILE_EXTERNAL)); // Other than this end bit(?), the rest is fine.
+                          'accepted_types' => array('jpg', 'jpeg', 'png'), 'return_types'=> FILE_INTERNAL | FILE_EXTERNAL)); // FILE section, should this be something else?
 
                 // Below is an attempt to prepare the draft area.
                 $context = context_system::instance();
                 $id = optional_param('id', 0, PARAM_INT);
                 $draftitemid = file_get_submitted_draft_itemid('response');
-                file_prepare_draft_area($draftitemid, $context->id, 'block_carousel', 'response', $id);
+                file_prepare_draft_area($draftitemid, $context->id, 'observation', 'response', $id); // I think the context might be wrong/causing issues.
 
                 break;
         }
@@ -153,6 +153,7 @@ class pointmarking extends \moodleform {
         $errors = [];
 
         // Save submitted image.
+        
         // file_save_draft_area_files($fromform->content, $context->id, 'block_carousel', 'content', $recordid);
         // $draftitemid, $contextid, $component, $filearea, $itemid
         file_save_draft_area_files($data->content, $data->context->id, 'observation', 'response', $files);

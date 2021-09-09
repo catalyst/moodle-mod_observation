@@ -144,3 +144,27 @@ function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
 
     return !empty($matchingevent);
 }
+/*
+ * Context checks and serves file from certain areas
+ * https://github.com/catalyst/moodle-block_carousel/blob/master/lib.php
+ * https://stackoverflow.com/questions/36203770/how-to-retrieve-files-when-editing-a-file-manager-in-moodle
+ */
+function observation_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()){
+    if ($context->contextlevel != CONTEXT_SYSTEM) {
+        send_file_not_found();
+    }
+
+    if ($filearea !== 'response') {
+        send_file_not_found();
+    }
+
+    $fs = get_file_storage();
+
+    $filename = array_pop($args);
+    $itemid = array_pop($args);
+    $filepath = '/';
+
+    $file = $fs->get_file($context->id, 'observation', $filearea, $itemid, $filepath, $filename);
+
+    send_stored_file($file, null, 0, $forcedownload, $options);
+}
