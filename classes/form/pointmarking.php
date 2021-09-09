@@ -25,8 +25,13 @@
 
 namespace mod_observation\form;
 
+use context_block;
+use context_system;
+
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/formslib.php');
+
+$storage = get_file_storage(); ////// ADDED, comment to remind me to check.
 
 /**
  * Creates a moodle_form to mark an observation point.
@@ -72,15 +77,24 @@ class pointmarking extends \moodleform {
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('pass', 'observation'), 'Pass');
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('fail', 'observation'), 'Fail');
                 $mform->addGroup($radioarray, 'radioar', get_string('passfailtype', 'observation'), array(' '), false);
-                $mform->setType('response', PARAM_TEXT); // Response will be Pass or Fail.
+                $mform->setType('response', PARAM_TEXT);
                 $mform->addRule('radioar', get_string('required', 'observation'), 'required', null, 'client');
                 break;
             case \mod_observation\observation_manager::INPUT_IMAGE:
                 // Image upload here.
+                // need to get $context->id and $id
+                $id = optional_param('id', 0, PARAM_INT); // very incorrect
+                // $blockid = required_param('bid', PARAM_INT); // very incorrect - param bid
+                //$context = context_block::instance($blockid); // very incorrectish
+                $context = context_system::instance(); // stackoverflow someone used this.
+
                 $maxbytes = 5; // TODO: this restricts the size of each individual file.
                 $mform->addElement('filemanager', 'response', get_string('imageupload', 'observation'), null,
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
                           'accepted_types' => array('jpg', 'jpeg', 'png'), 'return_types'=> FILE_INTERNAL | FILE_EXTERNAL));
+
+                $draftitemid = file_get_submitted_draft_itemid('response'); /////////// ADDED, comment to remind me to check.
+                file_prepare_draft_area($draftitemid, $context->id, 'imageinput', 'response', $id); ///// ADDED, comment to remind me to check.
                 break;
         }
 
