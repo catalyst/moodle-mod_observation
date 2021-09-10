@@ -84,7 +84,9 @@ class pointmarking extends \moodleform {
                 $maxbytes = 5; // TODO: this restricts the size of each individual file.
                 $mform->addElement('filemanager', 'response', get_string('imageupload', 'observation'), null,
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
-                          'accepted_types' => 'jpg,jpeg,png')); // FILE section, should this be something else?
+                          'accepted_types' => 'jpg,jpeg,png')); // Make the response 'File uploaded' instead of image numbers.
+                $mform->setType('response', PARAM_TEXT);
+                $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
 
                 // Below is an attempt to prepare the draft area. 
                 // Should this be placed somewhere else?
