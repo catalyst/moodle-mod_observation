@@ -150,7 +150,7 @@ function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
  * https://stackoverflow.com/questions/36203770/how-to-retrieve-files-when-editing-a-file-manager-in-moodle
  */
 function observation_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()){
-    if ($context->contextlevel != CONTEXT_SYSTEM) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }
 

@@ -84,20 +84,19 @@ class pointmarking extends \moodleform {
                 $maxbytes = 5; // TODO: this restricts the size of each individual file.
                 $mform->addElement('filemanager', 'response', get_string('imageupload', 'observation'), null,
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
-                          'accepted_types' => array('jpg', 'jpeg', 'png'), 'return_types'=> FILE_INTERNAL | FILE_EXTERNAL)); // FILE section, should this be something else?
+                          'accepted_types' => 'jpg,jpeg,png')); // FILE section, should this be something else?
 
                 // Below is an attempt to prepare the draft area. 
                 // Should this be placed somewhere else?
-                $context = context_system::instance();
-                $id = optional_param('id', 0, PARAM_INT); // I don't think this is getting what I need it to. 
+                //$context = context_system::instance();
+                //$id = optional_param('id', 0, PARAM_INT); // I don't think this is getting what I need it to. 
 
-                global $DB;
-                $data = $DB->get_record('observation', ['id' => $id]); // Why does $DB have an issue here but not in the catalyst file?
+                //global $DB;
+                //$data = $DB->get_record('observation', ['id' => $id]); // Why does $DB have an issue here but not in the catalyst file?
 
-                $draftitemid = file_get_submitted_draft_itemid('response');
-                file_prepare_draft_area($draftitemid, $context->id, 'observation', 'response', $id); // I think the context might be wrong/causing issues.
+            
 
-                $data->response = $draftitemid;
+                //$data->response = $draftitemid;
                 //$form->set_data($data); // set_data issue
 
                 //$data->response = $draftitemid;
@@ -167,19 +166,19 @@ class pointmarking extends \moodleform {
         // Save submitted image.
         //file_save_draft_area_files($data->content, $data->context->id, 'observation', 'response', $files);
 
-        if (!empty($files)){
-            $itemid = empty($files->get_itemid()) ? null : $files->get_itemid();
-            $data['link'] = \moodle_url::make_pluginfile_url(
-                $files->get_contextid(),
-                $files->get_component(),
-                $files->get_filearea(),
-                $itemid,
-                $files->get_filepath(),
-                $files->get_filename()
-            );
-        } else {
-            $data['link'] = '';
-        }
+        // if (!empty($files)){
+        //     $itemid = empty($files->get_itemid()) ? null : $files->get_itemid();
+        //     $data['link'] = \moodle_url::make_pluginfile_url(
+        //         $files->get_contextid(),
+        //         $files->get_component(),
+        //         $files->get_filearea(),
+        //         $itemid,
+        //         $files->get_filepath(),
+        //         $files->get_filename()
+        //     );
+        // } else {
+        //     $data['link'] = '';
+        // }
 
         // Below from: https://github.com/catalyst/moodle-block_carousel/blob/master/classes/cache/slide_cache.php#L121
         // $itemid = empty($selectedfile->get_itemid()) ? null : $selectedfile->get_itemid();
