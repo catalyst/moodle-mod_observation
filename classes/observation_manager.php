@@ -49,14 +49,13 @@ class observation_manager {
     /**
      * Gets observation, course and coursemodule from course module ID
      * @param int $cmid Course module ID
-     * @param string $tablename database table name
      * @return list List containing the observation instance, course and coursemodule (in that order)
      */
-    public static function get_observation_course_cm_from_cmid(int $cmid, string $tablename = 'observation') {
+    public static function get_observation_course_cm_from_cmid(int $cmid) {
         global $DB;
-        list($course, $cm) = get_course_and_cm_from_cmid($cmid, $tablename);
+        list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'observation');
         $observationid = $cm->instance;
-        if (!$observation = $DB->get_record($tablename, ['id' => $observationid])) {
+        if (!$observation = $DB->get_record('observation', ['id' => $observationid])) {
             throw new \moodle_exception('moduleinstancedoesnotexist');
         }
         return [$observation, $course, $cm];
@@ -65,16 +64,15 @@ class observation_manager {
     /**
      * Gets observation, course and coursemodule from observation instance ID
      * @param int $obid Observation instance ID
-     * @param string $tablename Database table name
      * @return list List containing the observation instance, course and coursemodule (in that order)
      */
-    public static function get_observation_course_cm_from_obid(int $obid, string $tablename = 'observation') {
+    public static function get_observation_course_cm_from_obid(int $obid) {
         global $DB;
-        if (!$cm = get_coursemodule_from_instance($tablename, $obid)) {
+        if (!$cm = get_coursemodule_from_instance('observation', $obid)) {
             throw new \moodle_exception('invalidcoursemodule');
         }
         list($course, $cm) = get_course_and_cm_from_cmid($cm->id, 'observation');
-        if (!$observation = $DB->get_record($tablename, ['id' => $obid])) {
+        if (!$observation = $DB->get_record('observation', ['id' => $obid])) {
             throw new \moodle_exception('moduleinstancedoesnotexist');
         }
         return [$observation, $course, $cm];
@@ -85,10 +83,9 @@ class observation_manager {
      * Note that when updating an instance, an ID must be passed in the $data param array.
      * @param mixed $data Data to be passed to the update or create DB function
      * @param bool $newinstance If true creates new instance, else updates instance.
-     * @param string $tablename Name of database table to operate on.
      * @return int If param $newinstance is true, returns ID of new instance. Else returns 1 if updated successfully, else 0.
      */
-    public static function modify_instance($data, bool $newinstance = false, string $tablename = 'observation'): int {
+    public static function modify_instance($data, bool $newinstance = false): int {
         global $DB;
 
         // Editor data need to be checked to ensure empty strings are not added.
@@ -103,9 +100,9 @@ class observation_manager {
         }
 
         if ($newinstance) {
-            return $DB->insert_record($tablename, $data);
+            return $DB->insert_record('observation', $data);
         } else {
-            return (int)$DB->update_record($tablename, $data);
+            return (int)$DB->update_record('observation', $data);
         }
     }
 
@@ -114,11 +111,9 @@ class observation_manager {
      * @param mixed $data Data to pass to database function
      * @param bool $newinstance True if new instance, else false if editing
      * @param bool $returnid True if should return id (only when $newinstance = true)
-     * @param string $tablename Tablename
      * @return mixed True if successful. If $returnid is True and $newinstance is True, returns ID
      */
-    public static function modify_observation_point($data, bool $newinstance = false, bool $returnid = false,
-            string $tablename = 'observation_points') {
+    public static function modify_observation_point($data, bool $newinstance = false, bool $returnid = false) {
         global $DB;
 
         $data = (object)$data;
@@ -156,9 +151,9 @@ class observation_manager {
             $data->list_order = $maxordering + 1;
 
             // Insert.
-            return $DB->insert_record($tablename, $data, $returnid);
+            return $DB->insert_record('observation_points', $data, $returnid);
         } else {
-            return $DB->update_record($tablename, $data);
+            return $DB->update_record('observation_points', $data);
         }
     }
 
@@ -166,42 +161,37 @@ class observation_manager {
      * Gets observation point data
      * @param int $observationid ID of observation instance
      * @param int $pointid ID of the observation point
-     * @param string $tablename database table name
      * @return object existing point data
      */
-    public static function get_existing_point_data(int $observationid, int $pointid,
-            string $tablename = 'observation_points'): object {
+    public static function get_existing_point_data(int $observationid, int $pointid): object {
         global $DB;
-        return $DB->get_record($tablename, ['id' => $pointid, 'obs_id' => $observationid], '*', MUST_EXIST);
+        return $DB->get_record('observation_points', ['id' => $pointid, 'obs_id' => $observationid], '*', MUST_EXIST);
     }
 
     /**
      * Get all observation points in an observation instance
      * @param int $observationid ID of the observation instance
      * @param string $sortby column to sort by
-     * @param string $tablename database tablename
      * @return array array of database objects obtained from database
      */
-    public static function get_observation_points(int $observationid, string $sortby='list_order',
-            string $tablename='observation_points'): array {
+    public static function get_observation_points(int $observationid, string $sortby='list_order'): array {
         global $DB;
-        return $DB->get_records($tablename, ['obs_id' => $observationid], $sortby);
+        return $DB->get_records('observation_points', ['obs_id' => $observationid], $sortby);
     }
 
     /**
      * Deletes observation point
      * @param int $observationid ID of the observation instance
      * @param int $obpointid ID of the observation point to delete
-     * @param string $tablename database table name
      */
-    public static function delete_observation_point(int $observationid, int $obpointid, string $tablename='observation_points') {
+    public static function delete_observation_point(int $observationid, int $obpointid) {
         global $DB;
         // To ensure ordering stays intact, should move all those points with a higher order than this one down by 1.
-        $currentpoint = self::get_existing_point_data($observationid, $obpointid, $tablename);
+        $currentpoint = self::get_existing_point_data($observationid, $obpointid, 'observation_points');
 
         // Get those with a higher list ordering than this one.
         $pointsabove = $DB->get_records_select(
-            $tablename,
+            'observation_points',
             "obs_id = :obsid AND list_order > :listorder",
             [
                 'obsid' => $observationid,
@@ -211,12 +201,12 @@ class observation_manager {
 
         $transaction = $DB->start_delegated_transaction();
 
-        $DB->delete_records($tablename, ['id' => $obpointid, 'obs_id' => $observationid]);
+        $DB->delete_records('observation_points', ['id' => $obpointid, 'obs_id' => $observationid]);
 
         // Shuffle those above down.
         foreach ($pointsabove as $pointabove) {
             $DB->update_record(
-                $tablename,
+                'observation_points',
                 [
                     'id' => $pointabove->id,
                     'list_order' => $pointabove->list_order - 1
@@ -232,10 +222,8 @@ class observation_manager {
      * @param int $observationid ID of the observation instance
      * @param int $obpointid ID of the observation point to reorder
      * @param int $direction direction and magnitude to reorder the point in
-     * @param string $tablename database table name
      */
-    public static function reorder_observation_point(int $observationid, int $obpointid, int $direction,
-            string $tablename='observation_points') {
+    public static function reorder_observation_point(int $observationid, int $obpointid, int $direction) {
         global $DB;
 
         if (!is_int($direction) || $direction == 0) {
@@ -243,7 +231,7 @@ class observation_manager {
         }
 
         // First get the ordering of the current point.
-        $targetpoint = self::get_existing_point_data($observationid, $obpointid, $tablename);
+        $targetpoint = self::get_existing_point_data($observationid, $obpointid, 'observation_points');
 
         // Get all the points to get the bounds.
         $allpoints = self::get_observation_points($observationid);
@@ -287,7 +275,7 @@ class observation_manager {
         $transaction = $DB->start_delegated_transaction();
 
         // Give the target point the new ordering.
-        $DB->update_record($tablename,
+        $DB->update_record('observation_points',
         [
             'id' => $targetpoint->id,
             'list_order' => $newordering
@@ -296,8 +284,8 @@ class observation_manager {
         // Reduce the direction to a unit vector (e.g. 5 -> 1 and -5 -> -1).
         $reductionamount = intdiv($direction, abs($direction));
 
-        array_walk($affectedpoints, function($elem) use($DB, $tablename, $reductionamount) {
-            $DB->update_record($tablename,
+        array_walk($affectedpoints, function($elem) use($DB, $reductionamount) {
+            $DB->update_record('observation_points',
             [
                 'id' => $elem->id,
                 'list_order' => $elem->list_order - $reductionamount

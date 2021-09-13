@@ -44,11 +44,9 @@ class timeslot_manager {
      * Modifies or creates a new time slot in the database
      * @param mixed $data Data to pass to database function
      * @param bool $newinstance True if new instance, else false if editing
-     * @param string $tablename Tablename
      * @return mixed True if updating and successful or ID if inserting and successful.
      */
-    public static function modify_time_slot($data, bool $newinstance = false,
-            string $tablename = 'observation_timeslots') {
+    public static function modify_time_slot($data, bool $newinstance = false) {
         global $DB;
 
         $data = (object)$data;
@@ -70,12 +68,12 @@ class timeslot_manager {
         }
 
         if ($newinstance) {
-            $slotid = $DB->insert_record($tablename, $data, true);
+            $slotid = $DB->insert_record('observation_timeslots', $data, true);
             self::update_timeslot_calendar_events($data->obs_id, $slotid);
             return $slotid;
         } else {
 
-            $dbreturn = $DB->update_record($tablename, $data);
+            $dbreturn = $DB->update_record('observation_timeslots', $data);
             self::update_timeslot_calendar_events($data->obs_id, $data->id);
             return $dbreturn;
         }
@@ -85,35 +83,30 @@ class timeslot_manager {
      * Gets observation timeslot data
      * @param int $observationid ID of observation instance
      * @param int $slotid ID of the observation point
-     * @param string $tablename database table name
      * @return object existing point data
      */
-    public static function get_existing_slot_data(int $observationid, int $slotid,
-            string $tablename = 'observation_timeslots'): object {
+    public static function get_existing_slot_data(int $observationid, int $slotid): object {
         global $DB;
-        return $DB->get_record($tablename, ['id' => $slotid, 'obs_id' => $observationid], '*', MUST_EXIST);
+        return $DB->get_record('observation_timeslots', ['id' => $slotid, 'obs_id' => $observationid], '*', MUST_EXIST);
     }
 
     /**
      * Get all observation timeslots in an observation instance
      * @param int $observationid ID of the observation instance
      * @param string $sortby column to sort by
-     * @param string $tablename database tablename
      * @return array array of database objects obtained from database
      */
-    public static function get_time_slots(int $observationid, string $sortby='',
-            string $tablename='observation_timeslots'): array {
+    public static function get_time_slots(int $observationid, string $sortby=''): array {
         global $DB;
-        return $DB->get_records($tablename, ['obs_id' => $observationid], $sortby);
+        return $DB->get_records('observation_timeslots', ['obs_id' => $observationid], $sortby);
     }
 
     /**
      * Deletes timeslot
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the observation point to delete
-     * @param string $tablename database table name
      */
-    public static function delete_time_slot(int $observationid, int $slotid, string $tablename='observation_timeslots') {
+    public static function delete_time_slot(int $observationid, int $slotid) {
         global $DB;
 
         // Get record to get the calendar event ID.
@@ -140,7 +133,7 @@ class timeslot_manager {
             }
         }
 
-        $DB->delete_records($tablename, ['id' => $slotid, 'obs_id' => $observationid]);
+        $DB->delete_records('observation_timeslots', ['id' => $slotid, 'obs_id' => $observationid]);
     }
 
     /**

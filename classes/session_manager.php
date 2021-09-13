@@ -63,10 +63,9 @@ class session_manager {
      * @param int $obsid observation instance ID
      * @param int $observerid user ID of the observer
      * @param int $observeeid user ID of the observee
-     * @param string $tablename DB table
      * @return int ID of the session that was just started.
      */
-    public static function start_session(int $obsid, int $observerid, int $observeeid, string $tablename='observation_sessions') {
+    public static function start_session(int $obsid, int $observerid, int $observeeid) {
         global $DB;
 
         $data = [
@@ -77,7 +76,7 @@ class session_manager {
             'start_time' => time()
         ];
 
-        return $DB->insert_record($tablename, $data, true);
+        return $DB->insert_record('observation_sessions', $data, true);
     }
 
     /**
