@@ -58,7 +58,7 @@ if (is_null($pointid)) {
 $selectoroptions = [];
 
 foreach ($observationpoints as $point) {
-    $selectoroptions[$point->point_id] = $point->title.' [id: '.$point->point_id.']';
+    $selectoroptions[$point->point_id] = $point->list_order.'. '.$point->title;
 }
 
 $selectprefill = [
