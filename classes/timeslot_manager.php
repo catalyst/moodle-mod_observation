@@ -50,7 +50,7 @@ class timeslot_manager {
 
         $data = (object)$data;
 
-        if (property_exists($data, 'duration')) {
+        if (!empty($data->duration)) {
             if (!is_int($data->duration)) {
                 throw new \coding_exception("Property duration must be an int.");
             }
@@ -60,7 +60,7 @@ class timeslot_manager {
             }
         }
 
-        if (property_exists($data, 'start_time')) {
+        if (!empty($data->start_time)) {
             if (!is_int($data->start_time) || $data->start_time < 0) {
                 throw new \coding_exception("Start time must be an integer in Unix Epoch Format.");
             }

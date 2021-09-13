@@ -118,7 +118,7 @@ class observation_manager {
 
         $data = (object)$data;
 
-        if (property_exists($data, 'max_grade')) {
+        if (!empty($data->max_grade)) {
             // Ensure maxgrade (if set) is an int.
             if (!is_int($data->max_grade)) {
                 throw new \coding_exception("Property max_grade must be an int.");
@@ -130,7 +130,7 @@ class observation_manager {
             }
         }
 
-        if (property_exists($data, 'res_type')) {
+        if (!empty($data->res_type)) {
             // Get record, MUST_EXIST is passed so will except if res_type is invalid.
             $DB->get_record('observation_res_type_map', ['res_type' => $data->res_type], '*', MUST_EXIST);
         }
