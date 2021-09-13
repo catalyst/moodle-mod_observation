@@ -239,10 +239,6 @@ class observation_manager {
         $allpoints = self::get_observation_points($observationid);
         $alllistorders = array_column($allpoints, 'list_order');
 
-        if (count($alllistorders) === 0) {
-            throw new \coding_exception('No list orderings found for this observation instance, but expected at least one.');
-        }
-
         $newordering = $targetpoint->list_order + $direction;
 
         // Is currently the minimum - do nothing.
@@ -286,13 +282,14 @@ class observation_manager {
         // Reduce the direction to a unit vector (e.g. 5 -> 1 and -5 -> -1).
         $reductionamount = intdiv($direction, abs($direction));
 
-        array_walk($affectedpoints, function($elem) use($DB, $reductionamount) {
+        // Apply reduction to all affected points.
+        array_map(function($e) use($DB, $reductionamount) {
             $DB->update_record('observation_points',
             [
-                'id' => $elem->id,
-                'list_order' => $elem->list_order - $reductionamount
+                'id' => $e->id,
+                'list_order' => $e->list_order - $reductionamount
             ]);
-        });
+        }, $affectedpoints);
 
         $transaction->allow_commit();
     }
@@ -309,9 +306,7 @@ class observation_manager {
         // Selects all points for this observation,
         // and attaches responses for the current session (if one exists).
 
-        $sql = 'SELECT pts.id as point_id, obs_id, title, list_order, ins, ins_f, max_grade, res_type,
-                       sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response,
-                       ex_comment
+        $sql = 'SELECT pts.id as point_id, sess_resp.id as response_id, obs_ses_id as session_id, *
                   FROM {observation_points} pts
              LEFT JOIN {observation_point_responses} sess_resp
                     ON pts.id = sess_resp.obs_pt_id AND sess_resp.obs_ses_id = :sessionid
