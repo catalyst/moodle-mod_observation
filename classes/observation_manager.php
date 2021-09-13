@@ -305,8 +305,10 @@ class observation_manager {
 
         // Selects all points for this observation,
         // and attaches responses for the current session (if one exists).
-
-        $sql = 'SELECT pts.id as point_id, sess_resp.id as response_id, obs_ses_id as session_id, *
+        // Note: SELECT * was not used here as it caused issues with DB cross compatibility.
+        $sql = 'SELECT pts.id as point_id, obs_id, title, list_order, ins, ins_f, max_grade, res_type,
+                       sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response,
+                       ex_comment
                   FROM {observation_points} pts
              LEFT JOIN {observation_point_responses} sess_resp
                     ON pts.id = sess_resp.obs_pt_id AND sess_resp.obs_ses_id = :sessionid
