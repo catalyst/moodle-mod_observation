@@ -15,16 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Observation activity version information.
+ * Defines message permissions.
  *
- * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @package mod_observation
+ * @copyright 2021 Endurer Solutions Team
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2021052521;
-$plugin->requires  = 2021052500;
-$plugin->component = 'mod_observation';
+$messageproviders = array(
+    // Confirm timeslot signup.
+    'confirmsignup' => array(
+    ),
+);

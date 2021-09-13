@@ -52,23 +52,6 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('editor', 'observeeins_editor', get_string('instructionsobservee', 'observation'));
         $mform->setType('observeeins_editor', PARAM_RAW);
 
-        // Timeslots.
-        $mform->addElement('header', 'timeslots', get_string('timeslots', 'observation'));
-        $mform->addElement('static', 'description', get_string('placeholder', 'observation'),
-        get_string('placeholder', 'observation')); // TODO: replace.
-
-        // Observation Points.
-        $mform->addElement('header', 'observationpoints', get_string('observationpoints', 'observation'));
-        // Actions.
-        // Observation points.
-        // TODO: replace.
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'),
-        'Example: Using correct PPE while handling chemicals');
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'),
-        'Example: Reading chemical safety information');
-        $mform->addElement('advcheckbox', 'placeholders', get_string('placeholder', 'observation'),
-        'Example: Choosing correct equipment');
-
         // Settings.
 
         // Footer.

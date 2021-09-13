@@ -43,6 +43,22 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
         )
     ),
+    'mod/observation:editobservationpoints' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
+    'mod/observation:edittimeslots' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
     'mod/observation:performobservation' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',

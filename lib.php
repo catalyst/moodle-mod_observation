@@ -56,7 +56,7 @@ function observation_get_course_content_items(\core_course\local\entity\content_
  */
 function observation_add_instance($data): int {
     $cmid = $data->coursemodule;
-    return \mod_observation\manager::modify_instance(array(
+    return \mod_observation\observation_manager::modify_instance(array(
         "course" => $cmid,
         "name" => $data->name,
         "intro" => "",
@@ -65,7 +65,7 @@ function observation_add_instance($data): int {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
-    ), true);
+    ));
 }
 
 /**
@@ -77,7 +77,7 @@ function observation_add_instance($data): int {
  * @return bool true on success, false or a string error message on failure.
  */
 function observation_update_instance($data): bool {
-    return \mod_observation\manager::modify_instance(array(
+    return \mod_observation\observation_manager::modify_instance(array(
         "id" => $data->instance,
         "name" => $data->name,
         "timemodified" => time(),
@@ -85,7 +85,7 @@ function observation_update_instance($data): bool {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
-    ), false);
+    ));
 }
 
 /**
@@ -98,4 +98,48 @@ function observation_delete_instance($id) {
 
     $DB->delete_records('observation', array('id' => $id));
     return true;
+}
+
+/**
+ * Defines what features this activity supports.
+ * @param mixed $feature given feature enum
+ * @return mixed True is supports feature, else null.
+ */
+function observation_supports($feature) {
+    switch($feature) {
+        case FEATURE_GRADE_HAS_GRADE: {
+            return true;
+        }
+        default: {
+            return null;
+        }
+    }
+}
+
+/**
+ * Determines if a calendar event is visible.
+ * @param calendar_event $event event to determine visibility for.
+ */
+function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
+    global $USER;
+    global $DB;
+
+    // For some archaic reason, $event->userid is NOT the userID of the event in the database,
+    // but is instead the caller of this function (i.e. the same as $USER->id).
+    // We have no choice but to query the $DB again.
+    $sql = 'SELECT *
+              FROM {observation_timeslots}
+             WHERE (observer_event_id = :observerevent AND observer_id = :observer)
+                OR (observee_event_id = :observeeevent AND observee_id = :observee)';
+
+    $params = [
+        "observerevent" => $event->id,
+        "observeeevent" => $event->id,
+        "observer" => $USER->id,
+        "observee" => $USER->id
+    ];
+
+    $matchingevent = $DB->get_records_sql($sql, $params);
+
+    return !empty($matchingevent);
 }
