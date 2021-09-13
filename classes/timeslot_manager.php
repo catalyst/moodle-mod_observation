@@ -43,10 +43,9 @@ class timeslot_manager {
     /**
      * Modifies or creates a new time slot in the database
      * @param mixed $data Data to pass to database function
-     * @param bool $newinstance True if new instance, else false if editing
      * @return mixed True if updating and successful or ID if inserting and successful.
      */
-    public static function modify_time_slot($data, bool $newinstance = false) {
+    public static function modify_time_slot($data) {
         global $DB;
 
         $data = (object)$data;
@@ -66,6 +65,8 @@ class timeslot_manager {
                 throw new \coding_exception("Start time must be an integer in Unix Epoch Format.");
             }
         }
+
+        $newinstance = empty($data->id);
 
         if ($newinstance) {
             $slotid = $DB->insert_record('observation_timeslots', $data, true);
@@ -269,7 +270,7 @@ class timeslot_manager {
         $transaction = $DB->start_delegated_transaction();
 
         array_map(function($value) {
-            self::modify_time_slot($value, true);
+            self::modify_time_slot($value);
         }, $intervalslots);
 
         $transaction->allow_commit();
@@ -375,7 +376,7 @@ class timeslot_manager {
             'obs_id' => $observationid
         ];
 
-        self::modify_time_slot($dbdata, false);
+        self::modify_time_slot($dbdata);
         self::send_signup_confirmation_message($observationid, $slotid, $userid);
     }
 

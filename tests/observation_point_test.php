@@ -88,7 +88,7 @@ class observation_point_test extends advanced_testcase {
         $data['obs_id'] = $observationid;
 
         // Create point and return data.
-        $newpointid = \mod_observation\observation_manager::modify_observation_point($data, true, true);
+        $newpointid = \mod_observation\observation_manager::modify_observation_point($data, true);
         return \mod_observation\observation_manager::get_existing_point_data($observationid, $newpointid);
     }
 
@@ -105,7 +105,7 @@ class observation_point_test extends advanced_testcase {
         );
 
         $this->assertTrue(
-            \mod_observation\observation_manager::modify_observation_point($data, true));
+            \mod_observation\observation_manager::modify_observation_point($data));
 
         // Unset DB generated values to compare to the original data.
         $returndata = \mod_observation\observation_manager::get_observation_points($this->instance->id);
@@ -134,7 +134,7 @@ class observation_point_test extends advanced_testcase {
 
         // Modify point.
         $this->assertTrue(
-            \mod_observation\observation_manager::modify_observation_point($editeddata, false));
+            \mod_observation\observation_manager::modify_observation_point($editeddata));
 
         // Re get data and confirm changed.
         $returndata = \mod_observation\observation_manager::get_observation_points($this->instance->id);
@@ -281,7 +281,7 @@ class observation_point_test extends advanced_testcase {
         $invalidmaxgrade['max_grade'] = 5.5;
 
         $this->expectException('coding_exception');
-        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, false);
     }
 
     /**
@@ -296,7 +296,7 @@ class observation_point_test extends advanced_testcase {
         $invalidmaxgrade['max_grade'] = -1;
 
         $this->expectException('coding_exception');
-        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, false);
     }
 
     /**
@@ -311,7 +311,7 @@ class observation_point_test extends advanced_testcase {
         $invalidmaxgrade['max_grade'] = "test";
 
         $this->expectException('coding_exception');
-        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, false);
     }
 
     /**
@@ -326,7 +326,7 @@ class observation_point_test extends advanced_testcase {
         unset($invalidmaxgrade['max_grade']);
 
         $this->expectException('dml_exception');
-        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, false);
     }
 
     /**
@@ -343,6 +343,6 @@ class observation_point_test extends advanced_testcase {
         $invalidmaxgrade['res_type'] = 1000;
 
         $this->expectException('dml_exception');
-        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, true, false);
+        \mod_observation\observation_manager::modify_observation_point($invalidmaxgrade, false);
     }
 }

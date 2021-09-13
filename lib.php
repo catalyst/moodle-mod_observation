@@ -65,7 +65,7 @@ function observation_add_instance($data): int {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
-    ), true);
+    ));
 }
 
 /**
@@ -85,7 +85,7 @@ function observation_update_instance($data): bool {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
-    ), false);
+    ));
 }
 
 /**

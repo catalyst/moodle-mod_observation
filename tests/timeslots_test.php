@@ -101,7 +101,7 @@ class timeslots_test extends advanced_testcase {
         $obid = $this->instance->id;
         $data = $this->create_valid_timeslot();
 
-        $timeslotid = \mod_observation\timeslot_manager::modify_time_slot($data, true);
+        $timeslotid = \mod_observation\timeslot_manager::modify_time_slot($data);
 
         // Test read.
         $thistimeslot = \mod_observation\timeslot_manager::get_existing_slot_data($obid, $timeslotid);
@@ -134,7 +134,7 @@ class timeslots_test extends advanced_testcase {
         $editedslot['id'] = $timeslotid;
         $editedslot['observer_id'] = $this->observer2->id;
 
-        \mod_observation\timeslot_manager::modify_time_slot($editedslot, false);
+        \mod_observation\timeslot_manager::modify_time_slot($editedslot);
         $thistimeslot = \mod_observation\timeslot_manager::get_existing_slot_data($obid, $timeslotid);
         $this->assertEquals($editedslot['duration'], $thistimeslot->duration);
         $this->assertEquals($editedslot['start_time'], $thistimeslot->start_time);
@@ -175,7 +175,7 @@ class timeslots_test extends advanced_testcase {
         $data['duration'] = -1;
 
         $this->expectException('coding_exception');
-        \mod_observation\timeslot_manager::modify_time_slot($data, true);
+        \mod_observation\timeslot_manager::modify_time_slot($data);
     }
 
     /**
@@ -186,7 +186,7 @@ class timeslots_test extends advanced_testcase {
         $data['duration'] = 20.5;
 
         $this->expectException('coding_exception');
-        \mod_observation\timeslot_manager::modify_time_slot($data, true);
+        \mod_observation\timeslot_manager::modify_time_slot($data);
     }
 
     /**
@@ -197,7 +197,7 @@ class timeslots_test extends advanced_testcase {
         $data['start_time'] = 'Wed 5th July 10am';
 
         $this->expectException('coding_exception');
-        \mod_observation\timeslot_manager::modify_time_slot($data, true);
+        \mod_observation\timeslot_manager::modify_time_slot($data);
     }
 
     /**
@@ -208,7 +208,7 @@ class timeslots_test extends advanced_testcase {
         $data['start_time'] = -1000;
 
         $this->expectException('coding_exception');
-        \mod_observation\timeslot_manager::modify_time_slot($data, true);
+        \mod_observation\timeslot_manager::modify_time_slot($data);
     }
 
     /**

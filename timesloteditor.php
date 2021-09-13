@@ -89,12 +89,12 @@ if ($fromform = $sloteditorform->get_data()) {
                 \mod_observation\timeslot_manager::create_timeslots_by_interval($fromform);
             } else {
                 // Creating new single.
-                \mod_observation\timeslot_manager::modify_time_slot($dbdata, true);
+                \mod_observation\timeslot_manager::modify_time_slot($dbdata);
             }
         } else {
             // Editing existing.
             $dbdata['id'] = $fromform->slotid;
-            \mod_observation\timeslot_manager::modify_time_slot($dbdata, false);
+            \mod_observation\timeslot_manager::modify_time_slot($dbdata);
         }
 
         // Redirect back to slot viewer.

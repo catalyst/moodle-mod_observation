@@ -83,11 +83,11 @@ if ($fromform = $pointeditorform->get_data()) {
 
     if ($fromform->mode === "new") {
         // Creating new.
-        \mod_observation\observation_manager::modify_observation_point($dbdata, true);
+        \mod_observation\observation_manager::modify_observation_point($dbdata);
     } else {
         // Editing existing.
         $dbdata['id'] = $fromform->pointid;
-        \mod_observation\observation_manager::modify_observation_point($dbdata, false);
+        \mod_observation\observation_manager::modify_observation_point($dbdata);
     }
 
     // Redirect back to point viewer.

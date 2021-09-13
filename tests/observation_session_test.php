@@ -83,8 +83,8 @@ class observation_session_test extends advanced_testcase {
         $data = self::VALID_POINT_DATA;
         $data['obs_id'] = $obinstance->id;
 
-        $pointid1 = \mod_observation\observation_manager::modify_observation_point($data, true, true);
-        $pointid2 = \mod_observation\observation_manager::modify_observation_point($data, true, true);
+        $pointid1 = \mod_observation\observation_manager::modify_observation_point($data, true);
+        $pointid2 = \mod_observation\observation_manager::modify_observation_point($data, true);
 
         // Add data to the context.
         $this->course = $course;
@@ -254,7 +254,7 @@ class observation_session_test extends advanced_testcase {
         $lowermaxresponse = $response;
         $lowermaxresponse->max_grade = 1;
         $lowermaxresponse->id = $this->pointid1;
-        \mod_observation\observation_manager::modify_observation_point($lowermaxresponse, false);
+        \mod_observation\observation_manager::modify_observation_point($lowermaxresponse);
 
         // Ensure the max grades are now set correctly.
         $responses = \mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);

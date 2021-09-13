@@ -87,7 +87,7 @@ class timeslot_joining_test extends advanced_testcase {
         $data['observer_id'] = $this->observer->id;
         $data['obs_id'] = $obid;
 
-        return \mod_observation\timeslot_manager::modify_time_slot($data, true);
+        return \mod_observation\timeslot_manager::modify_time_slot($data);
     }
 
     /**

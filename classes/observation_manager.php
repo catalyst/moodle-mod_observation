@@ -82,10 +82,9 @@ class observation_manager {
      * Modifies an instance of an observation by either creating a new one or updating existing one.
      * Note that when updating an instance, an ID must be passed in the $data param array.
      * @param mixed $data Data to be passed to the update or create DB function
-     * @param bool $newinstance If true creates new instance, else updates instance.
-     * @return int If param $newinstance is true, returns ID of new instance. Else returns 1 if updated successfully, else 0.
+     * @return int Returns ID of new instance if creating, else returns 1 if updated successfully, else 0.
      */
-    public static function modify_instance($data, bool $newinstance = false): int {
+    public static function modify_instance($data): int {
         global $DB;
 
         // Editor data need to be checked to ensure empty strings are not added.
@@ -99,6 +98,8 @@ class observation_manager {
             $data['observee_ins_f'] = null;
         }
 
+        $newinstance = empty($data->id);
+
         if ($newinstance) {
             return $DB->insert_record('observation', $data);
         } else {
@@ -109,11 +110,10 @@ class observation_manager {
     /**
      * Modifies or creates a new observation point in the database
      * @param mixed $data Data to pass to database function
-     * @param bool $newinstance True if new instance, else false if editing
-     * @param bool $returnid True if should return id (only when $newinstance = true)
-     * @return mixed True if successful. If $returnid is True and $newinstance is True, returns ID
+     * @param bool $returnid True if should return id (only when creating new instance)
+     * @return mixed True if successful. If $returnid is True and creating new point, returns ID
      */
-    public static function modify_observation_point($data, bool $newinstance = false, bool $returnid = false) {
+    public static function modify_observation_point($data, bool $returnid = false) {
         global $DB;
 
         $data = (object)$data;
@@ -134,6 +134,8 @@ class observation_manager {
             // Get record, MUST_EXIST is passed so will except if res_type is invalid.
             $DB->get_record('observation_res_type_map', ['res_type' => $data->res_type], '*', MUST_EXIST);
         }
+
+        $newinstance = empty($data->id);
 
         if ($newinstance) {
             // Get the max observation point list_order to place this new one after it.
