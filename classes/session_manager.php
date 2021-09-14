@@ -299,7 +299,8 @@ class session_manager {
         global $DB;
 
         self::check_session_exists($sessionid);
-        $DB->update_record('observation_sessions', ['id' => $sessionid, 'state' => self::SESSION_CANCELLED, 'finish_time' => time()]);
+        $DB->update_record('observation_sessions', ['id' => $sessionid, 'state' => self::SESSION_CANCELLED,
+            'finish_time' => time()]);
         return;
     }
 }

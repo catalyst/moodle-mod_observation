@@ -97,7 +97,7 @@ echo $OUTPUT->heading(get_string('currentpoints', 'observation'), 3);
 $pointexist = $DB->get_record('observation_points', array('obs_id' => $id));
 
 if ($pointexist !== false) {
-    echo \mod_observation\viewpoints\viewpoints::ob_point_table($observation->id, $pageurl);
+    echo \mod_observation\table\viewpoints\viewpoints_display::ob_point_table($observation->id, $pageurl);
 } else if ($pointexist === false) {
     echo "Nothing to display";
 }

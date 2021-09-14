@@ -56,11 +56,6 @@ class sessionsubmit extends \moodleform {
         $mform->addElement('hidden', 'sessionid', $prefill['session_id']);
         $mform->setType('sessionid', PARAM_INT);
 
-        // Enforce validations.
-        if ($mform->validate()) {
-            $mform->freeze();
-        }
-
         // Set defaults.
         $this->set_data($prefill);
 

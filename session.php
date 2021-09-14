@@ -147,5 +147,4 @@ echo $OUTPUT->container_end();
 
 $markingform->display();
 
-
 echo $OUTPUT->footer();

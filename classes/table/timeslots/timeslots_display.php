@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_observation\timeslots;
+namespace mod_observation\table\timeslots;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die;
  * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class timeslots {
+class timeslots_display {
 
     /**
      * Display mode with editing buttons
@@ -83,7 +83,7 @@ class timeslots {
      * @param int $displaymode display mode for table
      */
     public static function timeslots_table(int $observationid, \moodle_url $callbackurl, int $displaymode) {
-        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
+        $table = new \mod_observation\table\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
 
         $sql = (object) self::COMMON_SQL;
 
@@ -104,7 +104,7 @@ class timeslots {
     public static function assigned_timeslots_table(int $observationid, \moodle_url $callbackurl, int $displaymode, int $userid,
         int $timefilter = 0) {
 
-        $table = new \mod_observation\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
+        $table = new \mod_observation\table\timeslots\timeslots_table('slotviewtable', $callbackurl, $displaymode);
 
         // Optional time filtering SQL query.
         if ($timefilter < 0) {

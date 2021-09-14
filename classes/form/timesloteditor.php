@@ -133,7 +133,7 @@ class timesloteditor extends \moodleform {
      * @return array array of errors.
      */
     public function validation($data, $files): array {
-        $errors = [];
+        $errors = parent::validation($data, $files);
 
         if ($data['enable_interval'] === "1") {
             if (!is_int($data['interval_amount']) || $data['interval_amount'] < 1) {

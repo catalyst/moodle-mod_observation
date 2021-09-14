@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Renderable to render the list of observation points
+ * Renderable to render the list of observation sessions
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -23,32 +23,42 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_observation\viewpoints;
+namespace mod_observation\table\viewsessions;
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Functions to view observation points
+ * Functions to view the list of observation sessions
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class viewpoints {
+class viewsessions_display {
 
     /**
-     * Creates a table that displays all the observation points for a given observation
-     * @param int $observationid ID of the observation instance to get the observation points from.
+     * Creates a table that displays all the observation sessions for a given observation
+     * @param int $observationid ID of the observation instance to get the observation sesssions from.
      * @param \moodle_url $callbackurl URL for action buttons in table to callback to
-     * @param int $displaymode display mode for table
      */
-    public static function ob_point_table(int $observationid, \moodle_url $callbackurl, int $displaymode = 0) {
-        $table = new \mod_observation\viewpoints\viewpoints_table('obpointviewtable', $callbackurl, $displaymode);
-        // Left join the res type map table to get the corresponding lang string for the response type.
+    public static function ob_sess_table(int $observationid, \moodle_url $callbackurl) {
+        $table = new \mod_observation\table\viewsessions\viewsessions_table('obsessionviewtable', $callbackurl);
+
+        // Select the sessions, and left join the observer and observee's usernames.
         $sql = (object) [
-            'fields' => 'op.*, ortm.lang_string',
-            'from' => '{observation_points} op LEFT JOIN {observation_res_type_map} ortm ON op.res_type = ortm.res_type',
+            'fields' => '*',
+            'from' => '{observation_sessions} os
+             LEFT JOIN (
+                    SELECT id as observer_id, username as observer_username
+                    FROM {user}
+                 ) as observers
+             ON os.observer_id = observers.observer_id
+             LEFT JOIN (
+                    SELECT id as observee_id, username as observee_username
+                    FROM {user}
+                  ) as observees
+            ON os.observee_id = observees.observee_id',
             'where' => 'obs_id = :obsid',
             'params' => ['obsid' => $observationid]
         ];

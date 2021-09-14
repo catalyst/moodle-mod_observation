@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_observation\viewsessions;
+namespace mod_observation\table\viewsessions;
 
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/tablelib.php');
@@ -115,20 +115,6 @@ class viewsessions_table extends \table_sql implements \renderable {
     }
 
     /**
-     * Creates an action button for the col_action function.
-     * @param \moodle_url $url URL for the button to link to
-     * @param string $text button text
-     * @param string $style button classes
-     */
-    private function action_button(\moodle_url $url, string $text, string $style = '') {
-        return \html_writer::link(
-            $url,
-            $text,
-            ['class' => 'btn mr-2 '.$style]
-        );
-    }
-
-    /**
      * Data converter for the action column
      * @param mixed $row current row
      */
@@ -138,13 +124,13 @@ class viewsessions_table extends \table_sql implements \renderable {
 
         if ($row->state === \mod_observation\session_manager::SESSION_COMPLETE) {
             // View summary button.
-            $htmlout .= $this->action_button(
+            $htmlout .= \mod_observation\table\common::action_button(
                 new \moodle_url('/mod/observation/sessionsummary.php', ['sessionid' => $row->id, 'mode' => 'viewing']),
                 get_string('viewsummary', 'observation'),
                 'btn-info');
 
             // Re-open button.
-            $htmlout .= $this->action_button(
+            $htmlout .= \mod_observation\table\common::action_button(
                 new \moodle_url('/mod/observation/session.php', ['sessionid' => $row->id]),
                 get_string('reopen', 'observation'),
                 'btn-secondary');
@@ -152,7 +138,7 @@ class viewsessions_table extends \table_sql implements \renderable {
 
         if ($row->state === \mod_observation\session_manager::SESSION_INPROGRESS) {
             // Resume Button.
-            $htmlout .= $this->action_button(
+            $htmlout .= \mod_observation\table\common::action_button(
                 new \moodle_url('/mod/observation/session.php', ['sessionid' => $row->id]),
                 get_string('resume', 'observation'),
                 'btn-primary');
