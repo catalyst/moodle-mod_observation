@@ -66,7 +66,7 @@ $selectprefill = [
     'pointid_options' => $selectoroptions,
     'sessionid' => $sessionid,
 ];
-$selectorform = new \mod_observation\pointselector_form(null, $selectprefill);
+$selectorform = new \mod_observation\form\pointselector(null, $selectprefill);
 
 if ($fromform = $selectorform->get_data()) {
     redirect(new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $fromform->pointid]));
@@ -82,7 +82,7 @@ $selectedpointdata = $observationpoints[$pointid];
 
 $formprefill = (array)$selectedpointdata;
 $formprefill['sessionid'] = $sessionid;
-$markingform = new \mod_observation\pointmarking_form(null, $formprefill);
+$markingform = new \mod_observation\form\pointmarking(null, $formprefill);
 
 if ($markingform->no_submit_button_pressed()) {
     $fromform = $markingform->get_submitted_data();

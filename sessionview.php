@@ -61,7 +61,7 @@ $upcomingprefill = [
     'filter_enabled' => $filterenabled
 ];
 
-$upcomingfilterform = new \mod_observation\upcomingfilter_form(null, $upcomingprefill);
+$upcomingfilterform = new \mod_observation\form\upcomingfilter(null, $upcomingprefill);
 
 if ($fromform = $upcomingfilterform->get_data()) {
     if ($fromform->filter_enabled) {
@@ -79,7 +79,7 @@ $startsessionformprefill = [
     'id' => $id,
     'observerid' => $USER->id
 ];
-$startsessionform = new \mod_observation\startsession_form(null, $startsessionformprefill);
+$startsessionform = new \mod_observation\form\startsession(null, $startsessionformprefill);
 
 // If start session form was submitted, call function to start session.
 if ($fromform = $startsessionform->get_data()) {

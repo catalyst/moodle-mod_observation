@@ -52,7 +52,7 @@ $formprefill = [
     'extracomment' => $sessioninfo['ex_comment']
 ];
 
-$submitform = new \mod_observation\sessionsubmit_form(null, $formprefill, 'post', '', null, !$isviewonly);
+$submitform = new \mod_observation\form\sessionsubmit(null, $formprefill, 'post', '', null, !$isviewonly);
 
 // Submission form was submitted.
 if ($fromform = $submitform->get_data()) {

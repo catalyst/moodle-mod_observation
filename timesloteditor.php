@@ -66,7 +66,7 @@ if ($mode === "edit") {
 }
 
 // Load form.
-$sloteditorform = new \mod_observation\timeslot_form(null, $formprefill);
+$sloteditorform = new \mod_observation\form\timesloteditor(null, $formprefill);
 
 // Form submitted.
 if ($fromform = $sloteditorform->get_data()) {

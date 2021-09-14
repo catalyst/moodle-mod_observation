@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_observation;
+namespace mod_observation\form;
 
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
@@ -36,7 +36,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class pointeditor_form extends \moodleform {
+class pointeditor extends \moodleform {
     /**
      * Defines the observation point form
      */

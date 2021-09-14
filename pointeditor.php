@@ -68,7 +68,7 @@ if ($mode === "edit") {
 }
 
 // Load form.
-$pointeditorform = new \mod_observation\pointeditor_form(null, $formprefill);
+$pointeditorform = new \mod_observation\form\pointeditor(null, $formprefill);
 
 // Form submitted, save/edit the data.
 if ($fromform = $pointeditorform->get_data()) {
