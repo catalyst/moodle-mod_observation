@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_observation;
+namespace mod_observation\form;
 
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
@@ -36,7 +36,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class timeslot_form extends \moodleform {
+class timesloteditor extends \moodleform {
 
     /**
      * Defines the time slot form
@@ -133,7 +133,7 @@ class timeslot_form extends \moodleform {
      * @return array array of errors.
      */
     public function validation($data, $files): array {
-        $errors = [];
+        $errors = parent::validation($data, $files);
 
         if ($data['enable_interval'] === "1") {
             if (!is_int($data['interval_amount']) || $data['interval_amount'] < 1) {

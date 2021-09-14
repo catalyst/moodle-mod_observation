@@ -73,11 +73,13 @@ class observation_session_test extends advanced_testcase {
         $coordinator = $this->getDataGenerator()->create_user();
         $observer = $this->getDataGenerator()->create_user();
         $observee = $this->getDataGenerator()->create_user();
+        $observee2 = $this->getDataGenerator()->create_user();
 
         // Enrol all users to course with their roles.
         $this->getDataGenerator()->enrol_user($coordinator->id, $course->id, 'editingteacher');
         $this->getDataGenerator()->enrol_user($observer->id, $course->id, 'teacher');
         $this->getDataGenerator()->enrol_user($observee->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($observee2->id, $course->id, 'student');
 
         // Create two observation points.
         $data = self::VALID_POINT_DATA;
@@ -93,6 +95,7 @@ class observation_session_test extends advanced_testcase {
         $this->coordinator = $coordinator;
         $this->observer = $observer;
         $this->observee = $observee;
+        $this->observee2 = $observee2;
 
         $this->pointid1 = $pointid1;
         $this->pointid2 = $pointid2;
@@ -121,7 +124,8 @@ class observation_session_test extends advanced_testcase {
         $this->assertEquals('inprogress', $sessioninfo['state']);
 
         // Get session data.
-        $sessiondata = \mod_observation\session_manager::get_session_data($sessionid);
+        $session = \mod_observation\session_manager::get_session_data($sessionid);
+        $sessiondata = $session['data'];
 
         // Ensure the observation points are returned.
         $sessiondataids = array_column($sessiondata, 'point_id');
@@ -214,7 +218,7 @@ class observation_session_test extends advanced_testcase {
     public function test_finish_nonexistent_session() {
         $sessionid = $this->create_session();
 
-        $this->expectException('coding_exception');
+        $this->expectException('moodle_exception');
         \mod_observation\session_manager::finish_session($sessionid + 1);
     }
 
@@ -263,5 +267,29 @@ class observation_session_test extends advanced_testcase {
         // Try and submit a session.
         $this->expectException('moodle_exception');
         \mod_observation\session_manager::finish_session($sessionid);
+    }
+
+    /**
+     * Tests to ensure the lockout is working properly.
+     */
+    public function test_start_session_lockout() {
+        $obid = $this->instance->id;
+        $sessionid = $this->create_session();
+
+        // Try to start another one quickly, should throw exception.
+        $this->expectException('moodle_exception');
+        $this->create_session();
+    }
+
+    /**
+     * Tests to ensure lockout DOES NOT lockout when using different observees.
+     */
+    public function test_start_session_lockout_neg() {
+        $obid = $this->instance->id;
+        $oberid = $this->observer->id;
+
+        // Should not throw any exceptions.
+        \mod_observation\session_manager::start_session($obid, $oberid, $this->observee->id);
+        \mod_observation\session_manager::start_session($obid, $oberid, $this->observee2->id);
     }
 }

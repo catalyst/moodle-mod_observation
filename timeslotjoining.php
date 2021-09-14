@@ -79,13 +79,13 @@ if ($signedupslot === false) {
     echo $OUTPUT->container_end();
 
     echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
-    echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
-    \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP);
+    echo \mod_observation\table\timeslots\timeslots_display::timeslots_table($observation->id, $pageurl,
+    \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_SIGNUP);
 } else {
     // Already signed up - show details.
     echo $OUTPUT->heading(get_string('yourtimeslot', 'observation'), 3);
-    echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
-    \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED, $USER->id);
+    echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
+    \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_ASSIGNED, $USER->id);
 }
 
 // Moodle footer.

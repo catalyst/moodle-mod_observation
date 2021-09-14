@@ -61,7 +61,7 @@ $upcomingprefill = [
     'filter_enabled' => $filterenabled
 ];
 
-$upcomingfilterform = new \mod_observation\upcomingfilter_form(null, $upcomingprefill);
+$upcomingfilterform = new \mod_observation\form\upcomingfilter(null, $upcomingprefill);
 
 if ($fromform = $upcomingfilterform->get_data()) {
     if ($fromform->filter_enabled) {
@@ -79,7 +79,7 @@ $startsessionformprefill = [
     'id' => $id,
     'observerid' => $USER->id
 ];
-$startsessionform = new \mod_observation\startsession_form(null, $startsessionformprefill);
+$startsessionform = new \mod_observation\form\startsession(null, $startsessionformprefill);
 
 // If start session form was submitted, call function to start session.
 if ($fromform = $startsessionform->get_data()) {
@@ -99,14 +99,14 @@ $upcomingfilterform->display();
 
 // If there are URL args from the filter form, calculate the filter amount to pass to the table.
 $filter = $filterenabled ? $interval * $intervalmultiplier : 0;
-echo \mod_observation\timeslots\timeslots::assigned_timeslots_table($observation->id, $pageurl,
-\mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING, $USER->id, $filter);
+echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
+\mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING, $USER->id, $filter);
 
 // Start new session form block.
 $startsessionform->display();
 
 // Session history block.
 echo $OUTPUT->heading(get_string('previoussessions', 'observation'), 3);
-echo \mod_observation\viewsessions\viewsessions::ob_sess_table($observation->id, $pageurl);
+echo \mod_observation\table\viewsessions\viewsessions_display::ob_sess_table($observation->id, $pageurl);
 
 echo $OUTPUT->footer();

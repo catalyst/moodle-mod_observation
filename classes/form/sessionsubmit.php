@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_observation;
+namespace mod_observation\form;
 
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
@@ -36,7 +36,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sessionsubmit_form extends \moodleform {
+class sessionsubmit extends \moodleform {
     /**
      * Defines the point marking form
      */
@@ -55,11 +55,6 @@ class sessionsubmit_form extends \moodleform {
         // Hidden form elements.
         $mform->addElement('hidden', 'sessionid', $prefill['session_id']);
         $mform->setType('sessionid', PARAM_INT);
-
-        // Enforce validations.
-        if ($mform->validate()) {
-            $mform->freeze();
-        }
 
         // Set defaults.
         $this->set_data($prefill);

@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_observation\timeslots;
+namespace mod_observation\table\timeslots;
 
 use context_course;
 
@@ -68,7 +68,7 @@ class timeslots_table extends \table_sql implements \renderable {
             get_string('actions', 'observation'),
         ];
 
-        if ($displaymode === \mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING) {
+        if ($displaymode === \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING) {
             // Add observee details as the second last column.
             array_splice($columns, count($columns) - 1, 0, 'observee_fullname');
             array_splice($headers, count($headers) - 1, 0, get_string('observeename', 'observation'));
@@ -89,22 +89,6 @@ class timeslots_table extends \table_sql implements \renderable {
     }
 
     /**
-     * Generates an action button for the table
-     * @param string $url base URL for the button to link to
-     * @param int $obsid observation ID to add to the URL
-     * @param int $slotid observation slot ID to add to the url
-     * @param string $action action to add to the URL
-     * @param string $text button text
-     */
-    private function action_button(string $url, int $obsid, int $slotid, string $action, string $text) {
-        return \html_writer::link(
-            new \moodle_url($url, ['id' => $obsid, 'action' => $action, 'slotid' => $slotid]),
-            $text,
-            ['class' => 'btn btn-secondary']
-        );
-    }
-
-    /**
      * Data converter for the start_time column
      * @param mixed $row current row
      */
@@ -117,26 +101,25 @@ class timeslots_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_action($row) {
-
-        // If statement to determine editing or viewing.
-
         $htmlout = "";
 
         switch($this->displaymode) {
-            case \mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING:
-                $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
-                $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete',
-                    get_string('delete', 'observation'));
+            case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_EDITING:
+                $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'edit']), get_string('edit', 'observation'));
+                $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete']), get_string('delete', 'observation'));
             break;
 
-            case \mod_observation\timeslots\timeslots::DISPLAY_MODE_SIGNUP:
-                $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'join', get_string('join', 'observation'));
+            case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_SIGNUP:
+                $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'join']), get_string('join', 'observation'));
             break;
 
-            case \mod_observation\timeslots\timeslots::DISPLAY_MODE_UPCOMING:
+            case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING:
                 if ($row->observee_id !== null) {
-                    $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'startsession',
-                        get_string('startobservationsession', 'observation'));
+                    $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
+                        'slotid' => $row->id, 'action' => 'startsession']), get_string('startobservationsession', 'observation'));
                 } else {
                     $htmlout .= get_string('noobservee', 'observation');
                 }

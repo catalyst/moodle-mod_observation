@@ -90,8 +90,8 @@ echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
 $slotexist = $DB->get_record('observation_timeslots', array('obs_id' => $id));
 
 if ($slotexist !== false) {
-    echo \mod_observation\timeslots\timeslots::timeslots_table($observation->id, $pageurl,
-    \mod_observation\timeslots\timeslots::DISPLAY_MODE_EDITING);
+    echo \mod_observation\table\timeslots\timeslots_display::timeslots_table($observation->id, $pageurl,
+    \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_EDITING);
 } else if ($slotexist === false) {
     echo "Nothing to display";
 }

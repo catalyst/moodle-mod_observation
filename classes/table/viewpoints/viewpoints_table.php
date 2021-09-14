@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_observation\viewpoints;
+namespace mod_observation\table\viewpoints;
 
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/tablelib.php');
@@ -88,35 +88,23 @@ class viewpoints_table extends \table_sql implements \renderable {
     }
 
     /**
-     * Generates an action button for the table
-     * @param string $url base URL for the button to link to
-     * @param int $obsid observation ID to add to the URL
-     * @param int $pointid observation point ID to add to the url
-     * @param string $action action to add to the URL
-     * @param string $text button text
-     */
-    private function action_button(string $url, int $obsid, int $pointid, string $action, string $text) {
-        return \html_writer::link(
-            new \moodle_url($url, ['id' => $obsid, 'action' => $action, 'pointid' => $pointid]),
-            $text,
-            ['class' => 'btn btn-secondary']
-        );
-    }
-
-    /**
      * Data converter for the action column
      * @param mixed $row current row
      */
     public function col_action($row) {
-        if ($this->displaymode == \mod_observation\timeslots\timeslots::DISPLAY_MODE_ASSIGNED) {
+        if ($this->displaymode == \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_ASSIGNED) {
             $htmlout = "";
             return $htmlout;
         };
         // Add action buttons.
-        $htmlout = $this->action_button($this->baseurl, $row->obs_id, $row->id, 'edit', get_string('edit', 'observation'));
-        $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'delete', get_string('delete', 'observation'));
-        $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'moveup', get_string('moveup', 'observation'));
-        $htmlout .= $this->action_button($this->baseurl, $row->obs_id, $row->id, 'movedown', get_string('movedown', 'observation'));
+        $htmlout = \mod_observation\table\common::action_button($this->baseurl, $row->obs_id, $row->id, 'edit',
+            get_string('edit', 'observation'));
+        $htmlout .= \mod_observation\table\common::action_button($this->baseurl, $row->obs_id, $row->id, 'delete',
+            get_string('delete', 'observation'));
+        $htmlout .= \mod_observation\table\common::action_button($this->baseurl, $row->obs_id, $row->id, 'moveup',
+            get_string('moveup', 'observation'));
+        $htmlout .= \mod_observation\table\common::action_button($this->baseurl, $row->obs_id, $row->id, 'movedown',
+            get_string('movedown', 'observation'));
         return $htmlout;
     }
 }

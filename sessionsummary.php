@@ -27,8 +27,10 @@ require_once(__DIR__.'/../../config.php');
 
 // Get data from the session ID.
 $sessionid = required_param('sessionid', PARAM_INT);
-$sessioninfo = \mod_observation\session_manager::get_session_info($sessionid);
-$sessiondata = \mod_observation\session_manager::get_session_data($sessionid);
+$session = \mod_observation\session_manager::get_session_data($sessionid);
+
+$sessiondata = $session['data'];
+$sessioninfo = $session['info'];
 
 $pointid = optional_param('pointid', null, PARAM_INT);
 
@@ -50,7 +52,7 @@ $formprefill = [
     'extracomment' => $sessioninfo['ex_comment']
 ];
 
-$submitform = new \mod_observation\sessionsubmit_form(null, $formprefill, 'post', '', null, !$isviewonly);
+$submitform = new \mod_observation\form\sessionsubmit(null, $formprefill, 'post', '', null, !$isviewonly);
 
 // Submission form was submitted.
 if ($fromform = $submitform->get_data()) {
