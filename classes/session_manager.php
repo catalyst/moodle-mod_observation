@@ -50,6 +50,11 @@ class session_manager {
     const SESSION_INPROGRESS = 'inprogress';
 
     /**
+     * @var int Number of seconds of lockout between starting a session with same observer, observee in an activity instance
+     */
+    const START_SESSION_LOCKOUT = 3;
+
+    /**
      * Returns all the sessions
      * @return array of integer ids of observation sessions
      */
@@ -67,6 +72,16 @@ class session_manager {
      */
     public static function start_session(int $obsid, int $observerid, int $observeeid) {
         global $DB;
+
+        // Ensure not accidentially calling start session too quickly.
+        $prevsession = $DB->get_record('observation_sessions', ['obs_id' => $obsid, 'observee_id' => $observeeid,
+            'observer_id' => $observerid, 'state' => self::SESSION_INPROGRESS]);
+
+        // If there is a previous session similar, check how long ago it was.
+        if ($prevsession !== false && time() - $prevsession->start_time < self::START_SESSION_LOCKOUT) {
+            throw new \moodle_exception("Tried to start a session too quickly.
+                Please wait ".self::START_SESSION_LOCKOUT. " seconds between starting new sessions");
+        }
 
         $data = [
             'obs_id' => $obsid,
