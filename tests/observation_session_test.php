@@ -124,7 +124,8 @@ class observation_session_test extends advanced_testcase {
         $this->assertEquals('inprogress', $sessioninfo['state']);
 
         // Get session data.
-        $sessiondata = \mod_observation\session_manager::get_session_data($sessionid);
+        $session = \mod_observation\session_manager::get_session_data($sessionid);
+        $sessiondata = $session['data'];
 
         // Ensure the observation points are returned.
         $sessiondataids = array_column($sessiondata, 'point_id');

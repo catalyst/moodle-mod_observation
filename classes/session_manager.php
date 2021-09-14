@@ -95,7 +95,7 @@ class session_manager {
     }
 
     /**
-     * Returns information about a session (such as observation id)
+     * Returns information about a session (such as observation id, state, users, etc)
      * @param int $sessionid observation session ID
      * @return array array of information about session. Does NOT return any observation point data - see get_session_data().
      */
@@ -115,9 +115,10 @@ class session_manager {
     }
 
     /**
-     * Returns the observation point data for a session, including any existing responses to the points
+     * Returns the observation point data for a session, including any existing responses to the points,
+     * along with the information about the session.
      * @param int $sessionid observation session id
-     * @return array array of observation points
+     * @return array array of observation points and responses
      */
     public static function get_session_data(int $sessionid) {
         // Get the details for the session.
@@ -125,8 +126,8 @@ class session_manager {
         $obid = $sessioninfo['obid'];
 
         // Get all points.
-        $observationpoints = \mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);
-        return $observationpoints;
+        $pointsandresponses = \mod_observation\observation_manager::get_points_and_responses($obid, $sessionid);
+        return ['info' => $sessioninfo, 'data' => $pointsandresponses];
     }
 
     /**
@@ -136,7 +137,8 @@ class session_manager {
      */
     public static function get_incomplete_points(int $sessionid) {
         $sessiondata = self::get_session_data($sessionid);
-        $incompletepoints = array_filter($sessiondata, function($point) {
+        $pointsandresponses = $sessiondata['data'];
+        $incompletepoints = array_filter($pointsandresponses, function($point) {
             return $point->response_id === null;
         });
         return $incompletepoints;
