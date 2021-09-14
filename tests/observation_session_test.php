@@ -218,7 +218,7 @@ class observation_session_test extends advanced_testcase {
     public function test_finish_nonexistent_session() {
         $sessionid = $this->create_session();
 
-        $this->expectException('coding_exception');
+        $this->expectException('moodle_exception');
         \mod_observation\session_manager::finish_session($sessionid + 1);
     }
 

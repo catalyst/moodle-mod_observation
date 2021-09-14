@@ -50,6 +50,11 @@ class session_manager {
     const SESSION_INPROGRESS = 'inprogress';
 
     /**
+     * @var int Session has been created, and the user has cancelled it.
+     */
+    const SESSION_CANCELLED = 'cancelled';
+
+    /**
      * @var int Number of seconds of lockout between starting a session with same observer, observee in an activity instance
      */
     const START_SESSION_LOCKOUT = 3;
@@ -79,8 +84,7 @@ class session_manager {
 
         // If there is a previous session similar, check how long ago it was.
         if ($prevsession !== false && time() - $prevsession->start_time < self::START_SESSION_LOCKOUT) {
-            throw new \moodle_exception("Tried to start a session too quickly.
-                Please wait ".self::START_SESSION_LOCKOUT. " seconds between starting new sessions");
+            throw new \moodle_exception(get_string('sessionlockouterror', 'observation', self::START_SESSION_LOCKOUT));
         }
 
         $data = [
@@ -100,6 +104,7 @@ class session_manager {
      * @return array array of information about session. Does NOT return any observation point data - see get_session_data().
      */
     public static function get_session_info(int $sessionid) {
+        self::check_session_exists($sessionid);
         global $DB;
 
         $sessiondata = $DB->get_record('observation_sessions', ['id' => $sessionid],
@@ -122,6 +127,7 @@ class session_manager {
      */
     public static function get_session_data(int $sessionid) {
         // Get the details for the session.
+        self::check_session_exists($sessionid);
         $sessioninfo = self::get_session_info($sessionid);
         $obid = $sessioninfo['obid'];
 
@@ -136,6 +142,7 @@ class session_manager {
      * @return array array containing points with no responses.
      */
     public static function get_incomplete_points(int $sessionid) {
+        self::check_session_exists($sessionid);
         $sessiondata = self::get_session_data($sessionid);
         $pointsandresponses = $sessiondata['data'];
         $incompletepoints = array_filter($pointsandresponses, function($point) {
@@ -160,17 +167,13 @@ class session_manager {
         // Ensure for each grade given that it is less than the max_grade.
         foreach ($givengrades as $index => $grade) {
             if ($grade > $maxgrades[$index]) {
-                throw new \moodle_exception("One or more grades was greater than the max grade.
-                    This can happen when an observation point is editied before a session has been submitted.");
+                throw new \moodle_exception(get_string('gradegreatermaxgrade', 'observation'));
             }
         }
 
-        $totalmaxgrade = array_sum($maxgrades);
-        $totalgradegiven = array_sum($givengrades);
-
         return [
-            'total' => $totalgradegiven,
-            'max' => $totalmaxgrade
+            'total' => array_sum($givengrades),
+            'max' => array_sum($maxgrades)
         ];
     }
 
@@ -181,7 +184,27 @@ class session_manager {
      */
     public static function save_extra_comment(int $sessionid, string $extracomment) {
         global $DB;
+        self::check_session_exists($sessionid);
         $DB->update_record('observation_sessions', ['id' => $sessionid, 'ex_comment' => $extracomment]);
+    }
+
+    /**
+     * Checks if a session exists.
+     * @param int $sessionid ID of session to check for existence of
+     * @return bool True if exists, throws exception if it does not.
+     */
+    public static function check_session_exists(int $sessionid): bool {
+        global $DB;
+
+        // Will throw exception if does not exist.
+        try {
+            $DB->get_record('observation_sessions', ['id' => $sessionid], MUST_EXIST);
+        } catch (\dml_missing_record_exception $e) {
+            // Throw a nicer exception than the DB one.
+            throw new \moodle_exception(get_string('sessiondoesntexist', 'observation'));
+        }
+
+        return true;
     }
 
     /**
@@ -192,12 +215,7 @@ class session_manager {
     public static function finish_session(int $sessionid) {
         global $DB;
 
-        // Ensure session exists.
-        $sessions = self::get_sessions();
-
-        if (!in_array($sessionid, $sessions)) {
-            throw new \coding_exception('Session does not exist.');
-        }
+        self::check_session_exists($sessionid);
 
         $incompletepoints = self::get_incomplete_points($sessionid);
 
@@ -224,7 +242,7 @@ class session_manager {
         $errorcode = self::update_session_grade($sessionid, $grades['total'], $grades['max']);
 
         if ($errorcode !== 0) {
-            throw new \moodle_exception("Could not update grade in gradebook.");
+            throw new \moodle_exception(get_string('couldnotupdategrade', 'observation'));
         }
 
         return true;
@@ -241,9 +259,11 @@ class session_manager {
     public static function update_session_grade(int $sessionid, int $gradegiven, int $maxgrade, int $mingrade = 0) {
         global $CFG;
 
+        self::check_session_exists($sessionid);
+
         // Sanity checks.
         if ($gradegiven < $mingrade || $gradegiven > $maxgrade) {
-            throw new \coding_exception("Grade given must be between the mingrade and the maxgrade specified");
+            throw new \coding_exception(get_string('gradegivenbounds', 'observation'));
         }
 
         $sessioninfo = self::get_session_info($sessionid);
@@ -277,7 +297,9 @@ class session_manager {
      */
     public static function cancel_session(int $sessionid) {
         global $DB;
-        $DB->update_record('observation_sessions', ['id' => $sessionid, 'state' => 'cancelled', 'finish_time' => time()]);
+
+        self::check_session_exists($sessionid);
+        $DB->update_record('observation_sessions', ['id' => $sessionid, 'state' => self::SESSION_CANCELLED, 'finish_time' => time()]);
         return;
     }
 }
