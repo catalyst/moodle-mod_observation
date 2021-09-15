@@ -96,15 +96,20 @@ class viewpoints_table extends \table_sql implements \renderable {
             $htmlout = "";
             return $htmlout;
         };
+
         // Add action buttons.
-        $htmlout = \mod_observation\table\common::action_button($this->baseurl, $row->obs_id, $row->id, 'edit',
-            get_string('edit', 'observation'));
-        $htmlout .= \mod_observation\table\common::action_button($this->baseurl, $row->obs_id, $row->id, 'delete',
-            get_string('delete', 'observation'));
-        $htmlout .= \mod_observation\table\common::action_button($this->baseurl, $row->obs_id, $row->id, 'moveup',
-            get_string('moveup', 'observation'));
-        $htmlout .= \mod_observation\table\common::action_button($this->baseurl, $row->obs_id, $row->id, 'movedown',
-            get_string('movedown', 'observation'));
+        $htmlout = \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
+            'pointid' => $row->id, 'action' => 'edit']), get_string('edit', 'observation'), 'btn-secondary');
+
+        $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
+            'pointid' => $row->id, 'action' => 'delete']), get_string('delete', 'observation'), 'btn-secondary');
+
+        $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
+            'pointid' => $row->id, 'action' => 'moveup']), get_string('moveup', 'observation'), 'btn-secondary');
+
+        $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
+            'pointid' => $row->id, 'action' => 'movedown']), get_string('movedown', 'observation'), 'btn-secondary');
+
         return $htmlout;
     }
 }
