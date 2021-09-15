@@ -45,7 +45,7 @@ class common {
         return \html_writer::link(
             $url,
             $text,
-            ['class' => 'btn mr-2 btn-secondary'.$style]
+            ['class' => 'btn mr-2 '.$style]
         );
     }
 }
