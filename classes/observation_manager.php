@@ -382,7 +382,7 @@ class observation_manager {
 
         $table->data = array_map(function($item) {
             // if $item->response is an image (change setType in form/pointmarking?) 
-            // then do the data['link'] url thing with img tags around it to put in the table
+            // then $item->response = do the data['link'] url thing with img tags around it to put in the table
             return [
                 $item->title,
                 $item->response,
