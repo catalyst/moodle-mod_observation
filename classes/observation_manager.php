@@ -383,6 +383,10 @@ class observation_manager {
         $table->data = array_map(function($item) {
             // if $item->response is an image (change setType in form/pointmarking?) 
             // then $item->response = do the data['link'] url thing with img tags around it to put in the table
+            if($item->response=="IMAGE/MEDIA/THING"){
+                $item->response = self::get_media_response($observationid, $item->response);
+            }
+
             return [
                 $item->title,
                 $item->response,
@@ -392,4 +396,90 @@ class observation_manager {
 
         return \html_writer::table($table);
     }
+
+    /**
+     * https://github.com/catalyst/moodle-block_carousel/blob/master/classes/cache/slide_cache.php#L121
+     * @param int $observationid ID of the observation instance
+     * @param int $itemResponse
+     */
+    public static function get_media_response($observationid, $itemResponse){
+
+        /////////////////////
+        global $DB;
+        //$key  = null; // my addition
+
+        $record = $DB->get_record('observation', $observationid); // The example function is given $key - what is this?
+
+        $data = (array) $record;
+
+        // If courseid is set, generate data based on course info.
+        $iscourse = false;
+        if (!empty($data['courseid'])) {
+            $invalid = false;
+            try {
+                $course = get_course($data['courseid']);
+            } catch (\dml_exception $e) {
+                // The course was not found.
+                $invalid = true;
+            }
+            // Ensure we have a good course before doing anything.
+            if ($invalid) {
+                $data['title'] = '';
+                $data['text'] = '';
+            } else {
+                $iscourse = true;
+                $data['title'] = empty($data['title']) ? $course->fullname : $data['title'];
+                $data['text'] = empty($data['text']) ? $course->fullname : $data['text'];
+            }
+        }
+
+        // Find the relevant content for the slide.
+        $context = \context_block::instance($record->blockid); // ??????????????
+        $selectedfile = null;
+        $storage = get_file_storage();
+
+        // Try to find any files in the direct file area first.
+        $files = $storage->get_area_files($context->id, 'observation', 'response', $observationid); // ???? $observationid???
+        foreach ($files as $file) {
+            if (!$file->is_directory()) {
+                $selectedfile = $file;
+            }
+        }
+
+        // There was no image supplied, try to find course image.
+        if (empty($selectedfile) && $iscourse) {
+            $context = \context_course::instance($data['courseid']);
+            $files = $storage->get_area_files(
+                $context->id,
+                'observation',//'course',
+                'response'//'overviewfiles'
+            );
+            foreach ($files as $file) {
+                if ($file->is_valid_image()) { //////////////////// images only
+                    $selectedfile = $file;
+                    break;
+                }
+            }
+        }
+
+        // Now we have the correct file.
+        if (!empty($selectedfile)) {
+            $itemid = empty($selectedfile->get_itemid()) ? null : $selectedfile->get_itemid();
+            $data['link'] = \moodle_url::make_pluginfile_url(
+                $selectedfile->get_contextid(),
+                $selectedfile->get_component(),
+                $selectedfile->get_filearea(),
+                $itemid,
+                $selectedfile->get_filepath(),
+                $selectedfile->get_filename()
+            );
+        } else {
+            $data['link'] = '';
+        }
+
+        return $data;
+        /////////////////////
+
+    }
+
 }
