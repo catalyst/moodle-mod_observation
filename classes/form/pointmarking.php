@@ -29,7 +29,7 @@ use context_system;
 
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/formslib.php');
-require_once(__DIR__.'/../../../config.php');
+//require_once(__DIR__.'/../../../config.php');
 
 /**
  * Creates a moodle_form to mark an observation point.
@@ -80,30 +80,12 @@ class pointmarking extends \moodleform {
                 break;
             case \mod_observation\observation_manager::INPUT_IMAGE:
                 // Image upload here.
-
                 $maxbytes = 5; // TODO: this restricts the size of each individual file.
                 $mform->addElement('filemanager', 'response', get_string('imageupload', 'observation'), null,
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
                           'accepted_types' => 'jpg,jpeg,png')); // Make the response 'File uploaded' instead of image numbers.
-                $mform->setType('response', PARAM_TEXT);
+                //$mform->setType('response', PARAM_TEXT);
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
-
-                // Below is an attempt to prepare the draft area. 
-                // Should this be placed somewhere else?
-                //$context = context_system::instance();
-                //$id = optional_param('id', 0, PARAM_INT); // I don't think this is getting what I need it to. 
-
-                //global $DB;
-                //$data = $DB->get_record('observation', ['id' => $id]); // Why does $DB have an issue here but not in the catalyst file?
-
-            
-
-                //$data->response = $draftitemid;
-                //$form->set_data($data); // set_data issue
-
-                //$data->response = $draftitemid;
-                //$data->modal = ['text' => $data->modalcontent, 'format' => FORMAT_HTML];
-
                 break;
         }
 
