@@ -106,20 +106,24 @@ class timeslots_table extends \table_sql implements \renderable {
         switch($this->displaymode) {
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_EDITING:
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'edit']), get_string('edit', 'observation'));
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'edit', 'sesskey' => sesskey()]),
+                    get_string('edit', 'observation'));
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete']), get_string('delete', 'observation'));
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete', 'sesskey' => sesskey()]),
+                    get_string('delete', 'observation'));
             break;
 
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_SIGNUP:
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'join']), get_string('join', 'observation'));
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'join', 'sesskey' => sesskey()]),
+                    get_string('join', 'observation'));
             break;
 
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING:
                 if ($row->observee_id !== null) {
                     $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
-                        'slotid' => $row->id, 'action' => 'startsession']), get_string('startobservationsession', 'observation'));
+                        'slotid' => $row->id, 'action' => 'startsession', 'sesskey' => sesskey()]),
+                        get_string('startobservationsession', 'observation'));
                 } else {
                     $htmlout .= get_string('noobservee', 'observation');
                 }

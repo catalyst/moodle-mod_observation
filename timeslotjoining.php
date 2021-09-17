@@ -40,6 +40,8 @@ if ($action !== null) {
 
     switch ($action) {
         case 'join':
+            require_sesskey();
+
             // Assign user to timeslot.
             if ($slotid === null) {
                 throw new \coding_exception("Missing SlotID parameter");
