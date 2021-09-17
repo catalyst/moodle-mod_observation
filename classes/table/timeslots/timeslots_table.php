@@ -25,8 +25,6 @@
 
 namespace mod_observation\table\timeslots;
 
-use context_course;
-
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -56,6 +54,8 @@ class timeslots_table extends \table_sql implements \renderable {
             'duration',
             'observer_fullname',
             'observer_email',
+            'observee_fullname',
+            'observee_email',
             'action',
         ];
 
@@ -65,6 +65,8 @@ class timeslots_table extends \table_sql implements \renderable {
             get_string('duration', 'observation'),
             get_string('observer_fullname', 'observation'),
             get_string('observer_email', 'observation'),
+            get_string('observee_fullname', 'observation'),
+            get_string('observee_email', 'observation'),
             get_string('actions', 'observation'),
         ];
 
@@ -109,9 +111,14 @@ class timeslots_table extends \table_sql implements \renderable {
                     ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'edit', 'sesskey' => sesskey()]),
                     get_string('edit', 'observation'));
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete', 'sesskey' => sesskey()]),
-                    get_string('delete', 'observation'));
-            break;
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete']), get_string('delete', 'observation'));
+
+                if ($row->observee_id !== null) {
+                    $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
+                        ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'kick']),
+                        get_string('kickobservee', 'observation'));
+                }
+                break;
 
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_SIGNUP:
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,

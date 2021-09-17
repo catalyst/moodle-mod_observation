@@ -52,13 +52,17 @@ if ($action !== null && $slotid !== null) {
             \mod_observation\timeslot_manager::delete_time_slot($observation->id, $slotid);
             break;
 
+        case 'kick':
+            \mod_observation\timeslot_manager::remove_observee($observation->id, $slotid);
+            break;
+
         default:
             // Unknown action.
             throw new moodle_exception(
                 'invalidqueryparam',
                 'error',
                 null,
-                ['expected' => "'edit','delete','moveup' or 'movedown'", 'actual' => $action]);
+                ['expected' => "'edit','delete','kick'", 'actual' => $action]);
     }
 
     // Redirect back to this page but without params after running action to avoid weird errors if user refreshes page.

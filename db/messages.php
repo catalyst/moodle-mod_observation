@@ -29,4 +29,8 @@ $messageproviders = array(
     // Confirm timeslot signup.
     'confirmsignup' => array(
     ),
+
+    // Cancel timeslot alert.
+    'cancellationalert' => array(
+    ),
 );

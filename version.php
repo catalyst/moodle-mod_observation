@@ -25,6 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2021052522;
+$plugin->version   = 2021052523;
 $plugin->requires  = 2021052500;
 $plugin->component = 'mod_observation';

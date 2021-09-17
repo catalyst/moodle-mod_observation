@@ -25,7 +25,6 @@
 
 namespace mod_observation;
 
-use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/calendar/lib.php');
@@ -142,6 +141,11 @@ class timeslot_manager {
                 // If the event cant be deleted for some reason.
                 echo 'Error deleting observee event: ',  $e->getMessage(), "\n";
             }
+        }
+
+        // If observee was registered, send a cancellation message.
+        if (!empty($timeslot->observee_id)) {
+            self::send_cancellation_message($observationid, $slotid, $timeslot->observee_id);
         }
 
         $DB->delete_records('observation_timeslots', ['id' => $slotid, 'obs_id' => $observationid]);
@@ -374,9 +378,9 @@ class timeslot_manager {
         $signedupslot = self::get_registered_timeslot($observationid, $userid);
 
         if ($timeslot->observee_id !== null) {
-            throw new moodle_exception("Could not signup to timeslot. Timeslot already taken.");
+            throw new \moodle_exception("Could not signup to timeslot. Timeslot already taken.");
         } else if ($signedupslot !== false) {
-            throw new moodle_exception("Could not signup to timeslot. You have already signed up for a timeslot.");
+            throw new \moodle_exception("Could not signup to timeslot. You have already signed up for a timeslot.");
         }
 
         // Allow signup.
@@ -491,7 +495,7 @@ class timeslot_manager {
         $eventdata->subject           = get_string('signupconfirm', 'observation', $observation->name);
         $eventdata->fullmessage       = "";
         $eventdata->fullmessageformat = FORMAT_HTML;
-        $eventdata->fullmessagehtml   = self::timeslot_html($observationid, $slotid);
+        $eventdata->fullmessagehtml   = self::timeslot_html($observationid, $slotid, 'mod_observation/confirm_message');
 
         $eventdata->smallmessage      = "";
         $eventdata->contexturl        = $contexturl;
@@ -504,8 +508,9 @@ class timeslot_manager {
      * Generates timeslot HTML message used in signup message notification.
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the timeslot
+     * @param string $template Mustache template to render
      */
-    public static function timeslot_html(int $observationid, int $slotid) {
+    public static function timeslot_html(int $observationid, int $slotid, string $template) {
         global $OUTPUT;
 
         list($observation, $course, $cm) =
@@ -520,7 +525,65 @@ class timeslot_manager {
             "start_time_formatted" => userdate($slotdata->start_time)
         ];
 
-        return $OUTPUT->render_from_template('mod_observation/confirm_message', $data);
+        return $OUTPUT->render_from_template($template, $data);
+    }
+
+    /**
+     * Removes an observee from a timeslot, and sends a notification to user affected.
+     * @param int $observationid ID of the observation instance
+     * @param int $slotid ID of the timeslot to remove the observee for.
+     */
+    public static function remove_observee(int $observationid, int $slotid) {
+        global $DB;
+
+        // Find the current observee registered.
+        $slot = self::get_existing_slot_data($observationid, $slotid);
+
+        if (empty($slot->observee_id)) {
+            throw new \moodle_exception("Could not remove observee from timeslot, as there is currently none registered.");
+        }
+
+        $newdata = ['id' => $slotid, 'obs_id' => $observationid, 'observee_id' => null];
+
+        $DB->update_record('observation_timeslots', $newdata);
+        self::send_cancellation_message($observationid, $slotid, $slot->observee_id);
+    }
+
+    /**
+     * Sends the signup confirmation message to the desired user.
+     * @param int $observationid id of the observation instance.
+     * @param int $slotid id of the timeslot the user signed up to.
+     * @param int $userid id of the user to send the message to.
+     */
+    public static function send_cancellation_message(int $observationid, int $slotid, int $userid) {
+        global $DB;
+        $user = $DB->get_record('user', ['id' => $userid]);
+
+        list($observation, $course, $cm) =
+            \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+
+        $contexturl =
+            (new \moodle_url('/mod/observation/timeslotjoining.php', ['id' => $observation->id]))->out(false);
+
+        $eventdata = new \core\message\message();
+
+        $eventdata->courseid          = $course->id;
+        $eventdata->component         = 'mod_observation';
+        $eventdata->name              = 'cancellationalert';
+        $eventdata->notification      = 1;
+
+        $eventdata->userfrom          = \core_user::get_noreply_user();
+        $eventdata->userto            = $user;
+        $eventdata->subject           = get_string('cancellationalert', 'observation', $observation->name);
+        $eventdata->fullmessage       = "";
+        $eventdata->fullmessageformat = FORMAT_HTML;
+        $eventdata->fullmessagehtml   = self::timeslot_html($observationid, $slotid, 'mod_observation/cancellation_message');
+
+        $eventdata->smallmessage      = "";
+        $eventdata->contexturl        = $contexturl;
+        $eventdata->contexturlname    = get_string('signupfortimeslot', 'observation');
+
+        return message_send($eventdata);
     }
 
     /**
