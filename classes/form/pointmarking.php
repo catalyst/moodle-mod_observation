@@ -145,35 +145,7 @@ class pointmarking extends \moodleform {
      */
     public function validation($data, $files) {
         $errors = [];
-
-        // Save submitted image.
-        //file_save_draft_area_files($data->content, $data->context->id, 'observation', 'response', $files);
-
-        // if (!empty($files)){
-        //     $itemid = empty($files->get_itemid()) ? null : $files->get_itemid();
-        //     $data['link'] = \moodle_url::make_pluginfile_url(
-        //         $files->get_contextid(),
-        //         $files->get_component(),
-        //         $files->get_filearea(),
-        //         $itemid,
-        //         $files->get_filepath(),
-        //         $files->get_filename()
-        //     );
-        // } else {
-        //     $data['link'] = '';
-        // }
-
-        // Below from: https://github.com/catalyst/moodle-block_carousel/blob/master/classes/cache/slide_cache.php#L121
-        // $itemid = empty($selectedfile->get_itemid()) ? null : $selectedfile->get_itemid();
-        // $data['link'] = \moodle_url::make_pluginfile_url(
-        //     $selectedfile->get_contextid(),
-        //     $selectedfile->get_component(),
-        //     $selectedfile->get_filearea(),
-        //     $itemid,
-        //     $selectedfile->get_filepath(),
-        //     $selectedfile->get_filename()
-        // );
-
+        
         // Ensure grade given <= max grade.
         if ($data['grade_given'] > $data['max_grade']) {
             $errors['grade_given'] = get_string('gradegivengreatermaxgrade', 'observation');
