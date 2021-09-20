@@ -25,6 +25,8 @@
 
 namespace mod_observation;
 
+use Behat\Behat\Output\Node\Printer\Helper\ResultToStringConverter;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/../../../config.php');
@@ -390,14 +392,20 @@ class observation_manager {
                 $record = $DB->get_record('observation', ['id' => $item->obs_id]);
                 $data = (array) $record;
 
-                //$context = \context_block::instance($record->blockid); // issue
+                //$context = \context_block::instance($record->blockid); // id from {block_instances} table.
 
                 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($item->obs_id);
                 $context = \context_module::instance($cm->id);
 
-                $storage = get_file_storage();
-                $files = $storage->get_area_files($context->id, 'observation', 'response', $item->obs_id);
+                $storage = get_file_storage(); // not empty
+                $files = $storage->get_area_files($context->id, 'observation', 'response', $item->obs_id); // this is empty, context id is 98
                 $selectedfile = null;
+
+                if(!empty($files)){
+                    $testingString = 'not empty';
+                } else {
+                    $testingString = 'empty';
+                }
 
                 // iterate through to find the non-directory file like slide_cache
                 foreach ($files as $file) {
@@ -425,7 +433,8 @@ class observation_manager {
                 }
 
                 // set $item->response to format_text(url)
-                $item->response = format_text($data['link']);
+                //$item->response = format_text($data['link']);
+                $item->response = format_text($testingString);
             }
 
             return [
