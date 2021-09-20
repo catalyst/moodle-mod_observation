@@ -35,7 +35,7 @@ function xmldb_observation_install() {
     $mappings = [
         ['res_type' => 0, 'lang_string' => 'textinputtype'],
         ['res_type' => 1, 'lang_string' => 'passfailtype'],
-        ['res_type' => 2, 'lang_string' => 'imagetype']
+        ['res_type' => 2, 'lang_string' => 'evidencetype']
     ];
     $DB->insert_records($tablename, $mappings);
 }

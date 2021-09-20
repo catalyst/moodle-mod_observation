@@ -46,9 +46,9 @@ class observation_manager {
      */
     const INPUT_PASSFAIL = 1;
     /**
-     * @var int Observation point image input type.
+     * @var int Observation point evidence input type.
      */
-    const INPUT_IMAGE = 2;
+    const INPUT_EVIDENCE = 2;
 
     /**
      * Gets observation, course and coursemodule from course module ID
@@ -381,12 +381,6 @@ class observation_manager {
         $table->head = ['Title', 'Response', 'Grade Given'];
 
         $table->data = array_map(function($item) {
-            // if $item->response is an image (change setType in form/pointmarking?) 
-            // then $item->response = do the data['link'] url thing with img tags around it to put in the table
-            if($item->response=="IMAGE/MEDIA/THING"){
-                $item->response = self::get_media_response($observationid, $item->response);
-            }
-
             return [
                 $item->title,
                 $item->response,
@@ -406,9 +400,8 @@ class observation_manager {
 
         /////////////////////
         global $DB;
-        //$key  = null; // my addition
 
-        $record = $DB->get_record('observation', $observationid); // The example function is given $key - what is this?
+        $record = $DB->get_record('observation', ['id' => $observationid]); // The example function is given $key - what is this?
 
         $data = (array) $record;
 
