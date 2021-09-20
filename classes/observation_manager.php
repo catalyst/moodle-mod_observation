@@ -390,7 +390,11 @@ class observation_manager {
                 $record = $DB->get_record('observation', ['id' => $item->obs_id]);
                 $data = (array) $record;
 
-                $context = \context_block::instance($record->blockid); // issue
+                //$context = \context_block::instance($record->blockid); // issue
+
+                list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($item->obs_id);
+                $context = \context_module::instance($cm->id);
+
                 $storage = get_file_storage();
                 $files = $storage->get_area_files($context->id, 'observation', 'response', $item->obs_id);
                 $selectedfile = null;
@@ -406,6 +410,7 @@ class observation_manager {
                 // make pluginfile url
                 if (!empty($selectedfile)) {
                     $itemid = empty($selectedfile->get_itemid()) ? null : $selectedfile->get_itemid();
+                    /*
                     $data['link'] = \moodle_url::make_pluginfile_url(
                         $selectedfile->get_contextid(),
                         $selectedfile->get_component(),
@@ -413,9 +418,10 @@ class observation_manager {
                         $itemid,
                         $selectedfile->get_filepath(),
                         $selectedfile->get_filename()
-                    );
+                    );*/
+                    $data['link'] = 'found file';
                 } else {
-                    $data['link'] = '';
+                    $data['link'] = 'selected file is empty';
                 }
 
                 // set $item->response to format_text(url)
