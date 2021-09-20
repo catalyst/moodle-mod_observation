@@ -380,7 +380,18 @@ class observation_manager {
         $table = new \html_table();
         $table->head = ['Title', 'Response', 'Grade Given'];
 
+        // $item->res_type,
+
         $table->data = array_map(function($item) {
+            if($item->res_type == self::INPUT_EVIDENCE){
+                // get file area
+
+                // iterate through to find the non-directory file like slide_cache
+
+                // make pluginfile url
+
+                // set $item->response to format_text(url)
+            }
             return [
                 $item->title,
                 $item->response,
