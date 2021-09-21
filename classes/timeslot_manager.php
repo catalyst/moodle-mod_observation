@@ -40,6 +40,11 @@ require_once($CFG->dirroot . '/calendar/lib.php');
 class timeslot_manager {
 
     /**
+     * @var int Maximum number of notifications a user can create for themselves.
+     */
+    const MAX_NOTIFICATIONS = 3;
+
+    /**
      * Modifies or creates a new time slot in the database
      * @param mixed $data Data to pass to database function
      * @return mixed True if updating and successful or ID if inserting and successful.
@@ -505,11 +510,50 @@ class timeslot_manager {
     }
 
     /**
+     * Sends a reminder message about a timeslot to a specific user.
+     * @param int $observationid id of the observation instance.
+     * @param int $slotid id of the timeslot the user signed up to.
+     * @param int $userid id of the user to send the message to.
+     */
+    public static function send_reminder_message(int $observationid, int $slotid, int $userid) {
+        global $DB;
+        $user = $DB->get_record('user', ['id' => $userid]);
+
+        list($observation, $course, $cm) =
+            \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+
+        $contexturl =
+            (new \moodle_url('/mod/observation/timeslotjoining.php', ['id' => $observation->id]))->out(false);
+
+        $eventdata = new \core\message\message();
+
+        $eventdata->courseid          = $course->id;
+        $eventdata->component         = 'mod_observation';
+        $eventdata->name              = 'signupreminder';
+        $eventdata->notification      = 1;
+
+        $eventdata->userfrom          = \core_user::get_noreply_user();
+        $eventdata->userto            = $user;
+        $eventdata->subject           = get_string('signupreminder', 'observation', $observation->name);
+        $eventdata->fullmessage       = "";
+        $eventdata->fullmessageformat = FORMAT_HTML;
+        $eventdata->fullmessagehtml   = self::timeslot_html($observationid, $slotid, 'mod_observation/reminder_message');
+
+        $eventdata->smallmessage      = "";
+        $eventdata->contexturl        = $contexturl;
+        $eventdata->contexturlname    = get_string('viewsignup', 'observation');
+
+        return message_send($eventdata);
+    }
+
+    /**
      * Generates timeslot HTML message used in signup message notification.
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the timeslot
+     * @param string $template Mustache template to render the data to
      * @param string $template Mustache template to render
      */
+    public static function timeslot_html(int $observationid, int $slotid, string $template='mod_observation/confirm_message') {
     public static function timeslot_html(int $observationid, int $slotid, string $template) {
         global $OUTPUT;
 
@@ -526,6 +570,112 @@ class timeslot_manager {
         ];
 
         return $OUTPUT->render_from_template($template, $data);
+    }
+
+    /**
+     * Creates a database record for a notification to send at a later date.
+     * @param int $observationid ID of the observation instance
+     * @param int $slotid ID of the timeslot to create a notification for
+     * @param int $userid ID of the user to create the notification for
+     * @param object $data Data containing details about the notification
+     */
+    public static function create_notification(int $observationid, int $slotid, int $userid, $data) {
+        global $DB;
+
+        $interval = $data->interval_amount;
+        $multiplier = $data->interval_multiplier;
+
+        if (!is_int($interval) || $interval < 1) {
+            throw new \coding_exception("Interval amount must be an integer that is greater than or equal to 1");
+        }
+
+        if (!is_int($multiplier) || $multiplier < 1) {
+            throw new \coding_exception("Multiplier amount must be an integer that is greater than or equal to 1");
+        }
+
+        // Ensure user hasn't created too many notifications.
+        $currentnotifications = self::get_users_notifications($observationid, $userid);
+
+        if (count($currentnotifications) >= self::MAX_NOTIFICATIONS) {
+            throw new \moodle_exception(get_string('toomanynotifications', 'observation'));
+        }
+
+        $DB->insert_record('observation_notifications', [
+            'timeslot_id' => $slotid,
+            'time_before' => $interval * $multiplier
+        ]);
+    }
+
+    /**
+     * Obtains the notifications for a user in a given observation activity
+     * @param int $observationid ID of the observation instance
+     * @param int $userid ID of the user to get notifications for
+     * @return array
+     */
+    public static function get_users_notifications(int $observationid, int $userid) {
+        global $DB;
+
+        $sql = '
+            SELECT obn.id as notification_id, time_before, ot.observee_id as userid
+            FROM {observation_notifications} obn LEFT JOIN {observation_timeslots} ot ON obn.timeslot_id = ot.id
+            WHERE ot.obs_id = :obsid AND ot.observee_id = :userid
+        ';
+
+        return $DB->get_records_sql($sql, ['userid' => $userid, 'obsid' => $observationid]);
+    }
+
+    /**
+     * Deletes a notification
+     * @param int $observationid ID of the observation instance
+     * @param int $userid ID of the user to delete notifications for
+     * @param int $notifyid ID of the notification to delete
+     */
+    public static function delete_notification(int $observationid, int $userid, int $notifyid) {
+        global $DB;
+
+        // Ensure user actually owns the notification.
+        $usersnotify = self::get_users_notifications($observationid, $userid);
+        $notifyids = array_column($usersnotify, 'notification_id');
+
+        if (!in_array($notifyid, $notifyids)) {
+            throw new \moodle_exception(get_string('notownnotification', 'observation'));
+        } else {
+            $DB->delete_records('observation_notifications', ['id' => $notifyid]);
+        }
+    }
+
+    /**
+     * Processes notifications. If it is the correct time, will notify user and delete notification. Else ignores.
+     * This is usually run via a CRON job at hourly intervals.
+     */
+    public static function process_notifications() {
+        global $DB;
+
+        // Get all notifications.
+        $sql = '
+            SELECT ot.obs_id as obs_id, obn.id as notification_id, time_before,
+                   ot.observee_id as userid, ot.id as timeslot_id,
+                   ot.start_time as start_time
+              FROM {observation_notifications} obn
+         LEFT JOIN {observation_timeslots} ot
+                ON obn.timeslot_id = ot.id';
+
+        $notifications = $DB->get_records_sql($sql);
+
+        foreach ($notifications as $n) {
+            $notifytime = $n->start_time - $n->time_before;
+
+            if ($notifytime < time()) {
+                // Process it !
+                self::send_reminder_message($n->obs_id, $n->timeslot_id, $n->userid);
+
+                // Delete notification record.
+                $DB->delete_records('observation_notifications', ['id' => $n->notification_id]);
+                return;
+            }
+        }
+
+        return;
     }
 
     /**

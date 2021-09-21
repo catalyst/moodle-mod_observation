@@ -27,10 +27,11 @@ defined('MOODLE_INTERNAL') || die();
 
 $messageproviders = array(
     // Confirm timeslot signup.
-    'confirmsignup' => array(
-    ),
+    'confirmsignup' => [],
 
-    // Cancel timeslot alert.
-    'cancellationalert' => array(
-    ),
+    // Reminder ofdocker container check crontabdocker container check crontab timeslot signup.
+    'signupreminder' => []
+    
+    // Cancellation alert.
+    'cancellationalert' => []
 );
