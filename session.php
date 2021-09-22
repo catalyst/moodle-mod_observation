@@ -23,13 +23,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__.'/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 
 // Get data from the session ID.
 $sessionid = required_param('sessionid', PARAM_INT);
 $sessiondata = \mod_observation\session_manager::get_session_info($sessionid);
-
 $pointid = optional_param('pointid', null, PARAM_INT);
+$confirm = optional_param('confirm', null, PARAM_BOOL);
+$confirmsubmit = optional_param('confirmsubmit', null, PARAM_BOOL);
+$mode = optional_param('mode', null, PARAM_TEXT);
 
 $obid = $sessiondata['obid'];
 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($obid);
@@ -46,8 +48,12 @@ if (is_null($pointid)) {
     $firstpoint = empty($observationpoints) ? null : reset($observationpoints);
     if (is_null($firstpoint)) {
         // No observation points - redirect back with error message.
-        redirect(new moodle_url('sessionview.php', ['id' => $obid]), get_string('noobservationpoints', 'observation'),
-            null, \core\output\notification::NOTIFY_ERROR);
+        redirect(
+            new moodle_url('sessionview.php', ['id' => $obid]),
+            get_string('noobservationpoints', 'observation'),
+            null,
+            \core\output\notification::NOTIFY_ERROR
+        );
     } else {
         redirect(new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $firstpoint->point_id]));
     }
@@ -58,7 +64,7 @@ if (is_null($pointid)) {
 $selectoroptions = [];
 
 foreach ($observationpoints as $point) {
-    $selectoroptions[$point->point_id] = $point->list_order.'. '.$point->title;
+    $selectoroptions[$point->point_id] = $point->list_order . '. ' . $point->title;
 }
 
 $selectprefill = [
@@ -92,22 +98,74 @@ $formprefill['file_size'] = $formprefill['file_size'] * 1048576; // MB in binary
 
 $markingform = new \mod_observation\form\pointmarking(null, $formprefill);
 
+// Render page.
+$pageurl = new moodle_url('/mod/observation/session.php', array('sessionid' => $sessionid));
+$PAGE->set_url($pageurl);
+$PAGE->set_title($course->shortname . ': ' . $observation->name);
+$PAGE->set_heading($course->fullname);
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('markingobservation', 'observation'), 2);
+
+
+
 if ($markingform->no_submit_button_pressed()) {
     $fromform = $markingform->get_submitted_data();
 
     // Cancel / abandon observation button pressed.
     if (!is_null($fromform->abandonbutton)) {
-        \mod_observation\session_manager::cancel_session($sessionid);
-        redirect(new moodle_url('sessionview.php', ['id' => $obid]), get_string('successfulcancel', 'observation'),
-            null, \core\output\notification::NOTIFY_SUCCESS);
-        return;
+
+        // If no confirmation yet, display confirmation dialog.
+        if ($confirm === null) {
+            echo $OUTPUT->confirm(
+                get_string('confirmcancel', 'observation'),
+                new moodle_url($pageurl, ['confirm' => true]),
+                new moodle_url($pageurl, ['confirm' => false])
+            );
+        }
+
+        // If confirmation approved proceed to cancel session
+        if ($confirm === 1) {
+            //Canel Session
+            \mod_observation\session_manager::cancel_session($sessionid);
+            redirect(
+                new moodle_url('sessionview.php', ['id' => $obid]),
+                get_string('successfulcancel', 'observation'),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
+            return;
+        }
+
+        // If confirmation rejected proceed back to session.php
+        if ($confirm === 0) {
+            // Return to session page.
+            redirect($pageurl);
+        }
     }
 
     // Submit observation button pressed.
     if (!is_null($fromform->submitobservation)) {
-        // Redirect to final session page (summary, add final comments, etc.).
-        redirect(new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]));
-        return;
+
+        // If no confirmation yet, display confirmation dialog.
+        if ($confirmsubmit === null) {
+            echo $OUTPUT->confirm(
+                get_string('confirmcancel', 'observation'), new moodle_url($pageurl, ['confirmsubmit' => true]),
+                new moodle_url($pageurl, ['confirmsubmit' => false])
+            );
+        }
+
+        // If confirmation approved proceed to cancel session
+        if ($confirmsubmit === 1) {
+            // Redirect to final session page (summary, add final comments, etc.).
+            redirect(new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]));
+            return;
+        }
+
+        // If confirmation rejected proceed back to session.php
+        if ($confirmsubmit === 0) {
+            // Return to session page.
+            redirect($pageurl);
+        }
     }
 
     return;
@@ -134,23 +192,24 @@ if ($fromform = $markingform->get_data()) {
             $pointid = $nextpointid;
         } else {
             // No more points to process - redirect to the session summary/submission screen.
-            redirect(new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]), get_string('responsesaved', 'observation'),
-                null, \core\output\notification::NOTIFY_SUCCESS);
+            redirect(
+                new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]),
+                get_string('responsesaved', 'observation'),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
             return;
         }
     }
 
-    redirect(new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $pointid]),
-        get_string('responsesaved', 'observation'), null, \core\output\notification::NOTIFY_SUCCESS);
+    redirect(
+        new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $pointid]),
+        get_string('responsesaved', 'observation'),
+        null,
+        \core\output\notification::NOTIFY_SUCCESS
+    );
     return;
 }
-
-// Render page.
-$PAGE->set_url(new moodle_url('/mod/observation/session.php', array('sessionid' => $sessionid)));
-$PAGE->set_title($course->shortname.': '.$observation->name);
-$PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('markingobservation', 'observation'), 2);
 
 // Render forms.
 echo $OUTPUT->container_start('p-3 mb-2 bg-secondary');

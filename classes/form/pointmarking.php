@@ -105,13 +105,13 @@ class pointmarking extends \moodleform {
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
 
         // Submit Observation.
-        $mform->addElement('header', 'submitheader', get_string('submitobservation', 'observation'));
+        //$mform->addElement('header', 'submitheader', get_string('submitobservation', 'observation'));
 
         $mform->registerNoSubmitButton('submitobservation');
         $mform->addElement('submit', 'submitobservation', get_string('submitobservation', 'observation'));
 
         // Cancel buttons.
-        $mform->addElement('header', 'cancelheader', get_string('abandonobservation', 'observation'));
+        //$mform->addElement('header', 'cancelheader', get_string('abandonobservation', 'observation'));
 
         $mform->registerNoSubmitButton('abandonbutton');
         $mform->addElement('submit', 'abandonbutton', get_string('abandonobservation', 'observation'));
