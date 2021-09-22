@@ -402,7 +402,7 @@ class observation_manager {
                 //$contextid = $context->id;
 
                 $storage = get_file_storage(); // not empty
-                $files = $storage->get_area_files($contextid = 5, 'user', 'draft', $item->response);
+                $files = $storage->get_area_files($contextid = 5, 'user', 'draft', $item->response); // hardcoded
                 //$files = $storage->get_area_files($contextid = 5, 'observation', 'response', $item->obs_id); // this is empty, context id is 98, $item->obs_id
                 //I think the contextid should be 5 from beekeeper.
                 $selectedfile = null;
@@ -425,7 +425,7 @@ class observation_manager {
                 // make pluginfile url
                 if (!empty($selectedfile)) {
                     $itemid = empty($selectedfile->get_itemid()) ? null : $selectedfile->get_itemid();
-                    /*
+                    
                     $data['link'] = \moodle_url::make_pluginfile_url(
                         $selectedfile->get_contextid(),
                         $selectedfile->get_component(),
@@ -433,15 +433,15 @@ class observation_manager {
                         $itemid,
                         $selectedfile->get_filepath(),
                         $selectedfile->get_filename()
-                    );*/
-                    $data['link'] = 'found file';
+                    );
+                    //$data['link'] = 'found file';
                 } else {
                     $data['link'] = 'selected file is empty';
                 }
 
                 // set $item->response to format_text(url)
-                //$item->response = format_text($data['link']);
-                $item->response = format_text($testingString);
+                $item->response = format_text($data['link']);
+                //$item->response = format_text($testingString);
             }
 
             return [
