@@ -107,7 +107,6 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('markingobservation', 'observation'), 2);
 
 
-
 if ($markingform->no_submit_button_pressed()) {
     $fromform = $markingform->get_submitted_data();
 
@@ -116,27 +115,22 @@ if ($markingform->no_submit_button_pressed()) {
 
         // If no confirmation yet, display confirmation dialog.
         if ($confirm === null) {
-            echo $OUTPUT->confirm(
-                get_string('confirmcancel', 'observation'),
-                new moodle_url($pageurl, ['confirm' => true]),
-                new moodle_url($pageurl, ['confirm' => false])
+            echo $OUTPUT->confirm(get_string('confirmcancel', 'observation'),
+                new moodle_url($pageurl, ['confirm' => true]), new moodle_url($pageurl, ['confirm' => false])
             );
         }
 
-        // If confirmation approved proceed to cancel session
+        // If confirmation approved proceed to cancel session.
         if ($confirm === 1) {
-            //Canel Session
+            // Cancel Session.
             \mod_observation\session_manager::cancel_session($sessionid);
-            redirect(
-                new moodle_url('sessionview.php', ['id' => $obid]),
-                get_string('successfulcancel', 'observation'),
-                null,
-                \core\output\notification::NOTIFY_SUCCESS
-            );
+
+            redirect(new moodle_url('sessionview.php', ['id' => $obid]), get_string('successfulcancel', 'observation'),
+                null, \core\output\notification::NOTIFY_SUCCESS);
             return;
         }
 
-        // If confirmation rejected proceed back to session.php
+        // If confirmation rejected proceed back to session.php.
         if ($confirm === 0) {
             // Return to session page.
             redirect($pageurl);
@@ -148,20 +142,19 @@ if ($markingform->no_submit_button_pressed()) {
 
         // If no confirmation yet, display confirmation dialog.
         if ($confirmsubmit === null) {
-            echo $OUTPUT->confirm(
-                get_string('confirmcancel', 'observation'), new moodle_url($pageurl, ['confirmsubmit' => true]),
-                new moodle_url($pageurl, ['confirmsubmit' => false])
+            echo $OUTPUT->confirm(get_string('confirmsubmit', 'observation'),
+                new moodle_url($pageurl, ['confirmsubmit' => true]), new moodle_url($pageurl, ['confirmsubmit' => false])
             );
         }
 
-        // If confirmation approved proceed to cancel session
+        // If confirmation approved proceed to cancel session.
         if ($confirmsubmit === 1) {
             // Redirect to final session page (summary, add final comments, etc.).
             redirect(new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]));
             return;
         }
 
-        // If confirmation rejected proceed back to session.php
+        // If confirmation rejected proceed back to session.php.
         if ($confirmsubmit === 0) {
             // Return to session page.
             redirect($pageurl);
