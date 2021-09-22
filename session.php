@@ -75,7 +75,8 @@ $selectprefill = [
 $selectorform = new \mod_observation\form\pointselector(null, $selectprefill);
 
 if ($fromform = $selectorform->get_data()) {
-    redirect(new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $fromform->pointid]));
+    redirect(new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $fromform->pointid,
+        'confirm' => $confirm, 'confirmsubmit' => $confirmsubmit]));
     return;
 }
 
@@ -99,7 +100,11 @@ $formprefill['file_size'] = $formprefill['file_size'] * 1048576; // MB in binary
 $markingform = new \mod_observation\form\pointmarking(null, $formprefill);
 
 // Render page.
-$pageurl = new moodle_url('/mod/observation/session.php', array('sessionid' => $sessionid));
+$pageurl = new moodle_url('/mod/observation/session.php', array(
+    'sessionid' => $sessionid, 'pointid' => $pointid,
+    'confirm' => $confirm, 'confirmsubmit' => $confirmsubmit
+));
+$pageurl->out(false);
 $PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname . ': ' . $observation->name);
 $PAGE->set_heading($course->fullname);
@@ -115,54 +120,67 @@ if ($markingform->no_submit_button_pressed()) {
 
         // If no confirmation yet, display confirmation dialog.
         if ($confirm === null) {
-            echo $OUTPUT->confirm(get_string('confirmcancel', 'observation'),
-                new moodle_url($pageurl, ['confirm' => true]), new moodle_url($pageurl, ['confirm' => false])
+            echo $OUTPUT->confirm(
+                get_string('confirmcancel', 'observation'),
+                new moodle_url($pageurl, ['confirm' => true]),
+                new moodle_url($pageurl, ['confirm' => false])
             );
         }
-
-        // If confirmation approved proceed to cancel session.
-        if ($confirm === 1) {
-            // Cancel Session.
-            \mod_observation\session_manager::cancel_session($sessionid);
-
-            redirect(new moodle_url('sessionview.php', ['id' => $obid]), get_string('successfulcancel', 'observation'),
-                null, \core\output\notification::NOTIFY_SUCCESS);
-            return;
-        }
-
-        // If confirmation rejected proceed back to session.php.
-        if ($confirm === 0) {
-            // Return to session page.
-            redirect($pageurl);
-        }
     }
+
 
     // Submit observation button pressed.
     if (!is_null($fromform->submitobservation)) {
 
         // If no confirmation yet, display confirmation dialog.
         if ($confirmsubmit === null) {
-            echo $OUTPUT->confirm(get_string('confirmsubmit', 'observation'),
-                new moodle_url($pageurl, ['confirmsubmit' => true]), new moodle_url($pageurl, ['confirmsubmit' => false])
+            echo $OUTPUT->confirm(
+                get_string('confirmsubmit', 'observation'),
+                new moodle_url($pageurl, ['confirmsubmit' => true]),
+                new moodle_url($pageurl, ['confirmsubmit' => false])
             );
         }
-
-        // If confirmation approved proceed to cancel session.
-        if ($confirmsubmit === 1) {
-            // Redirect to final session page (summary, add final comments, etc.).
-            redirect(new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]));
-            return;
-        }
-
-        // If confirmation rejected proceed back to session.php.
-        if ($confirmsubmit === 0) {
-            // Return to session page.
-            redirect($pageurl);
-        }
     }
-
     return;
 }
+
+if ($confirm !== null & $confirmsubmit !== 1) {
+    // If confirmation approved proceed to cancel session.
+    if ($confirm === 1) {
+        // Cancel Session.
+        \mod_observation\session_manager::cancel_session($sessionid);
+
+        redirect(
+            new moodle_url('sessionview.php', ['id' => $obid]),
+            get_string('successfulcancel', 'observation'),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
+        return;
+    }
+
+    // If confirmation rejected proceed back to session.php.
+    if ($confirm === 0) {
+        // Return to session page.
+        redirect(new moodle_url('/mod/observation/session.php', array('sessionid' => $sessionid)));
+    }
+}
+
+if ($confirmsubmit !== null & $confirm !== 1) {
+    // If confirmation approved proceed to submit session.
+    if ($confirmsubmit === 1) {
+        // Redirect to final session page (summary, add final comments, etc.).
+        redirect(new moodle_url('/mod/observation/sessionsummary.php', array('sessionid' => $sessionid)));
+    }
+
+    // If confirmation rejected proceed back to session.php.
+    if ($confirmsubmit === 0) {
+        // Return to session page.
+        redirect(new moodle_url('/mod/observation/session.php', array('sessionid' => $sessionid)));
+    }
+    return;
+}
+
 
 // If point marking form was submitted.
 if ($fromform = $markingform->get_data()) {
