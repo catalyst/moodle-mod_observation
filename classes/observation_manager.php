@@ -26,6 +26,7 @@
 namespace mod_observation;
 
 use Behat\Behat\Output\Node\Printer\Helper\ResultToStringConverter;
+use context_system;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -390,21 +391,27 @@ class observation_manager {
                 // get file area
                 global $DB;
                 $record = $DB->get_record('observation', ['id' => $item->obs_id]);
-                $data = (array) $record;
+                $data = (array) $record; // not empty
 
                 //$context = \context_block::instance($record->blockid); // id from {block_instances} table.
 
                 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($item->obs_id);
-                $context = \context_module::instance($cm->id);
+                //$context = \context_module::instance($cm->id); // $cm->id is 43
+
+                //$context =  \context_block::instance($cm->instance);
+                //$contextid = $context->id;
 
                 $storage = get_file_storage(); // not empty
-                $files = $storage->get_area_files($context->id, 'observation', 'response', $item->obs_id); // this is empty, context id is 98
+                $files = $storage->get_area_files($contextid = 5, 'user', 'draft', $item->response);
+                //$files = $storage->get_area_files($contextid = 5, 'observation', 'response', $item->obs_id); // this is empty, context id is 98, $item->obs_id
+                //I think the contextid should be 5 from beekeeper.
                 $selectedfile = null;
 
                 if(!empty($files)){
                     $testingString = 'not empty';
                 } else {
-                    $testingString = 'empty';
+                    //$testingString = 'empty';
+                    $testingString = format_text($contextid);
                 }
 
                 // iterate through to find the non-directory file like slide_cache
