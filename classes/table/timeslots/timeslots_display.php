@@ -135,4 +135,16 @@ class timeslots_display {
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
     }
+    /**
+     * checks if the coordinator has allowed students to unenrol
+     */
+    public static function can_unenrol($slotid) {
+        global $DB;
+        $query = $DB->get_record('observation', ['id' => $slotid],'*', MUST_EXIST);
+        if ($query->students_self_unregister === 0) {
+            return true;
+        } else if ($query->students_self_unregister === 1) {
+            return false;
+        }
+    }
 }
