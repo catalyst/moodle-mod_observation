@@ -396,6 +396,8 @@ class timeslot_manager {
 
         if ($timeslot->observee_id === null) {
             throw new moodle_exception("Could not unenroled from timeslot. Timeslot is empty.");
+        } else if (intval($timeslot->observee_id) !== $userid) {
+            throw new moodle_exception("Could not unenroled from timeslot. You are not the user enrolled in this timeslot.");
         }
 
         
