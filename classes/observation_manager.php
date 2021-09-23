@@ -407,11 +407,12 @@ class observation_manager {
                 //I think the contextid should be 5 from beekeeper.
                 $selectedfile = null;
 
-                if(!empty($files)){
+                $TestingFiles = $storage->get_area_files($contextid = 5, 'observation', 'response', $item->response);
+
+                if(!empty($TestingFiles)){
                     $testingString = 'not empty';
                 } else {
-                    //$testingString = 'empty';
-                    $testingString = format_text($contextid);
+                    $testingString = 'empty';
                 }
 
                 // iterate through to find the non-directory file like slide_cache

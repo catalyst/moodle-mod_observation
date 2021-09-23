@@ -83,7 +83,7 @@ class pointmarking extends \moodleform {
                 $mform->addElement('filemanager', 'response', get_string('imageupload', 'observation'), null,
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
                           'accepted_types' => 'jpg,jpeg,png')); // Make the response 'File uploaded' instead of image numbers.
-                //$mform->setType('response', PARAM_TEXT);
+                $mform->setType('response', PARAM_INT);
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
                 break;
         }
