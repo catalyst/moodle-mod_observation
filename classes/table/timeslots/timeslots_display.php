@@ -141,9 +141,9 @@ class timeslots_display {
     public static function can_unenrol($slotid) {
         global $DB;
         $query = $DB->get_record('observation', ['id' => $slotid],'*', MUST_EXIST);
-        if ($query->students_self_unregister === 0) {
+        if (intval($query->students_self_unregister) === 0) {
             return true;
-        } else if ($query->students_self_unregister === 1) {
+        } else if (intval($query->students_self_unregister) === 1) {
             return false;
         }
     }
