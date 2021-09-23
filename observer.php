@@ -87,7 +87,7 @@ echo $OUTPUT->box_start();
 // Table of timeslots the user has been assigned.
 echo $OUTPUT->heading(get_string('assignedtimeslots', 'observation'), 3);
 echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
-\mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_ASSIGNED, $USER->id);
+\mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_OBSERVER_ASSIGNED, $USER->id);
 
 echo $OUTPUT->box_end();
 

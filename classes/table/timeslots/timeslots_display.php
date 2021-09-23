@@ -56,10 +56,16 @@ class timeslots_display {
     const DISPLAY_MODE_UPCOMING = 2;
 
     /**
-     * Display mode with action buttons disabled.
+     * Display mode with action buttons for teachers.
      * @param const int
      */
-    const DISPLAY_MODE_ASSIGNED = 3;
+    const DISPLAY_MODE_OBSERVER_ASSIGNED = 3;
+
+    /**
+     * Display mode with action buttons for students.
+     * @param const int
+     */
+    const DISPLAY_MODE_OBSERVEE_REGISTERED = 4;
 
     /**
      * Common SQL for timeslot tables
@@ -128,5 +134,17 @@ class timeslots_display {
 
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
+    }
+    /**
+     * checks if the coordinator has allowed students to unenrol
+     */
+    public static function can_unenrol($slotid) {
+        global $DB;
+        $query = $DB->get_record('observation', ['id' => $slotid],'*', MUST_EXIST);
+        if ($query->students_self_unregister === 0) {
+            return true;
+        } else if ($query->students_self_unregister === 1) {
+            return false;
+        }
     }
 }

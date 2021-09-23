@@ -176,3 +176,6 @@ $string['sessiondoesntexist'] = 'Session does not exist.';
 $string['couldnotupdategrade'] = 'Could not update grade in gradebook.';
 $string['gradegivenbounds'] = 'Grade given must be between the mingrade and the maxgrade specified';
 $string['sessionlockouterror'] = 'Tried to start a session too quickly. Please wait {$a} seconds between starting new sessions';
+$string['unenrol'] = 'Unenrol';
+$string['unenrollmentsettings'] = 'Unenrollment Settings';
+$string['allowunenrol'] = 'Stop students from unenrol';

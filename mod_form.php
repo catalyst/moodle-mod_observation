@@ -52,7 +52,10 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('editor', 'observeeins_editor', get_string('instructionsobservee', 'observation'));
         $mform->setType('observeeins_editor', PARAM_RAW);
 
-        // Settings.
+        // Unenrollment Settings.
+        $mform->addElement('header', 'unenrollmentsettings', get_string('unenrollmentsettings', 'observation'));
+        $mform->addElement('advcheckbox', 'allowunenrol', get_string('allowunenrol', 'observation'), );
+
 
         // Footer.
         $this->standard_coursemodule_elements();
