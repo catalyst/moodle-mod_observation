@@ -390,29 +390,6 @@ class timeslot_manager {
         self::send_signup_confirmation_message($observationid, $slotid, $userid);
     }
 
-    public static function timeslot_unenrolment(int $observationid, int $slotid, int $userid) {
-        // Query the timeslot to find the signup status.
-        $timeslot = self::get_existing_slot_data($observationid, $slotid);
-
-        if ($timeslot->observee_id === null) {
-            throw new moodle_exception("Could not unenroled from timeslot. Timeslot is empty.");
-        } else if (intval($timeslot->observee_id) !== $userid) {
-            throw new moodle_exception("Could not unenroled from timeslot. You are not the user enrolled in this timeslot.");
-        }
-
-        
-        // Allow Unenrolment
-        $dbdata = [
-            'id' => $slotid,
-            'observee_id' => NULL,
-            'obs_id' => $observationid,
-            'observee_event_id' => NULL
-        ];
-        self::modify_time_slot($dbdata);
-        
-        
-    }
-
     /**
      * Determines timeslot signed up to, or false if not signed up (within a single observation instance)
      * @param int $observationid is the Observation ID

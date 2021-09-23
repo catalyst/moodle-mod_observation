@@ -54,11 +54,7 @@ class mod_observation_mod_form extends moodleform_mod {
 
         // Unenrollment Settings.
         $mform->addElement('header', 'unenrollmentsettings', get_string('unenrollmentsettings', 'observation'));
-        $mform->addElement('checkbox', 'student_self_unregister', get_string('allowunenrol', 'observation'));
-        $mform->setType('student_self_unregister', PARAM_INT);
-        $mform->setDefault('student_self_unregister', 0);
-
-
+        $mform->addElement('advcheckbox', 'allowunenrol', get_string('allowunenrol', 'observation'), );
 
         // Footer.
         $this->standard_coursemodule_elements();
