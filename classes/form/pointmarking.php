@@ -80,9 +80,9 @@ class pointmarking extends \moodleform {
             case \mod_observation\observation_manager::INPUT_EVIDENCE:
                 // Image upload here.
                 $maxbytes = 5; // TODO: this restricts the size of each individual file.
-                $mform->addElement('filemanager', 'response', get_string('imageupload', 'observation'), null,
+                $mform->addElement('filemanager', 'response', get_string('evidenceupload', 'observation'), null,
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
-                          'accepted_types' => 'jpg,jpeg,png')); // Make the response 'File uploaded' instead of image numbers.
+                          'accepted_types' => 'audio,video,document')); // Make the response 'File uploaded' instead of image numbers.
                 $mform->setType('response', PARAM_INT);
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
                 break;
