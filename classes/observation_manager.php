@@ -388,42 +388,26 @@ class observation_manager {
         $table->data = array_map(function($item) {
             
             if($item->res_type == self::INPUT_EVIDENCE){
-                // get file area
+                // Get file area
                 global $DB;
                 $record = $DB->get_record('observation', ['id' => $item->obs_id]);
-                $data = (array) $record; // not empty
-
-                //$context = \context_block::instance($record->blockid); // id from {block_instances} table.
+                $data = (array) $record;
 
                 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($item->obs_id);
-                $context = \context_module::instance($cm->id); // $cm->id is 43
+                $context = \context_module::instance($cm->id);
 
-                //$context =  \context_block::instance($cm->instance);
-                //$contextid = $context->id;
-
-                $storage = get_file_storage(); // not empty
+                $storage = get_file_storage();
                 $files = $storage->get_area_files($context->id, 'mod_observation', 'response', $item->point_id);
-                //$files = $storage->get_area_files($contextid = 5, 'observation', 'response', $item->obs_id); // this is empty, context id is 98, $item->obs_id
-                //I think the contextid should be 5 from beekeeper.
                 $selectedfile = null;
 
-                //
-
-                if(!empty($TestingFiles)){
-                    $testingString = 'not empty';
-                } else {
-                    $testingString = 'empty';
-                }
-
-                // iterate through to find the non-directory file like slide_cache
+                // Iterate through to find the non-directory file.
                 foreach ($files as $file) {
                     if (!$file->is_directory()) {
                         $selectedfile = $file;
                     }
                 }
-                // ... maybe another method too, this iteration above is what I'm unsure about.
 
-                // make pluginfile url
+                // Make pluginfile url
                 if (!empty($selectedfile)) {
                     $itemid = $selectedfile->get_itemid();
                     
@@ -435,15 +419,20 @@ class observation_manager {
                         $selectedfile->get_filepath(),
                         $selectedfile->get_filename()
                     );
-                    //$data['link'] = 'found file';
                 } else {
                     $data['link'] = 'selected file is empty';
                 }
 
+                if ($selectedfile->is_valid_image()){
+                    $item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
+                } else {
+                    $item->response = '<p><a href="'.$data['link'].'">'.$data['link'].'</a></p>'; // Currently not working?
+                }
+
                 // set $item->response to format_text(url)
                 //$item->response = format_text($data['link']);
-                $item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
-                //$item->response = format_text($testingString);
+                //$item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
+                // '.$data['link'].'
             }
 
             return [
