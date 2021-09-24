@@ -98,7 +98,7 @@ class observation_manager {
             $data['observee_ins_f'] = null;
         }
 
-        $newinstance = empty($data->id);
+        $newinstance = empty($data['id']);
 
         if ($newinstance) {
             return $DB->insert_record('observation', $data);
