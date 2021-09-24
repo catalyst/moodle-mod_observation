@@ -55,9 +55,8 @@ function observation_get_course_content_items(\core_course\local\entity\content_
  * @return int new observation instance id
  */
 function observation_add_instance($data): int {
-    $cmid = $data->coursemodule;
     return \mod_observation\observation_manager::modify_instance(array(
-        "course" => $cmid,
+        "course" => (int)$data->course,
         "name" => $data->name,
         "intro" => "",
         "timemodified" => time(),
