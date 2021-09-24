@@ -426,7 +426,7 @@ class observation_manager {
                 if ($selectedfile->is_valid_image()){
                     $item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
                 } else {
-                    $item->response = '<p><a href="'.$data['link'].'">'.$data['link'].'</a></p>'; // Currently not working?
+                    $item->response = '<a href="'.$data['link'].'" target="_blank">'.$data['link'].'</a>'; // Currently not working?
                 }
 
                 // set $item->response to format_text(url)
