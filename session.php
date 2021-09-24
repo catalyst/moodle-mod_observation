@@ -109,7 +109,8 @@ if ($markingform->no_submit_button_pressed()) {
 if ($fromform = $markingform->get_data()) {
 
     // Save submitted image
-    file_save_draft_area_files($fromform->observation, $context->id, 'observation', 'response', $obs_id); // context may be fine, $obs_id is fine
+    $draftitemid = file_get_submitted_draft_itemid('response');
+    file_save_draft_area_files($draftitemid, $PAGE->context->id, 'mod_observation', 'response', $pointid); // context may be fine, $obs_id is fine
     // component "user" (observation) and filearea "draft" (response)
     // ($contextid = 5, 'user', 'draft', $item->response)
 
