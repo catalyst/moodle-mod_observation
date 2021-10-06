@@ -426,8 +426,9 @@ class observation_manager {
                 if ($selectedfile->is_valid_image()){
                     $item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
                 } else {
-                    //.'" target="_blank">'.$data['link'].'</a>'; // Currently not working?
-                    $item->response = '<a href="'.$data['link'].'" target="_blank">'.$data['link'].'</a>'; // Currently not working?
+                    // PDF, Word Doc, Audio, Video
+                    //$item->response = '<a href="'.$data['link'].'" target="_blank">'.$data['link'].'</a>'; // Currently not working?
+                    $item->response = '<a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download '.$selectedfile->get_filename().'</a>'; // Audio: is empty
                 }
 
                 // set $item->response to format_text(url)
