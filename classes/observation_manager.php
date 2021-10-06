@@ -424,12 +424,24 @@ class observation_manager {
                 }
 
                 if ($selectedfile->is_valid_image()){
-                    $item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
+                    //$item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
+                    $item->response = '<img src="'.$data['link'].'"></img>';
                 } else {
-                    // PDF, Word Doc, Audio, Video
-                    //$item->response = '<a href="'.$data['link'].'" target="_blank">'.$data['link'].'</a>'; // Currently not working?
-                    $item->response = '<a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download '.$selectedfile->get_filename().'</a>'; // Audio: is empty
+                    $item->response = '<a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download '.$selectedfile->get_filename().'</a>';
                 }
+
+                // if ($selectedfile->is_valid_image()){
+                //     $item->response = '<img src="'.$data['link'].'" preview="thumb"></img>';
+                // } else {
+                //     // PDF, Word Doc, Audio, Video
+                //     $item->response = '<a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download '.$selectedfile->get_filename().'</a>'; // empty file
+
+                //     // Things tries:
+                //     //$item->response = '<a href="'.$data['link'].'" target="_blank">'.$data['link'].'</a>'; // Currently not working?
+                //     //$item->response = '<a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download '.$selectedfile->get_filename().'</a>'; // file : is empty
+                //     //$item->response = '<iframe src="'.$data['link'].'"></iframe>';
+                //     // $item->response = '<object data="'.$data['link'].'" type="application/pdf"><embed src="'.$data['link'].'" type="application/pdf" /></object>';
+                // }
 
                 // set $item->response to format_text(url)
                 //$item->response = format_text($data['link']);
