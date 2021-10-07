@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -407,7 +407,7 @@ class observation_manager {
                     }
                 }
 
-                // Make pluginfile url
+                // Make pluginfile url.
                 if (!empty($selectedfile)) {
                     $itemid = $selectedfile->get_itemid();
                     
@@ -423,32 +423,10 @@ class observation_manager {
                     $data['link'] = 'submitted file is empty';
                 }
 
-                if ($selectedfile->is_valid_image()){ // ISSUE: the stored_file is having issues (in the stack trace - copy image address and open in new tab).
-                    $item->response = '<img src="'.$data['link'].'?preview=thumb"></img>'; // blue box
-                    //$item->response = '<img src="'.$data['link'].'" width="200px"></img>'; // 200px blue box
-                    
-                    //$item->response = format_text($data['link']); // blue box and text
-                } else {
-                    $item->response = '<a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download '.$selectedfile->get_filename().'</a>';
-                }
-
-                // if ($selectedfile->is_valid_image()){
-                //     $item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
-                // } else {
-                //     // PDF, Word Doc, Audio, Video
-                //     $item->response = '<a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download '.$selectedfile->get_filename().'</a>'; // empty file
-
-                //     // Things tries:
-                //     //$item->response = '<a href="'.$data['link'].'" target="_blank">'.$data['link'].'</a>'; // Currently not working?
-                //     //$item->response = '<a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download '.$selectedfile->get_filename().'</a>'; // file : is empty
-                //     //$item->response = '<iframe src="'.$data['link'].'"></iframe>';
-                //     // $item->response = '<object data="'.$data['link'].'" type="application/pdf"><embed src="'.$data['link'].'" type="application/pdf" /></object>';
-                // }
-
-                // set $item->response to format_text(url)
-                //$item->response = format_text($data['link']);
-                //$item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
-                // '.$data['link'].'
+                // Set the response to html that allows the file to be viewed and downloaded.
+                $item->response = '<img src="'.$data['link'].'?preview=thumb"></img><br>'.$selectedfile->get_filename().'<br>
+                <a href="'.$data['link'].'" target="_blank">Open in new tab</a><br>
+                <a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download</a>';
             }
 
             return [
