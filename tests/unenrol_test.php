@@ -20,12 +20,21 @@
  * @package    mod_observation
  * @category   test
  * @copyright  2021 Endurer Solutions Team
- * @author Jack Kepper <Jack@Kepper.net>
+ * @author Jack Kepper <Jack@Kepper.net>, Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Unit tests for unenrollment functions.
+ *
+ * @package    mod_observation
+ * @category   test
+ * @copyright  2021 Endurer Solutions Team
+ * @author     Jack Kepper <Jack@Kepper.net>, Matthew Hilton <mj.hilton@outlook.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class unenrol_test extends advanced_testcase {
 
     /**
@@ -35,7 +44,7 @@ class unenrol_test extends advanced_testcase {
         'start_time' => 1628656920,
         'duration' => 20,
     ];
-    
+
     /**
      * Set up for tests. Creates course, activity and adds three basic user roles to it.
      */
@@ -65,8 +74,7 @@ class unenrol_test extends advanced_testcase {
         $this->observee = $observee;
         $this->observee2 = $observee2;
 
-        $this->slot1id = $this->create_valid_timeslot();
-        $this->slot2id = $this->create_valid_timeslot();
+        $this->slotid = $this->create_valid_timeslot();
 
         $this->setUser($this->observee);
     }
@@ -82,17 +90,69 @@ class unenrol_test extends advanced_testcase {
         return \mod_observation\timeslot_manager::modify_time_slot($data);
     }
 
-    private function test_unenrolling () {
-        // Creating test
+    public function test_unenrolling_enabled() {
+        global $DB;
+
+        // Creating test.
         $obid = $this->instance->id;
-        // Observee 1 joins timeslot
+
+        // Ensure unenrolment is enabled.
+        $DB->update_record('observation', ['id' => $obid, 'students_self_unregister' => 1]);
+
+        // Observee 1 joins timeslot.
         \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slotid, $this->observee->id);
 
-        // Observee 1 unenrols
+        // Observee 1 unenrols.
         \mod_observation\timeslot_manager::timeslot_unenrolment($obid, $this->slotid, $this->observee->id);
         $timeslot = \mod_observation\timeslot_manager::get_existing_slot_data($obid, $this->slotid);
 
-        $this->assertEquals(NULL, $timeslot->observee_id);
-        $this->assertEquals(NULL, $timeslot->observee_event_id);
+        // Ensure observee is removed from timeslot as well as calendar event.
+        $this->assertEquals(null, $timeslot->observee_id);
+        $this->assertEquals(null, $timeslot->observee_event_id);
+    }
+
+    public function test_unenrolling_disabled() {
+        global $DB;
+
+        // Creating test.
+        $obid = $this->instance->id;
+
+        // Ensure unenrolment is disabled.
+        $DB->update_record('observation', ['id' => $obid, 'students_self_unregister' => 0]);
+
+        // Observee 1 joins timeslot.
+        \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slotid, $this->observee->id);
+
+        // Observee 1 unenrols.
+        $this->expectException('moodle_exception');
+        \mod_observation\timeslot_manager::timeslot_unenrolment($obid, $this->slotid, $this->observee->id);
+    }
+
+    public function test_unenrolling_empty() {
+        global $DB;
+
+        // Ensure unenrolment is enabled.
+        $DB->update_record('observation', ['id' => $this->instance->id, 'students_self_unregister' => 1]);
+
+        // Remove observee from timeslot.
+        $DB->update_record('observation_timeslots', ['id' => $this->slotid, 'observee_id' => null]);
+
+        // Try to unenrol.
+        $this->expectException('moodle_exception');
+        \mod_observation\timeslot_manager::timeslot_unenrolment($this->instance->id, $this->slotid, $this->observee->id);
+    }
+
+    public function test_unenrolling_not_own() {
+        global $DB;
+
+        // Ensure unenrolment is enabled.
+        $DB->update_record('observation', ['id' => $this->instance->id, 'students_self_unregister' => 1]);
+
+        // Observee 1 joins timeslot.
+        \mod_observation\timeslot_manager::timeslot_signup($this->instance->id, $this->slotid, $this->observee->id);
+
+        // Try to unenrol using a different user.
+        $this->expectException('moodle_exception');
+        \mod_observation\timeslot_manager::timeslot_unenrolment($this->instance->id, $this->slotid, $this->observee2->id);
     }
 }

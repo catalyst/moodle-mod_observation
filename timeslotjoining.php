@@ -50,7 +50,7 @@ if ($action !== null) {
             \mod_observation\timeslot_manager::timeslot_signup($observation->id, $slotid, $USER->id);
             break;
         case 'unenrol':
-            // Unenrols user from course
+            // Unenrols user from course.
             if ($slotid === null) {
                 throw new \coding_exception("Missing SlotID parameter");
             }

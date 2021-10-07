@@ -129,12 +129,10 @@ class timeslots_table extends \table_sql implements \renderable {
                 }
             break;
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_OBSERVEE_REGISTERED:
-                if (\mod_observation\table\timeslots\timeslots_display::can_unenrol($row->obs_id) === true) {
-                $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
+                if (\mod_observation\timeslot_manager::can_unenrol($row->obs_id, $row->id, $row->observee_id, false) === true) {
+                    $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
                     ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'unenrol']), get_string('unenrol', 'observation'));
-                } else if (\mod_observation\table\timeslots\timeslots_display::can_unenrol($row->obs_id) === false) {
-
-                }                
+                }
             break;
         }
         return $htmlout;

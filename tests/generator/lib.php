@@ -56,6 +56,7 @@ class mod_observation_generator extends testing_module_generator {
         $defaultobservationsettings = array(
             'observerins_editor' => $defaulteditorvalues,
             'observeeins_editor' => $defaulteditorvalues,
+            'students_self_unregister' => 0,
         );
 
         // Set defaults if not already set.

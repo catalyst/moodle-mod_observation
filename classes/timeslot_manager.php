@@ -390,25 +390,67 @@ class timeslot_manager {
         self::send_signup_confirmation_message($observationid, $slotid, $userid);
     }
 
-    public static function timeslot_unenrolment(int $observationid, int $slotid, int $userid) {
-        // Query the timeslot to find the signup status.
-        $timeslot = self::get_existing_slot_data($observationid, $slotid);
+    /** Determines if a user can unenrol from a timeslot as an observee
+     * @param int $observationid ID of the observation
+     * @param int $slotid ID of the timeslot
+     * @param int $userid ID of user to remove
+     * @param bool $returnexception If true, returns moodle_exceptions, else will return False if errors
+     * @return bool|moodle_exception True if can unenrol, else False or moodle_exception
+     */
+    public static function can_unenrol(int $observationid, int $slotid, int $userid, bool $returnexception) {
+        $slotdata = self::get_existing_slot_data($observationid, $slotid);
+        [$observation, $course, $cm] = \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
 
-        if ($timeslot->observee_id === null) {
-            throw new moodle_exception("Could not unenroled from timeslot. Timeslot is empty.");
+        if ((int)$observation->students_self_unregister === 0) {
+            if ($returnexception) {
+                return new moodle_exception(get_string('unenrolnotallowed', 'observation'));
+            } else {
+                return false;
+            }
         }
 
-        
-        // Allow Unenrolment
+        if ((int)$slotdata->observee_id === null) {
+            if ($returnexception) {
+                return new moodle_exception(get_string('unenrolerrorempty', 'observation'));
+            } else {
+                return false;
+            }
+        }
+
+        if ((int)$slotdata->observee_id !== $userid) {
+            if ($returnexception) {
+                return new moodle_exception(get_string('unenrolerrornotuser', 'observation'));
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Unenrols a user from a timeslot.
+     * @param int $observationid ID of the observation instance
+     * @param int $slotid ID of the timeslot
+     * @param int $userid User to unenrol from timeslot
+     */
+    public static function timeslot_unenrolment(int $observationid, int $slotid, int $userid) {
+        // Query the timeslot to find the signup status (throw exceptions).
+        $error = self::can_unenrol($observationid, $slotid, $userid, true);
+
+        // Some error meant the user cannot be unenrolled.
+        if ($error !== true) {
+            throw $error;
+        }
+
+        // Allow Unenrolment.
         $dbdata = [
             'id' => $slotid,
-            'observee_id' => NULL,
+            'observee_id' => null,
             'obs_id' => $observationid,
-            'observee_event_id' => NULL
+            'observee_event_id' => null
         ];
         self::modify_time_slot($dbdata);
-        
-        
     }
 
     /**
