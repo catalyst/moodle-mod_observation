@@ -40,6 +40,7 @@ $pageurl = new moodle_url('/mod/observation/timeslots.php', array('id' => $id));
 
 // Check if action and slotid are present.
 if ($action !== null && $slotid !== null) {
+    require_sesskey();
 
     switch ($action) {
         case 'edit':

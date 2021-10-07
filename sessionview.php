@@ -41,6 +41,8 @@ $pageurl = new moodle_url('/mod/observation/sessionview.php', ['id' => $id]);
 
 // If actions is in URL args, action button on timeslots table was pressed.
 if ($action !== null && $slotid !== null) {
+    require_sesskey();
+
     // Get timeslot data.
     $timeslot = \mod_observation\timeslot_manager::get_existing_slot_data($id, $slotid);
 
