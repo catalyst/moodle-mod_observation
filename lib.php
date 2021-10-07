@@ -164,7 +164,7 @@ function observation_pluginfile($course, $cm, $context, $filearea, $args, $force
     $itemid = array_pop($args);
     $filepath = '/';
 
-    $file = $fs->get_file($context->id, 'observation', $filearea, $itemid, $filepath, $filename);
+    $file = $fs->get_file($context->id, 'mod_observation', $filearea, $itemid, $filepath, $filename);
 
     send_stored_file($file, null, 0, $forcedownload, $options);
 }

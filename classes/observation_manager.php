@@ -423,9 +423,11 @@ class observation_manager {
                     $data['link'] = 'submitted file is empty';
                 }
 
-                if ($selectedfile->is_valid_image()){
-                    //$item->response = '<img src="'.$data['link'].'?preview=thumb"></img>';
-                    $item->response = '<img src="'.$data['link'].'"></img>';
+                if ($selectedfile->is_valid_image()){ // ISSUE: the stored_file is having issues (in the stack trace - copy image address and open in new tab).
+                    $item->response = '<img src="'.$data['link'].'?preview=thumb"></img>'; // blue box
+                    //$item->response = '<img src="'.$data['link'].'" width="200px"></img>'; // 200px blue box
+                    
+                    //$item->response = format_text($data['link']); // blue box and text
                 } else {
                     $item->response = '<a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download '.$selectedfile->get_filename().'</a>';
                 }
