@@ -285,4 +285,73 @@ class timeslots_test extends advanced_testcase {
         $this->expectException('coding_exception');
         \mod_observation\timeslot_manager::create_timeslots_by_interval($data);
     }
+
+    /**
+     * Tests the basic case when randomly assigning students
+     * to timeslots.
+     */
+    public function test_random_assign_single_user() {
+        $obid = $this->instance->id;
+
+        // Currently 1 observee created in setUp.
+        $notsignedup = \mod_observation\timeslot_manager::randomly_assign_students($obid);
+        $this->assertEquals(1, count($notsignedup));
+
+        // Create timeslot.
+        $data = $this->create_valid_timeslot();
+        unset($data['observee_id']);
+        \mod_observation\timeslot_manager::modify_time_slot($data);
+
+        $notsignedup = \mod_observation\timeslot_manager::randomly_assign_students($obid);
+        $this->assertEquals(0, count($notsignedup));
+    }
+
+    /**
+     * Tests that if there are not enough slots, the users who
+     * where not signed up to a timeslot are returned.
+     */
+    public function test_random_assign_not_enough_slots() {
+        $obid = $this->instance->id;
+
+        // Create an additional user (to make 2 in total), but only a single timeslots.
+        $observee2 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($observee2->id, $this->course->id, 'student');
+
+        $data = $this->create_valid_timeslot();
+        unset($data['observee_id']);
+        \mod_observation\timeslot_manager::modify_time_slot($data);
+
+        $notsignedup = \mod_observation\timeslot_manager::randomly_assign_students($obid);
+        $this->assertEquals(1, count($notsignedup));
+    }
+
+    /**
+     * Tests if there are more empty slots than users,
+     * that a user is not assigned to more than a single slot.
+     */
+    public function test_random_assign_excessive_slots() {
+        $obid = $this->instance->id;
+
+        // Create 5 slots.
+        for ($i = 0; $i < 5; $i++) {
+            $data = $this->create_valid_timeslot();
+            unset($data['observee_id']);
+            \mod_observation\timeslot_manager::modify_time_slot($data);
+        }
+
+        // Assign the single user created in setUp.
+        $notsignedup = \mod_observation\timeslot_manager::randomly_assign_students($obid);
+        $this->assertEquals(0, count($notsignedup));
+
+        // Repeat again (should not re-assign the student assigned before).
+        $notsignedup = \mod_observation\timeslot_manager::randomly_assign_students($obid);
+        $this->assertEquals(0, count($notsignedup));
+
+        $slots = \mod_observation\timeslot_manager::get_time_slots($obid);
+        $observees = array_column($slots, 'observee_id');
+        $observees = array_filter($observees); // Filter nulls.
+
+        $this->assertEquals(1, count($observees));
+        $this->assertEquals(array_values($observees)[0], $this->observee->id);
+    }
 }

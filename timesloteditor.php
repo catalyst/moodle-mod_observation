@@ -29,8 +29,10 @@ $id = required_param('id', PARAM_INT); // Observation instance ID.
 $mode = required_param('mode', PARAM_TEXT); // Editor mode 'new' or 'edit'.
 $slotid = optional_param('slotid', null, PARAM_INT); // Optional param - required if mode is 'edit'.
 
+$validmodes = ['new', 'edit'];
+
 // Ensure $mode param is allowed option.
-if ($mode !== 'new' && $mode !== 'edit') {
+if (!in_array($mode, $validmodes)) {
     throw new moodle_exception(
         'invalidqueryparam',
         'error',

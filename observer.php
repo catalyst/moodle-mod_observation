@@ -40,10 +40,12 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($observation->name, 2);
 
-// If user has permissions show observation point editor page link.
+// Action buttons.
+echo $OUTPUT->container_start('mb-3 p-3 border border-secondary');
+echo $OUTPUT->heading(get_string('actions', 'observation'), 3);
+
+// Edit observation point link button.
 if (has_capability('mod/observation:editobservationpoints', $PAGE->context)) {
-    echo $OUTPUT->box_start();
-    echo $OUTPUT->heading(get_string('actions', 'observation'), 3);
     echo $OUTPUT->single_button(
         new moodle_url('/mod/observation/viewpoints.php', array('id' => $observation->id)),
         get_string('editobservationpoints', 'observation'),
@@ -51,16 +53,16 @@ if (has_capability('mod/observation:editobservationpoints', $PAGE->context)) {
     );
 }
 
-// If user has permissions show time slot editor page link.
+// Edit timeslots link button.
 if (has_capability('mod/observation:edittimeslots', $PAGE->context)) {
-    echo $OUTPUT->box_start();
     echo $OUTPUT->single_button(
         new moodle_url('/mod/observation/timeslots.php', array('id' => $observation->id)),
         get_string('edittimeslotss', 'observation'),
         'get'
     );
-    echo $OUTPUT->box_end();
 }
+
+echo $OUTPUT->container_end();
 
 echo \mod_observation\instructions::observation_instructions(
     get_string('instructions', 'observation'),
