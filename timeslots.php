@@ -74,7 +74,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('editingtimeslots', 'observation'), 2);
 
 // Actions buttons.
-echo $OUTPUT->box_start();
+echo $OUTPUT->container_start('mb-3 p-3 border border-secondary');
 
 // Create new time slot.
 echo $OUTPUT->single_button(
@@ -82,7 +82,15 @@ echo $OUTPUT->single_button(
     get_string('createnew', 'observation'),
     'get'
 );
-echo $OUTPUT->box_end();
+
+// Randomly assign students to timeslots.
+echo $OUTPUT->single_button(
+    new moodle_url('/mod/observation/assignstudents.php', array('mode' => 'randomassign', 'id' => $observation->id)),
+    get_string('randomlyassign', 'observation'),
+    'get'
+);
+
+echo $OUTPUT->container_end();
 
 // Time Slot Viewer (Table).
 echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);

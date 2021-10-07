@@ -103,6 +103,16 @@ class timeslot_manager {
     }
 
     /**
+     * Get all observation timeslots that have no observee registered to them.
+     * @param int $observationid ID of the observation instance
+     * @return array array of database objects obtained from database
+     */
+    public static function get_empty_timeslots(int $observationid): array {
+        global $DB;
+        return $DB->get_records('observation_timeslots', ['obs_id' => $observationid, 'observee_id' => null]);
+    }
+
+    /**
      * Deletes timeslot
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the observation point to delete
@@ -448,5 +458,53 @@ class timeslot_manager {
         ];
 
         return $OUTPUT->render_from_template('mod_observation/confirm_message', $data);
+    }
+
+    /**
+     * Randomly assigns users from the course to open timeslots.
+     * Users are only assigned if they do not have the mod/observation:performobservation permission,
+     * and have not already signed up to a timeslot.
+     * @param int $observationid ID of the observation instance
+     * @return array array of user Ids who were not signed up to a timeslot (e.g. not enough timeslots).
+     */
+    public static function randomly_assign_students(int $observationid): array {
+        global $DB;
+
+        list($obs, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+        $context = \context_course::instance($course->id);
+
+        // Get everyone enrolled in this course.
+        $courseusers = array_column(get_enrolled_users($context), 'id');
+
+        // Ignore those who can perform observations (i.e. the tutors).
+        $observers = array_column(get_enrolled_users($context, 'mod/observation:performobservation'), 'id');
+
+        // Ignore students who already have a timeslot.
+        $currentslots = self::get_time_slots($observationid);
+        $existingobservees = array_column($currentslots, 'observee_id');
+        $existingobservees = array_filter($existingobservees); // Filter null.
+
+        // Find the users we want to sign up (i.e. the users who are enrolled, but are not already signed up and are not observers).
+        $users = array_diff($courseusers, $observers, $existingobservees);
+
+        // Find the empty timeslots.
+        $emptyslots = array_column(self::get_empty_timeslots($observationid), 'id');
+
+        $transaction = $DB->start_delegated_transaction();
+
+        // Match each user to an empty timeslot.
+        while (count($users) !== 0 && count($emptyslots) !== 0) {
+            // Pop off a user and a timeslot.
+            $user = array_pop($users);
+            $timeslot = array_pop($emptyslots);
+
+            // Sign up user to timeslot.
+            self::timeslot_signup($observationid, $timeslot, $user);
+        }
+
+        $transaction->allow_commit();
+
+        // Return the remaining users who were not signed up (likely due to insufficient number of timeslots).
+        return $users;
     }
 }

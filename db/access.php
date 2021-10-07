@@ -67,5 +67,12 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
         )
+    ),
+    'mod/observation:assignstudents' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+        )
     )
 );

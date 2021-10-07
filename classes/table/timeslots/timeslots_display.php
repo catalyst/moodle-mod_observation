@@ -69,7 +69,8 @@ class timeslots_display {
         'fields' => "ot.*,
                     CONCAT(u.firstname, ' ', u.lastname) as observer_fullname,
                     u.email as observer_email,
-                    CONCAT(o.firstname, ' ', o.lastname) as observee_fullname",
+                    CONCAT(o.firstname, ' ', o.lastname) as observee_fullname,
+                    o.email as observee_email",
         'from' => '{observation_timeslots} ot
                     LEFT JOIN {user} u ON ot.observer_id = u.id
                     LEFT JOIN {user} o on ot.observee_id = o.id',
