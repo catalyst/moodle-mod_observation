@@ -21,7 +21,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -144,12 +144,17 @@ function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
 
     return !empty($matchingevent);
 }
-/*
+/**
  * Context checks and serves file from certain areas
- * https://github.com/catalyst/moodle-block_carousel/blob/master/lib.php
- * https://stackoverflow.com/questions/36203770/how-to-retrieve-files-when-editing-a-file-manager-in-moodle
+ * @param mixed $course course
+ * @param mixed $cm course module
+ * @param condex_module $context context
+ * @param stored_file $filearea file area
+ * @param mixed $args args
+ * @param bool $forcedownload bool if download should be forced
+ * @param array $options an array of options
  */
-function observation_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()){
+function observation_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }

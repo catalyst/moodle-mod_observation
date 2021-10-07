@@ -145,7 +145,7 @@ class pointmarking extends \moodleform {
      */
     public function validation($data, $files) {
         $errors = [];
-        
+
         // Ensure grade given <= max grade.
         if ($data['grade_given'] > $data['max_grade']) {
             $errors['grade_given'] = get_string('gradegivengreatermaxgrade', 'observation');

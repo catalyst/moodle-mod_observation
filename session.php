@@ -108,11 +108,9 @@ if ($markingform->no_submit_button_pressed()) {
 // If point marking form was submitted.
 if ($fromform = $markingform->get_data()) {
 
-    // Save submitted image
+    // Save submitted image.
     $draftitemid = file_get_submitted_draft_itemid('response');
-    file_save_draft_area_files($draftitemid, $PAGE->context->id, 'mod_observation', 'response', $pointid); // context may be fine, $obs_id is fine
-    // component "user" (observation) and filearea "draft" (response)
-    // ($contextid = 5, 'user', 'draft', $item->response)
+    file_save_draft_area_files($draftitemid, $PAGE->context->id, 'mod_observation', 'response', $pointid);
 
     // Save or Save and Next point button pressed.
     \mod_observation\observation_manager::submit_point_response($sessionid, $pointid, $fromform);

@@ -30,8 +30,6 @@ use context_system;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/../../../config.php');
-
 /**
  * mod_observation observation management class
  *
@@ -386,14 +384,15 @@ class observation_manager {
         $table->head = ['Title', 'Response', 'Grade Given'];
 
         $table->data = array_map(function($item) {
-            
-            if($item->res_type == self::INPUT_EVIDENCE){
-                // Get file area
+
+            if ($item->res_type == self::INPUT_EVIDENCE) {
+                // Get file area.
                 global $DB;
                 $record = $DB->get_record('observation', ['id' => $item->obs_id]);
                 $data = (array) $record;
 
-                list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($item->obs_id);
+                list($observation, $course, $cm) =
+                \mod_observation\observation_manager::get_observation_course_cm_from_obid($item->obs_id);
                 $context = \context_module::instance($cm->id);
 
                 $storage = get_file_storage();
@@ -410,7 +409,7 @@ class observation_manager {
                 // Make pluginfile url.
                 if (!empty($selectedfile)) {
                     $itemid = $selectedfile->get_itemid();
-                    
+
                     $data['link'] = \moodle_url::make_pluginfile_url(
                         $selectedfile->get_contextid(),
                         $selectedfile->get_component(),
