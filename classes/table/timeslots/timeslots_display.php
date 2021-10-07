@@ -56,10 +56,16 @@ class timeslots_display {
     const DISPLAY_MODE_UPCOMING = 2;
 
     /**
-     * Display mode with action buttons disabled.
+     * Display mode with action buttons for teachers.
      * @param const int
      */
-    const DISPLAY_MODE_ASSIGNED = 3;
+    const DISPLAY_MODE_OBSERVER_ASSIGNED = 3;
+
+    /**
+     * Display mode with action buttons for students.
+     * @param const int
+     */
+    const DISPLAY_MODE_OBSERVEE_REGISTERED = 4;
 
     /**
      * Common SQL for timeslot tables

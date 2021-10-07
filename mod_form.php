@@ -42,7 +42,7 @@ class mod_observation_mod_form extends moodleform_mod {
         // General.
         $mform->addElement('header', 'general', get_string('general', 'observation'));
         $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
-        $mform->setType('name', PARAM_RAW);
+        $mform->setType('name', PARAM_TEXT);
 
         // Activity Instructions Elements.
         $mform->addElement('header', 'instructions', get_string('instructions', 'observation'));
@@ -52,7 +52,9 @@ class mod_observation_mod_form extends moodleform_mod {
         $mform->addElement('editor', 'observeeins_editor', get_string('instructionsobservee', 'observation'));
         $mform->setType('observeeins_editor', PARAM_RAW);
 
-        // Settings.
+        // Timeslot Settings.
+        $mform->addElement('header', 'timeslotsettings', get_string('timeslotsettings', 'observation'));
+        $mform->addElement('checkbox', 'students_self_unregister', get_string('allowunenrol', 'observation'));
 
         // Footer.
         $this->standard_coursemodule_elements();
@@ -83,6 +85,7 @@ class mod_observation_mod_form extends moodleform_mod {
         $defaultvalues['observerins_editor']->format = $obsdata->observer_ins_f;
         $defaultvalues['observeeins_editor']->text = $obsdata->observee_ins;
         $defaultvalues['observeeins_editor']->format = $obsdata->observee_ins_f;
+
         return;
     }
 }

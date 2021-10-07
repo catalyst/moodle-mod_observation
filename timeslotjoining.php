@@ -49,14 +49,20 @@ if ($action !== null) {
 
             \mod_observation\timeslot_manager::timeslot_signup($observation->id, $slotid, $USER->id);
             break;
-
+        case 'unenrol':
+            // Unenrols user from course.
+            if ($slotid === null) {
+                throw new \coding_exception("Missing SlotID parameter");
+            }
+            \mod_observation\timeslot_manager::timeslot_unenrolment($observation->id, $slotid, $USER->id);
+            break;
         default:
             // Unknown action.
             throw new moodle_exception(
                 'invalidqueryparam',
                 'error',
                 null,
-                ['expected' => "'join'", 'actual' => $action]);
+                ['expected' => "'join', 'unenrol'", 'actual' => $action]);
     }
 
     // Redirect back to this page but without params after running action to avoid weird errors if user refreshes page.
@@ -87,7 +93,7 @@ if ($signedupslot === false) {
     // Already signed up - show details.
     echo $OUTPUT->heading(get_string('yourtimeslot', 'observation'), 3);
     echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
-    \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_ASSIGNED, $USER->id);
+    \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_OBSERVEE_REGISTERED, $USER->id);
 }
 
 // Moodle footer.
