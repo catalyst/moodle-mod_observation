@@ -159,7 +159,7 @@ function observation_pluginfile($course, $cm, $context, $filearea, $args, $force
         send_file_not_found();
     }
 
-    if (strpos($filearea, 'response')!==0) {
+    if (strpos($filearea, 'response') !== 0 ) {
         send_file_not_found();
     }
 

@@ -396,7 +396,7 @@ class observation_manager {
                 $context = \context_module::instance($cm->id);
 
                 $storage = get_file_storage();
-                $files = $storage->get_area_files($context->id, 'mod_observation', 'response' .$item->point_id, $sessionid); // response+$item->point_id, sessionid
+                $files = $storage->get_area_files($context->id, 'mod_observation', 'response' .$item->point_id, $sessionid);
                 $selectedfile = null;
 
                 // Iterate through to find the non-directory file.
@@ -426,7 +426,7 @@ class observation_manager {
                     // Set the response to html that allows the file to be viewed and downloaded.
                     $item->response = '<img src="'.$data['link'].'?preview=thumb"></img><br>'.$selectedfile->get_filename().'<br>
                     <a href="'.$data['link'].'" target="_blank">Open in new tab</a><br>
-                    <a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download</a>'; 
+                    <a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download</a>';
                 }
             }
 
