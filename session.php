@@ -81,6 +81,8 @@ if (!array_key_exists($pointid, $observationpoints)) {
 $selectedpointdata = $observationpoints[$pointid];
 
 $formprefill = (array)$selectedpointdata;
+$draftitemid = file_get_submitted_draft_itemid('response');
+file_prepare_draft_area($draftitemid, $PAGE->context->id, 'mod_observation', 'response' .$pointid, $sessionid);
 $formprefill['sessionid'] = $sessionid;
 $markingform = new \mod_observation\form\pointmarking(null, $formprefill);
 
@@ -110,7 +112,7 @@ if ($fromform = $markingform->get_data()) {
 
     // Save submitted image.
     $draftitemid = file_get_submitted_draft_itemid('response');
-    file_save_draft_area_files($draftitemid, $PAGE->context->id, 'mod_observation', 'response', $pointid);
+    file_save_draft_area_files($draftitemid, $PAGE->context->id, 'mod_observation', 'response' .$pointid, $sessionid);
 
     // Save or Save and Next point button pressed.
     \mod_observation\observation_manager::submit_point_response($sessionid, $pointid, $fromform);

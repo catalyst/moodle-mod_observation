@@ -383,7 +383,7 @@ class observation_manager {
         $table = new \html_table();
         $table->head = ['Title', 'Response', 'Grade Given'];
 
-        $table->data = array_map(function($item) {
+        $table->data = array_map(function($item) use ($sessionid) {
 
             if ($item->res_type == self::INPUT_EVIDENCE) {
                 // Get file area.
@@ -396,7 +396,7 @@ class observation_manager {
                 $context = \context_module::instance($cm->id);
 
                 $storage = get_file_storage();
-                $files = $storage->get_area_files($context->id, 'mod_observation', 'response', $item->point_id);
+                $files = $storage->get_area_files($context->id, 'mod_observation', 'response' .$item->point_id, $sessionid); // response+$item->point_id, sessionid
                 $selectedfile = null;
 
                 // Iterate through to find the non-directory file.
@@ -422,10 +422,12 @@ class observation_manager {
                     $data['link'] = 'submitted file is empty';
                 }
 
-                // Set the response to html that allows the file to be viewed and downloaded.
-                $item->response = '<img src="'.$data['link'].'?preview=thumb"></img><br>'.$selectedfile->get_filename().'<br>
-                <a href="'.$data['link'].'" target="_blank">Open in new tab</a><br>
-                <a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download</a>';
+                if (!empty($selectedfile)) {
+                    // Set the response to html that allows the file to be viewed and downloaded.
+                    $item->response = '<img src="'.$data['link'].'?preview=thumb"></img><br>'.$selectedfile->get_filename().'<br>
+                    <a href="'.$data['link'].'" target="_blank">Open in new tab</a><br>
+                    <a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download</a>'; 
+                }
             }
 
             return [

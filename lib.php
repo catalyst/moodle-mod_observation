@@ -149,7 +149,7 @@ function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
  * @param mixed $course course
  * @param mixed $cm course module
  * @param condex_module $context context
- * @param stored_file $filearea file area
+ * @param string $filearea file area
  * @param mixed $args args
  * @param bool $forcedownload bool if download should be forced
  * @param array $options an array of options
@@ -159,7 +159,7 @@ function observation_pluginfile($course, $cm, $context, $filearea, $args, $force
         send_file_not_found();
     }
 
-    if ($filearea !== 'response') {
+    if (strpos($filearea, 'response')!==0) {
         send_file_not_found();
     }
 
