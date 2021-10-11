@@ -211,4 +211,79 @@ class timeslot_notification_test extends advanced_testcase {
             }
         }
     }
+
+    /**
+     * Tests if the notifications are deleted if a student unenrols from a timeslot
+     */
+    public function test_deleted_after_unenrol() {
+        global $DB;
+
+        $obid = $this->instance->id;
+
+        // Ensure unenrol is enabled.
+        $DB->update_record('observation', ['id' => $obid, 'students_self_unregister' => 1]);
+
+        // Create notification.
+        $this->setUser($this->observee);
+        \mod_observation\timeslot_manager::create_notification($this->instance->id, $this->slot1id, $this->observee->id,
+            (object) self::NOTIFY_DATA);
+
+        $notifications = \mod_observation\timeslot_manager::get_users_notifications($obid, $this->observee->id);
+        $this->assertEquals(1, count($notifications));
+
+        // User unenrols from timeslot.
+        \mod_observation\timeslot_manager::timeslot_unenrolment($obid, $this->slot1id, $this->observee->id);
+
+        // Ensure notifications are removed.
+        $notifications = \mod_observation\timeslot_manager::get_users_notifications($obid, $this->observee->id);
+        $this->assertEmpty($notifications);
+    }
+
+    public function test_deleted_after_kicked() {
+        global $DB;
+
+        $obid = $this->instance->id;
+
+        // Ensure unenrol is enabled.
+        $DB->update_record('observation', ['id' => $obid, 'students_self_unregister' => 1]);
+
+        // Create notification.
+        $this->setUser($this->observee);
+        \mod_observation\timeslot_manager::create_notification($this->instance->id, $this->slot1id, $this->observee->id,
+            (object) self::NOTIFY_DATA);
+
+        $notifications = \mod_observation\timeslot_manager::get_users_notifications($obid, $this->observee->id);
+        $this->assertEquals(1, count($notifications));
+
+        // User is kicked from timeslot.
+        \mod_observation\timeslot_manager::remove_observee($obid, $this->slot1id, $this->observer->id);
+
+        // Ensure notifications are removed.
+        $notifications = \mod_observation\timeslot_manager::get_users_notifications($obid, $this->observee->id);
+        $this->assertEmpty($notifications);
+    }
+
+    public function test_deleted_after_slot_deleted() {
+        global $DB;
+
+        $obid = $this->instance->id;
+
+        // Ensure unenrol is enabled.
+        $DB->update_record('observation', ['id' => $obid, 'students_self_unregister' => 1]);
+
+        // Create notification.
+        $this->setUser($this->observee);
+        \mod_observation\timeslot_manager::create_notification($this->instance->id, $this->slot1id, $this->observee->id,
+            (object) self::NOTIFY_DATA);
+
+        $notifications = \mod_observation\timeslot_manager::get_users_notifications($obid, $this->observee->id);
+        $this->assertEquals(1, count($notifications));
+
+        // Timeslot is deleted.
+        \mod_observation\timeslot_manager::delete_time_slot($obid, $this->slot1id, $this->observer->id);
+
+        // Ensure notifications are removed.
+        $notifications = \mod_observation\timeslot_manager::get_users_notifications($obid, $this->observee->id);
+        $this->assertEmpty($notifications);
+    }
 }

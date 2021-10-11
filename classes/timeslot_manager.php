@@ -453,6 +453,13 @@ class timeslot_manager {
             throw $error;
         }
 
+        // Delete timeslot notifications.
+        $notifications = self::get_users_notifications($observationid, $userid);
+
+        foreach ($notifications as $n) {
+            self::delete_notification($observationid, $userid, $n->notification_id);
+        }
+
         // Allow Unenrolment.
         $dbdata = [
             'id' => $slotid,
