@@ -49,7 +49,11 @@ if ($action !== null && $slotid !== null) {
             break;
 
         case 'delete':
-            \mod_observation\timeslot_manager::delete_time_slot($observation->id, $slotid);
+            \mod_observation\timeslot_manager::delete_time_slot($observation->id, $slotid, $USER->id);
+            break;
+
+        case 'kick':
+            \mod_observation\timeslot_manager::remove_observee($observation->id, $slotid, $USER->id);
             break;
 
         default:
@@ -58,7 +62,7 @@ if ($action !== null && $slotid !== null) {
                 'invalidqueryparam',
                 'error',
                 null,
-                ['expected' => "'edit','delete','moveup' or 'movedown'", 'actual' => $action]);
+                ['expected' => "'edit','delete','kick'", 'actual' => $action]);
     }
 
     // Redirect back to this page but without params after running action to avoid weird errors if user refreshes page.

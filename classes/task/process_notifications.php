@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Observation activity version information.
+ * Contains task setup to process observation reminder notifications.
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -23,8 +23,30 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace mod_observation\task;
 
-$plugin->version   = 2021052526;
-$plugin->requires  = 2021052500;
-$plugin->component = 'mod_observation';
+/**
+ * Scheduled task to process reminder notifications for observation timeslots.
+ *
+ * @package   mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class process_notifications extends \core\task\scheduled_task {
+
+    /**
+     * Returns name of task
+     * @return string name of task
+     */
+    public function get_name() {
+        return get_string('processnotifications', 'observation');
+    }
+
+    /**
+     * Executes the task
+     */
+    public function execute() {
+        \mod_observation\timeslot_manager::process_notifications();
+    }
+}
