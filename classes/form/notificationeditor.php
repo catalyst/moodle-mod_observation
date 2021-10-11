@@ -48,6 +48,7 @@ class notificationeditor extends \moodleform {
         $mform->addElement('header', 'notificationheader', get_string('createnotification', 'observation'));
 
         $options = [
+            MINSECS => get_string('minutes').' '.get_string('before', 'observation'),
             HOURSECS => get_string('hours').' '.get_string('before', 'observation'),
             DAYSECS => get_string('days').' '.get_string('before', 'observation'),
         ];
@@ -61,8 +62,6 @@ class notificationeditor extends \moodleform {
 
         $mform->addGroup($intervalselector, 'select_group', get_string('receivenotification', 'observation'), null, false);
         $mform->setType('interval_amount', PARAM_INT);
-
-        $mform->addElement('duration', 'interval_test');
 
         // Hidden form elements.
         $mform->addElement('hidden', 'id', $prefill['id']);

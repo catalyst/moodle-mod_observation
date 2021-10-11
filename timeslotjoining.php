@@ -94,7 +94,7 @@ if ($signedupslot === false) {
     echo $OUTPUT->heading(get_string('yourtimeslot', 'observation'), 3);
     echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
     \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_OBSERVEE_REGISTERED, $USER->id);
-    
+
     echo $OUTPUT->heading(get_string('timeslotnotifications', 'observation'), 3);
     echo $OUTPUT->single_button(new moodle_url('/mod/observation/timeslotnotifications.php', ['id' => $id]),
         get_string('setuptimeslotnotifications', 'observation'), 'GET');

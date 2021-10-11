@@ -99,7 +99,7 @@ class unenrol_test extends advanced_testcase {
         // Ensure unenrolment is enabled.
         $DB->update_record('observation', ['id' => $obid, 'students_self_unregister' => 1]);
 
-        // Observee 1 joins timeslot.
+        // Observee 1 joins timeslot and creates notification.
         \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slotid, $this->observee->id);
 
         $this->preventResetByRollback();
