@@ -111,11 +111,12 @@ class timeslots_table extends \table_sql implements \renderable {
                     ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'edit', 'sesskey' => sesskey()]),
                     get_string('edit', 'observation'));
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete']), get_string('delete', 'observation'));
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete', 'sesskey' => sesskey()]),
+                    get_string('delete', 'observation'));
 
                 if ($row->observee_id !== null) {
                     $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                        ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'kick']),
+                        ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'kick', 'sesskey' => sesskey()]),
                         get_string('kickobservee', 'observation'));
                 }
                 break;

@@ -49,11 +49,11 @@ if ($action !== null && $slotid !== null) {
             break;
 
         case 'delete':
-            \mod_observation\timeslot_manager::delete_time_slot($observation->id, $slotid);
+            \mod_observation\timeslot_manager::delete_time_slot($observation->id, $slotid, $USER->id);
             break;
 
         case 'kick':
-            \mod_observation\timeslot_manager::remove_observee($observation->id, $slotid);
+            \mod_observation\timeslot_manager::remove_observee($observation->id, $slotid, $USER->id);
             break;
 
         default:

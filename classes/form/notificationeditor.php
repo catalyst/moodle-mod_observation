@@ -62,6 +62,8 @@ class notificationeditor extends \moodleform {
         $mform->addGroup($intervalselector, 'select_group', get_string('receivenotification', 'observation'), null, false);
         $mform->setType('interval_amount', PARAM_INT);
 
+        $mform->addElement('duration', 'interval_test');
+
         // Hidden form elements.
         $mform->addElement('hidden', 'id', $prefill['id']);
         $mform->setType('id', PARAM_INT);

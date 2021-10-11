@@ -29,9 +29,9 @@ $messageproviders = array(
     // Confirm timeslot signup.
     'confirmsignup' => [],
 
-    // Reminder ofdocker container check crontabdocker container check crontab timeslot signup.
-    'signupreminder' => []
-    
+    // Reminder of timeslot signup.
+    'signupreminder' => [],
+
     // Cancellation alert.
     'cancellationalert' => []
 );

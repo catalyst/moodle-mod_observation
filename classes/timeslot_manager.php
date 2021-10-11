@@ -120,8 +120,9 @@ class timeslot_manager {
      * Deletes timeslot
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the observation point to delete
+     * @param int $actioninguserid ID of the user actioning this deletion (used in messaging)
      */
-    public static function delete_time_slot(int $observationid, int $slotid) {
+    public static function delete_time_slot(int $observationid, int $slotid, int $actioninguserid) {
         global $DB;
 
         // Get record to get the calendar event ID.
@@ -150,7 +151,7 @@ class timeslot_manager {
 
         // If observee was registered, send a cancellation message.
         if (!empty($timeslot->observee_id)) {
-            self::send_cancellation_message($observationid, $slotid, $timeslot->observee_id);
+            self::send_cancellation_message($observationid, $slotid, $timeslot->observee_id, $actioninguserid);
         }
 
         $DB->delete_records('observation_timeslots', ['id' => $slotid, 'obs_id' => $observationid]);
@@ -412,7 +413,7 @@ class timeslot_manager {
 
         if ((int)$observation->students_self_unregister === 0) {
             if ($returnexception) {
-                return new moodle_exception(get_string('unenrolnotallowed', 'observation'));
+                return new \moodle_exception(get_string('unenrolnotallowed', 'observation'));
             } else {
                 return false;
             }
@@ -420,7 +421,7 @@ class timeslot_manager {
 
         if ((int)$slotdata->observee_id === null) {
             if ($returnexception) {
-                return new moodle_exception(get_string('unenrolerrorempty', 'observation'));
+                return new \moodle_exception(get_string('unenrolerrorempty', 'observation'));
             } else {
                 return false;
             }
@@ -428,7 +429,7 @@ class timeslot_manager {
 
         if ((int)$slotdata->observee_id !== $userid) {
             if ($returnexception) {
-                return new moodle_exception(get_string('unenrolerrornotuser', 'observation'));
+                return new \moodle_exception(get_string('unenrolerrornotuser', 'observation'));
             } else {
                 return false;
             }
@@ -459,6 +460,10 @@ class timeslot_manager {
             'obs_id' => $observationid,
             'observee_event_id' => null
         ];
+
+        // Send cancellation message.
+        self::send_cancellation_message($observationid, $slotid, $userid, $userid);
+
         self::modify_time_slot($dbdata);
     }
 
@@ -551,10 +556,8 @@ class timeslot_manager {
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the timeslot
      * @param string $template Mustache template to render the data to
-     * @param string $template Mustache template to render
      */
     public static function timeslot_html(int $observationid, int $slotid, string $template='mod_observation/confirm_message') {
-    public static function timeslot_html(int $observationid, int $slotid, string $template) {
         global $OUTPUT;
 
         list($observation, $course, $cm) =
@@ -617,8 +620,11 @@ class timeslot_manager {
 
         $sql = '
             SELECT obn.id as notification_id, time_before, ot.observee_id as userid
-            FROM {observation_notifications} obn LEFT JOIN {observation_timeslots} ot ON obn.timeslot_id = ot.id
-            WHERE ot.obs_id = :obsid AND ot.observee_id = :userid
+              FROM {observation_notifications} obn
+         LEFT JOIN {observation_timeslots} ot
+                ON obn.timeslot_id = ot.id
+             WHERE ot.obs_id = :obsid
+               AND ot.observee_id = :userid
         ';
 
         return $DB->get_records_sql($sql, ['userid' => $userid, 'obsid' => $observationid]);
@@ -682,8 +688,9 @@ class timeslot_manager {
      * Removes an observee from a timeslot, and sends a notification to user affected.
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the timeslot to remove the observee for.
+     * @param int $actioninguserid ID of the user removing the observee (used in messaging)
      */
-    public static function remove_observee(int $observationid, int $slotid) {
+    public static function remove_observee(int $observationid, int $slotid, int $actioninguserid) {
         global $DB;
 
         // Find the current observee registered.
@@ -696,7 +703,7 @@ class timeslot_manager {
         $newdata = ['id' => $slotid, 'obs_id' => $observationid, 'observee_id' => null];
 
         $DB->update_record('observation_timeslots', $newdata);
-        self::send_cancellation_message($observationid, $slotid, $slot->observee_id);
+        self::send_cancellation_message($observationid, $slotid, $slot->observee_id, $actioninguserid);
     }
 
     /**
@@ -704,10 +711,12 @@ class timeslot_manager {
      * @param int $observationid id of the observation instance.
      * @param int $slotid id of the timeslot the user signed up to.
      * @param int $userid id of the user to send the message to.
+     * @param int $sendinguserid ID of the user who is sending the message.
      */
-    public static function send_cancellation_message(int $observationid, int $slotid, int $userid) {
+    public static function send_cancellation_message(int $observationid, int $slotid, int $userid, int $sendinguserid) {
         global $DB;
         $user = $DB->get_record('user', ['id' => $userid]);
+        $sender = $DB->get_record('user', ['id' => $sendinguserid]);
 
         list($observation, $course, $cm) =
             \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
@@ -722,7 +731,7 @@ class timeslot_manager {
         $eventdata->name              = 'cancellationalert';
         $eventdata->notification      = 1;
 
-        $eventdata->userfrom          = \core_user::get_noreply_user();
+        $eventdata->userfrom          = $sender;
         $eventdata->userto            = $user;
         $eventdata->subject           = get_string('cancellationalert', 'observation', $observation->name);
         $eventdata->fullmessage       = "";

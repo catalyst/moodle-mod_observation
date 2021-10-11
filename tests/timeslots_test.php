@@ -157,13 +157,17 @@ class timeslots_test extends advanced_testcase {
         $this->preventResetByRollback();
         $sink = $this->redirectMessages();
 
-        \mod_observation\timeslot_manager::delete_time_slot($obid, $timeslotid);
+        \mod_observation\timeslot_manager::delete_time_slot($obid, $timeslotid, $this->coordinator->id);
         $alltimeslots = \mod_observation\timeslot_manager::get_time_slots($obid);
         $this->assertEmpty($alltimeslots);
 
         // Ensure message was sent on timeslot deletion.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
+
+        // Ensure the message comes from the coordinators email (the one who actioned the removal).
+        $this->assertEquals($this->coordinator->id, $messages[0]->useridfrom);
+        $this->assertEquals($this->observee->id, $messages[0]->useridto);
 
         // Ensure calendar event deleted for observer.
         $this->expectException('dml_exception');
@@ -294,6 +298,9 @@ class timeslots_test extends advanced_testcase {
     }
 
     /**
+     * Tests coordinator kicking an observee from a timeslot.
+     */
+    /**
      * Tests the basic case when randomly assigning students
      * to timeslots.
      */
@@ -375,16 +382,20 @@ class timeslots_test extends advanced_testcase {
         $sink = $this->redirectMessages();
 
         // Kick from timeslot, ensure they are removed and cancellation message is sent.
-        \mod_observation\timeslot_manager::remove_observee($obid, $slotid);
+        \mod_observation\timeslot_manager::remove_observee($obid, $slotid, $this->coordinator->id);
 
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
+
+        // Ensure the message comes from the coordinators email (the one who actioned the removal).
+        $this->assertEquals($this->coordinator->id, $messages[0]->useridfrom);
+        $this->assertEquals($this->observee->id, $messages[0]->useridto);
 
         $timeslot = \mod_observation\timeslot_manager::get_existing_slot_data($obid, $slotid);
         $this->assertEmpty($timeslot->observee_id);
 
         // Try to kick them again (should throw exception, as there should be no observee to kick).
         $this->expectException('moodle_exception');
-        \mod_observation\timeslot_manager::remove_observee($obid, $slotid);
+        \mod_observation\timeslot_manager::remove_observee($obid, $slotid, $this->coordinator->id);
     }
 }

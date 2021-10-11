@@ -33,26 +33,25 @@ function xmldb_observation_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2021052523) {
+
+        // Define table observation_notifications to be created.
         $table = new xmldb_table('observation_notifications');
 
-        // Table fields.
-        $id = new xmldb_field('id', XMLDB_TYPE_INTEGER, 20, XMLDB_UNSIGNED, true, true);
-        $timeslotid = new xmldb_field('timeslot_id', XMLDB_TYPE_INTEGER, 20, XMLDB_UNSIGNED, true, false);
-        $notify = new xmldb_field('time_before', XMLDB_TYPE_INTEGER, 20, XMLDB_UNSIGNED, true, false);
+        // Adding fields to table observation_notifications.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('timeslot_id', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('time_before', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
 
-        // Table keys.
-        $idpkey = new xmldb_key('id', XMLDB_KEY_PRIMARY, ['id']);
-        $timeslotidfkey = new xmldb_key('timeslot_id', XMLDB_KEY_FOREIGN, ['timeslot_id'], 'observation_timeslots', 'id');
+        // Adding keys to table observation_notifications.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('timeslot_id', XMLDB_KEY_FOREIGN, ['timeslot_id'], 'observation_timeslots', ['id']);
 
-        $table->addField($id);
-        $table->addField($timeslotid);
-        $table->addField($notify);
+        // Conditionally launch create table for observation_notifications.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
-        $table->addKey($idpkey);
-        $table->addKey($timeslotidfkey);
-
-        $dbman->create_table($table);
-
+        // Observation savepoint reached.
         upgrade_mod_savepoint(true, 2021052523, 'observation');
     }
 

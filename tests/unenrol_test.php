@@ -102,9 +102,18 @@ class unenrol_test extends advanced_testcase {
         // Observee 1 joins timeslot.
         \mod_observation\timeslot_manager::timeslot_signup($obid, $this->slotid, $this->observee->id);
 
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
         // Observee 1 unenrols.
         \mod_observation\timeslot_manager::timeslot_unenrolment($obid, $this->slotid, $this->observee->id);
         $timeslot = \mod_observation\timeslot_manager::get_existing_slot_data($obid, $this->slotid);
+
+        // Ensure they get an email from themselves.
+        $messages = $sink->get_messages();
+        $this->assertEquals(1, count($messages));
+        $this->assertEquals($this->observee->id, $messages[0]->useridfrom);
+        $this->assertEquals($this->observee->id, $messages[0]->useridto);
 
         // Ensure observee is removed from timeslot as well as calendar event.
         $this->assertEquals(null, $timeslot->observee_id);

@@ -86,11 +86,6 @@ echo $OUTPUT->heading(get_string('timeslotnotifications', 'observation'), 3);
 
 $notificationeditor->display();
 
-// Display a table here, show estimate notify time
-// Setup cron job to run checks
-// create function to check notifications, if actioned, delete from $DB;
-// send notification if past the time
-// Implement max number of notifications.
 echo \mod_observation\table\notifications\notifications_display::notifications_table($observation->id, $USER->id, $pageurl);
 
 echo $OUTPUT->footer();
