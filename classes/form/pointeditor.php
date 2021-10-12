@@ -52,6 +52,13 @@ class pointeditor extends \moodleform {
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('textinputtype', 'observation'), 0);
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('passfailtype', 'observation'), 1);
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('evidencetype', 'observation'), 2);
+        // If evidence checked, then allow the option to select the file size.
+        // https://docs.moodle.org/dev/lib/formslib.php_Form_Definition#disabledIf
+        $radioarray[] = $mform->createElement('text', 'filesize', '', get_string('aljskd', 'observation'));
+        $mform->disabledIf('filesize', 'textinputtype', 'checked');
+        $mform->disabledIf('filesize', 'passfailtype', 'checked');
+        $mform->disabledIf('filesize', 'evidencetype', 'notchecked');
+
         $mform->addGroup($radioarray, 'radioar', get_string('obpointtype', 'observation'), array(' '), false);
         $mform->setDefault('type', 0);
 
