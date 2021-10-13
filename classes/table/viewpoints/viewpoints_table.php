@@ -92,7 +92,7 @@ class viewpoints_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_action($row) {
-        if ($this->displaymode == \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_ASSIGNED) {
+        if ($this->displaymode == \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_OBSERVEE_REGISTERED) {
             $htmlout = "";
             return $htmlout;
         };

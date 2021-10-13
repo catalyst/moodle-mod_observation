@@ -25,9 +25,6 @@
 
 namespace mod_observation;
 
-use Behat\Behat\Output\Node\Printer\Helper\ResultToStringConverter;
-use context_system;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**

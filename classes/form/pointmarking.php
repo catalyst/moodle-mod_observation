@@ -25,8 +25,6 @@
 
 namespace mod_observation\form;
 
-use context_system;
-
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/formslib.php');
 
