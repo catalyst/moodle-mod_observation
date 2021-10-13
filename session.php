@@ -84,6 +84,7 @@ $formprefill = (array)$selectedpointdata;
 $draftitemid = file_get_submitted_draft_itemid('response');
 file_prepare_draft_area($draftitemid, $PAGE->context->id, 'mod_observation', 'response' . $pointid, $sessionid);
 $formprefill['sessionid'] = $sessionid;
+$formprefill['filesize'] = 500; // TODO: change this to what was submitted.
 $markingform = new \mod_observation\form\pointmarking(null, $formprefill);
 
 if ($markingform->no_submit_button_pressed()) {
