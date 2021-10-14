@@ -103,4 +103,21 @@ class pointeditor extends \moodleform {
         // Action buttons.
         $this->add_action_buttons();
     }
+
+    /**
+     * Custom validations for the form.
+     * NOTE: these are only run server side when get_data() is called.
+     * @param mixed $data form data
+     * @param mixed $files form files
+     */
+    public function validation($data, $files) {
+        $errors = [];
+
+        // Ensure file size <= 1000.
+        if ($data['file_size'] > 1000) {
+            $errors['file_size'] = get_string('intlessthanthousand', 'observation');
+        }
+
+        return $errors;
+    }
 }
