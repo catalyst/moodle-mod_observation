@@ -79,8 +79,7 @@ class pointmarking extends \moodleform {
                 // Image upload here.
                 var_dump($prefill);
 
-                $maxbytes = 524288000;
-                // $maxbytes = $prefill['filesize'];
+                $maxbytes = $prefill['filesize'];
 
                 // if its empty then $maxbytes = 524288000 - in session.php probably.
                 // filesize * 1048576 to convert to binary.
