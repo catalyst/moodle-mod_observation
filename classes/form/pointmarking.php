@@ -77,13 +77,8 @@ class pointmarking extends \moodleform {
                 break;
             case \mod_observation\observation_manager::INPUT_EVIDENCE:
                 // Image upload here.
-                var_dump($prefill);
-
+                var_dump($prefill); // TODO: remove.
                 $maxbytes = $prefill['filesize'];
-
-                // if its empty then $maxbytes = 524288000 - in session.php probably.
-                // filesize * 1048576 to convert to binary.
-
                 $mform->addElement('filemanager', 'response', get_string('evidenceupload', 'observation'), null,
                     array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 524288000, 'maxfiles' => 1,
                           'accepted_types' => 'audio,video,image,document'));

@@ -57,11 +57,11 @@ class pointeditor extends \moodleform {
         $mform->setDefault('type', 0);
 
         // Evidence file size.
-        $mform->addElement('text', 'filesize', get_string('evidencetype', 'observation'));
-        $mform->setType('filesize', PARAM_INT);
-        $mform->setDefault('filesize', 500);
-        $mform->addRule('filesize', get_string('err_numeric', 'form'), 'numeric', null, 'client');
-        $mform->addRule('filesize', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
+        $mform->addElement('text', 'file_size', get_string('evidencetype', 'observation'));
+        $mform->setType('file_size', PARAM_INT);
+        $mform->setDefault('file_size', 500);
+        $mform->addRule('file_size', get_string('err_numeric', 'form'), 'numeric', null, 'client');
+        $mform->addRule('file_size', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
 
         // Title.
         $mform->addElement('text', 'title', get_string('title', 'observation'));
