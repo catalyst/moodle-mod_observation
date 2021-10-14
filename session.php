@@ -88,7 +88,7 @@ $formprefill['sessionid'] = $sessionid;
 if (is_null($formprefill['file_size'])) {
     $formprefill['file_size'] = 500; // 500MB.
 }
-$formprefill['file_size'] = $formprefill['file_size']*1048576; // MB in binary.
+$formprefill['file_size'] = $formprefill['file_size'] * 1048576; // MB in binary.
 
 $markingform = new \mod_observation\form\pointmarking(null, $formprefill);
 
