@@ -90,10 +90,6 @@ if (is_null($formprefill['file_size'])) {
 }
 $formprefill['file_size'] = $formprefill['file_size']*1048576; // MB in binary.
 
-if (is_null($formprefill['num_files'])) {
-    $formprefill['num_files'] = 1;
-}
-
 $markingform = new \mod_observation\form\pointmarking(null, $formprefill);
 
 if ($markingform->no_submit_button_pressed()) {
