@@ -59,7 +59,6 @@
             <FIELD NAME="max_grade" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="true" COMMENT="Maximum grade that can be given for this observation point." />
             <FIELD NAME="res_type" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="true" COMMENT="Type of response required for this point. 0 = 'text input'." />
             <FIELD NAME="file_size" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Maximum file size for evidence files submitted." />
-            <FIELD NAME="num_files" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Number of evidence files that can be submitted." />
         </FIELDS>
         <KEYS>
             <KEY NAME="primary" TYPE="primary" FIELDS="id" />
