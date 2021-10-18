@@ -199,3 +199,6 @@ $string['allowunenrol'] = 'Allow students to remove themselves from signed up ti
 $string['unenrolerrorempty'] = 'Could not unenroled from timeslot. Timeslot is empty.';
 $string['unenrolerrornotuser'] = 'Could not unenroled from timeslot. You are not the user enrolled in this timeslot.';
 $string['unenrolnotallowed'] = 'You are not allowed to remove yourself from this timeslot.';
+$string['calendarsignup'] = 'Calendar signup';
+$string['nextmonth'] = 'Next month';
+$string['prevmonth'] = 'Previous month';

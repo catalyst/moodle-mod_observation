@@ -799,4 +799,25 @@ class timeslot_manager {
         // Return the remaining users who were not signed up (likely due to insufficient number of timeslots).
         return $users;
     }
+
+    /**
+     * Gets the timeslots for the calendar view.
+     * @param int $observationid ID of the observation instance
+     * @param int $month month to search for timeslots for (1-12)
+     * @param int $year year to search for timeslots for
+     * @return array array of timeslots
+     */
+    public static function get_timeslots_for_calendar(int $observationid, int $month, int $year) {
+        // Get all timeslots.
+        $timeslots = self::get_time_slots($observationid, 'start_time');
+
+        $calendartimeslots = array_filter($timeslots, function($slot) use($month, $year) {
+            $timeslotmonth = date('n', $slot->start_time);
+            $timeslotyear = date('Y', $slot->start_time);
+
+            return ((string) $month === $timeslotmonth && (string) $year === $timeslotyear);
+        });
+
+        return $calendartimeslots;
+    }
 }
