@@ -77,7 +77,7 @@ function observation_add_instance($data): int {
  * @return bool true on success, false or a string error message on failure.
  */
 function observation_update_instance($data): bool {
-    return \mod_observation\observation_manager::modify_instance(array(
+    $success = \mod_observation\observation_manager::modify_instance(array(
         "id" => $data->instance,
         "name" => $data->name,
         "timemodified" => time(),
@@ -87,6 +87,16 @@ function observation_update_instance($data): bool {
         "observee_ins_f" => $data->observeeins_editor['format'],
         "students_self_unregister" => (int) $data->students_self_unregister
     ));
+
+    // Update all the calendar events to get the new data.
+    $timeslots = \mod_observation\timeslot_manager::get_time_slots($data->instance);
+    $timeslotids = array_column($timeslots, 'id');
+
+    foreach ($timeslotids as $slotid) {
+        \mod_observation\timeslot_manager::update_timeslot_calendar_events($data->instance, $slotid);
+    }
+
+    return $success;
 }
 
 /**

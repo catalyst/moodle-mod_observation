@@ -137,6 +137,17 @@ class observation_manager {
         if (!empty($data->res_type)) {
             // Get record, MUST_EXIST is passed so will except if res_type is invalid.
             $DB->get_record('observation_res_type_map', ['res_type' => $data->res_type], '*', MUST_EXIST);
+
+            // Evidence response type checks.
+            if ((int)$data->res_type === "2") {
+                if (empty($data->file_size)) {
+                    throw new \coding_exception("Property file_size must exist for response type 'evidence'.");
+                }
+
+                if (!is_int($data->file_size)) {
+                    throw new \coding_exception("Property file_size must be an int.");
+                }
+            }
         }
 
         $newinstance = empty($data->id);
@@ -378,7 +389,7 @@ class observation_manager {
         $pointsandresponses = self::get_points_and_responses($observationid, $sessionid);
 
         $table = new \html_table();
-        $table->head = ['Title', 'Response', 'Grade Given'];
+        $table->head = ['Title', 'Response', 'Grade Given', 'Comment'];
 
         $table->data = array_map(function($item) use ($sessionid) {
 
@@ -431,6 +442,7 @@ class observation_manager {
                 $item->title,
                 $item->response,
                 $item->grade_given,
+                $item->ex_comment
             ];
         }, $pointsandresponses);
 

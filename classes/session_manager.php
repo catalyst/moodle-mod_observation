@@ -274,15 +274,14 @@ class session_manager {
             'gradetype' => 1,
             'grademax' => $maxgrade,
             'grademin' => $mingrade,
-            'itemname' => get_string('gradeitemname', 'observation', $cm->name),
-            'idnumber' => "",
+            'itemname' => $cm->name . ' - ' . get_string('gradeitemname', 'observation')
         ];
 
         $grade = [
             'rawgrade' => $gradegiven,
             'userid' => $sessioninfo['observee'],
             'usermodified' => $sessioninfo['observer'],
-            'datesubmitted' => null,
+            'datesubmitted' => time(),
             'dategraded' => time(),
             'feedbackformat' => FORMAT_PLAIN,
             'feedback' => $sessioninfo['ex_comment']

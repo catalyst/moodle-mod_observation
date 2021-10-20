@@ -55,7 +55,7 @@ function xmldb_observation_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021052523, 'observation');
     }
 
-    if ($oldversion < 2021052527) {
+    if ($oldversion < 2021052531) {
         // Add two columns to observation_points table.
         $table2 = new xmldb_table('observation_points');
         $field1 = new xmldb_field('file_size', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
@@ -64,8 +64,13 @@ function xmldb_observation_upgrade($oldversion) {
             $dbman->add_field($table2, $field1);
         }
 
+        // Add evidence response type to table.
+        if (empty($DB->get_record('observation_res_type_map', ['res_type' => 2]))) {
+            $DB->insert_record('observation_res_type_map', ['res_type' => 2, 'lang_string' => 'evidencetype']);
+        }
+
         // Observation savepoint reached.
-        upgrade_mod_savepoint(true, 2021052527, 'observation');
+        upgrade_mod_savepoint(true, 2021052531, 'observation');
     }
 
     return true;

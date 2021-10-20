@@ -75,8 +75,7 @@ $selectprefill = [
 $selectorform = new \mod_observation\form\pointselector(null, $selectprefill);
 
 if ($fromform = $selectorform->get_data()) {
-    redirect(new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $fromform->pointid,
-        'confirm' => $confirm, 'confirmsubmit' => $confirmsubmit]));
+    redirect(new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $fromform->pointid]));
     return;
 }
 
@@ -99,6 +98,46 @@ $formprefill['file_size'] = $formprefill['file_size'] * 1048576; // MB in binary
 
 $markingform = new \mod_observation\form\pointmarking(null, $formprefill);
 
+// If point marking form was submitted.
+if ($fromform = $markingform->get_data()) {
+
+    // Save submitted image.
+    $draftitemid = file_get_submitted_draft_itemid('response');
+    file_save_draft_area_files($draftitemid, $PAGE->context->id, 'mod_observation', 'response' . $pointid, $sessionid);
+
+    // Save or Save and Next point button pressed.
+    \mod_observation\observation_manager::submit_point_response($sessionid, $pointid, $fromform);
+
+    // If save and continue button pressed, find next observation point to redirect to.
+    if (!is_null($fromform->saveandnext)) {
+        $allpointids = array_column($observationpoints, 'point_id');
+        $index = array_search($pointid, $allpointids);
+        $nextpointid = $allpointids[$index + 1];
+
+        // Only continue if there is a point to continue to.
+        if (!is_null($nextpointid)) {
+            $pointid = $nextpointid;
+        } else {
+            // No more points to process - redirect to the session summary/submission screen.
+            redirect(
+                new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]),
+                get_string('responsesaved', 'observation'),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
+            return;
+        }
+    }
+
+    redirect(
+        new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $pointid]),
+        get_string('responsesaved', 'observation'),
+        null,
+        \core\output\notification::NOTIFY_SUCCESS
+    );
+    return;
+}
+
 // Render page.
 $pageurl = new moodle_url('/mod/observation/session.php', array(
     'sessionid' => $sessionid, 'pointid' => $pointid,
@@ -108,9 +147,9 @@ $pageurl->out(false);
 $PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname . ': ' . $observation->name);
 $PAGE->set_heading($course->fullname);
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('markingobservation', 'observation'), 2);
-
 
 if ($markingform->no_submit_button_pressed()) {
     $fromform = $markingform->get_submitted_data();
@@ -127,7 +166,6 @@ if ($markingform->no_submit_button_pressed()) {
             );
         }
     }
-
 
     // Submit observation button pressed.
     if (!is_null($fromform->submitobservation)) {
@@ -178,47 +216,6 @@ if ($confirmsubmit !== null & $confirm !== 1) {
         // Return to session page.
         redirect(new moodle_url('/mod/observation/session.php', array('sessionid' => $sessionid)));
     }
-    return;
-}
-
-
-// If point marking form was submitted.
-if ($fromform = $markingform->get_data()) {
-
-    // Save submitted image.
-    $draftitemid = file_get_submitted_draft_itemid('response');
-    file_save_draft_area_files($draftitemid, $PAGE->context->id, 'mod_observation', 'response' . $pointid, $sessionid);
-
-    // Save or Save and Next point button pressed.
-    \mod_observation\observation_manager::submit_point_response($sessionid, $pointid, $fromform);
-
-    // If save and continue button pressed, find next observation point to redirect to.
-    if (!is_null($fromform->saveandnext)) {
-        $allpointids = array_column($observationpoints, 'point_id');
-        $index = array_search($pointid, $allpointids);
-        $nextpointid = $allpointids[$index + 1];
-
-        // Only continue if there is a point to continue to.
-        if (!is_null($nextpointid)) {
-            $pointid = $nextpointid;
-        } else {
-            // No more points to process - redirect to the session summary/submission screen.
-            redirect(
-                new moodle_url('sessionsummary.php', ['sessionid' => $sessionid]),
-                get_string('responsesaved', 'observation'),
-                null,
-                \core\output\notification::NOTIFY_SUCCESS
-            );
-            return;
-        }
-    }
-
-    redirect(
-        new moodle_url('session.php', ['sessionid' => $sessionid, 'pointid' => $pointid]),
-        get_string('responsesaved', 'observation'),
-        null,
-        \core\output\notification::NOTIFY_SUCCESS
-    );
     return;
 }
 
