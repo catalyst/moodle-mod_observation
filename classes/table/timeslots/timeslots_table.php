@@ -109,29 +109,29 @@ class timeslots_table extends \table_sql implements \renderable {
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_EDITING:
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
                     ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'edit', 'sesskey' => sesskey()]),
-                    get_string('edit', 'observation'));
+                    get_string('edit', 'observation'), 'btn-secondary');
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
                     ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete', 'sesskey' => sesskey()]),
-                    get_string('delete', 'observation'));
+                    get_string('delete', 'observation'), 'btn-secondary');
 
                 if ($row->observee_id !== null) {
                     $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
                         ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'kick', 'sesskey' => sesskey()]),
-                        get_string('kickobservee', 'observation'));
+                        get_string('kickobservee', 'observation'), 'btn-warning');
                 }
                 break;
 
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_SIGNUP:
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
                     ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'join', 'sesskey' => sesskey()]),
-                    get_string('join', 'observation'));
+                    get_string('join', 'observation'), 'btn-secondary');
             break;
 
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING:
                 if ($row->observee_id !== null) {
                     $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
                         'slotid' => $row->id, 'action' => 'startsession', 'sesskey' => sesskey()]),
-                        get_string('startobservationsession', 'observation'));
+                        get_string('startobservationsession', 'observation'), 'btn-secondary');
                 } else {
                     $htmlout .= get_string('noobservee', 'observation');
                 }
@@ -139,7 +139,8 @@ class timeslots_table extends \table_sql implements \renderable {
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_OBSERVEE_REGISTERED:
                 if (\mod_observation\timeslot_manager::can_unenrol($row->obs_id, $row->id, $row->observee_id, false) === true) {
                     $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'unenrol']), get_string('unenrol', 'observation'));
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'unenrol']),
+                    get_string('unenrol', 'observation'), 'btn-danger');
                 }
             break;
         }

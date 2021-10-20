@@ -61,7 +61,7 @@ class pointeditor extends \moodleform {
         $mform->setType('file_size', PARAM_INT);
         $mform->setDefault('file_size', 500);
         $mform->addRule('file_size', get_string('err_numeric', 'form'), 'numeric', null, 'client');
-        $mform->addRule('file_size', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
+        $mform->hideIf('file_size', 'res_type', 'notchecked', '2');
 
         // Title.
         $mform->addElement('text', 'title', get_string('title', 'observation'));
@@ -106,9 +106,16 @@ class pointeditor extends \moodleform {
     public function validation($data, $files) {
         $errors = [];
 
-        // Ensure file size <= 1000.
-        if ($data['file_size'] > 1000) {
-            $errors['file_size'] = get_string('intlessthanthousand', 'observation');
+        if ((int)$data['res_type'] === 2) {
+            // Ensure file size is given for response type 'evidence'.
+            if (empty($data['file_size'])) {
+                $errors['file_size'] = get_string('filesizerequired', 'observation');
+            }
+
+            // Ensure 1 <= file size <= 1000 and is an integer.
+            if ($data['file_size'] > 1000 || $data['file_size'] < 1 || !is_int($data['file_size'])) {
+                $errors['file_size'] = get_string('filesizebounds', 'observation');
+            }
         }
 
         return $errors;

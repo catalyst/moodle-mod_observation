@@ -60,7 +60,8 @@ $formprefill = array(
 if ($mode === "edit") {
     $pointdata = \mod_observation\observation_manager::get_existing_point_data($id, $pointid);
     $formprefill['pointid'] = $pointdata->id;
-    $formprefill['radioar'] = $pointdata->res_type;
+    $formprefill['res_type'] = $pointdata->res_type;
+    $formprefill['file_size'] = $pointdata->file_size;
     $formprefill['maxgrade'] = $pointdata->max_grade;
     $formprefill['title'] = $pointdata->title;
     $formprefill['ins']['text'] = $pointdata->ins;
@@ -79,7 +80,7 @@ if ($fromform = $pointeditorform->get_data()) {
         "ins_f" => $fromform->ins['format'],
         "max_grade" => $fromform->maxgrade,
         "res_type" => $fromform->res_type,
-        "file_size" => $fromform->file_size,
+        "file_size" => (int)$fromform->res_type === 2 ? $fromform->file_size : null,
     );
 
     if ($fromform->mode === "new") {
