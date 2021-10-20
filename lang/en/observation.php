@@ -190,6 +190,9 @@ $string['sessiondoesntexist'] = 'Session does not exist.';
 $string['couldnotupdategrade'] = 'Could not update grade in gradebook.';
 $string['gradegivenbounds'] = 'Grade given must be between the mingrade and the maxgrade specified';
 $string['sessionlockouterror'] = 'Tried to start a session too quickly. Please wait {$a} seconds between starting new sessions';
+$string['confirmcancel'] = 'Are you sure you want to cancel the observation? This action cannot be undone.';
+$string['confirmsubmit'] = 'Are you sure you want to submit the observation?';
+
 $string['timeslotnotifications'] = 'Timeslot notifications';
 $string['setuptimeslotnotifications'] = 'Setup notifications';
 $string['createnotification'] = 'Create notification';
