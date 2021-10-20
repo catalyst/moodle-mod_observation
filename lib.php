@@ -21,7 +21,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -143,4 +143,33 @@ function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
     $matchingevent = $DB->get_records_sql($sql, $params);
 
     return !empty($matchingevent);
+}
+/**
+ * Context checks and serves file from certain areas
+ * @param mixed $course course
+ * @param mixed $cm course module
+ * @param condex_module $context context
+ * @param string $filearea file area
+ * @param mixed $args args
+ * @param bool $forcedownload bool if download should be forced
+ * @param array $options an array of options
+ */
+function observation_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        send_file_not_found();
+    }
+
+    if (strpos($filearea, 'response') !== 0 ) {
+        send_file_not_found();
+    }
+
+    $fs = get_file_storage();
+
+    $filename = array_pop($args);
+    $itemid = array_pop($args);
+    $filepath = '/';
+
+    $file = $fs->get_file($context->id, 'mod_observation', $filearea, $itemid, $filepath, $filename);
+
+    send_stored_file($file, null, 0, $forcedownload, $options);
 }

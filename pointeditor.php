@@ -79,6 +79,7 @@ if ($fromform = $pointeditorform->get_data()) {
         "ins_f" => $fromform->ins['format'],
         "max_grade" => $fromform->maxgrade,
         "res_type" => $fromform->res_type,
+        "file_size" => $fromform->file_size,
     );
 
     if ($fromform->mode === "new") {

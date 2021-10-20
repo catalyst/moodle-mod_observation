@@ -51,8 +51,17 @@ class pointeditor extends \moodleform {
         $radioarray = array();
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('textinputtype', 'observation'), 0);
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('passfailtype', 'observation'), 1);
+        $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('evidencetype', 'observation'), 2);
+
         $mform->addGroup($radioarray, 'radioar', get_string('obpointtype', 'observation'), array(' '), false);
         $mform->setDefault('type', 0);
+
+        // Evidence file size.
+        $mform->addElement('text', 'file_size', get_string('maxfilesize', 'observation'));
+        $mform->setType('file_size', PARAM_INT);
+        $mform->setDefault('file_size', 500);
+        $mform->addRule('file_size', get_string('err_numeric', 'form'), 'numeric', null, 'client');
+        $mform->addRule('file_size', get_string('intgreaterthanorzero', 'observation'), 'regex', '/^[0-9]\d*$/', 'client');
 
         // Title.
         $mform->addElement('text', 'title', get_string('title', 'observation'));
@@ -86,5 +95,22 @@ class pointeditor extends \moodleform {
 
         // Action buttons.
         $this->add_action_buttons();
+    }
+
+    /**
+     * Custom validations for the form.
+     * NOTE: these are only run server side when get_data() is called.
+     * @param mixed $data form data
+     * @param mixed $files form files
+     */
+    public function validation($data, $files) {
+        $errors = [];
+
+        // Ensure file size <= 1000.
+        if ($data['file_size'] > 1000) {
+            $errors['file_size'] = get_string('intlessthanthousand', 'observation');
+        }
+
+        return $errors;
     }
 }

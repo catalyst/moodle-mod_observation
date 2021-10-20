@@ -19,7 +19,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -45,6 +45,10 @@ class observation_manager {
      * @var int Observation point pass/fail input type.
      */
     const INPUT_PASSFAIL = 1;
+    /**
+     * @var int Observation point evidence input type.
+     */
+    const INPUT_EVIDENCE = 2;
 
     /**
      * Gets observation, course and coursemodule from course module ID
@@ -307,8 +311,8 @@ class observation_manager {
         // and attaches responses for the current session (if one exists).
         // Note: SELECT * was not used here as it caused issues with DB cross compatibility.
         $sql = 'SELECT pts.id as point_id, obs_id, title, list_order, ins, ins_f, max_grade, res_type,
-                       sess_resp.id as response_id, obs_ses_id as session_id, grade_given, response,
-                       ex_comment
+                        file_size, sess_resp.id as response_id, obs_ses_id as session_id,
+                        grade_given, response, ex_comment
                   FROM {observation_points} pts
              LEFT JOIN {observation_point_responses} sess_resp
                     ON pts.id = sess_resp.obs_pt_id AND sess_resp.obs_ses_id = :sessionid
@@ -376,7 +380,53 @@ class observation_manager {
         $table = new \html_table();
         $table->head = ['Title', 'Response', 'Grade Given'];
 
-        $table->data = array_map(function($item) {
+        $table->data = array_map(function($item) use ($sessionid) {
+
+            if ($item->res_type == self::INPUT_EVIDENCE) {
+                // Get file area.
+                global $DB;
+                $record = $DB->get_record('observation', ['id' => $item->obs_id]);
+                $data = (array) $record;
+
+                list($observation, $course, $cm) =
+                \mod_observation\observation_manager::get_observation_course_cm_from_obid($item->obs_id);
+                $context = \context_module::instance($cm->id);
+
+                $storage = get_file_storage();
+                $files = $storage->get_area_files($context->id, 'mod_observation', 'response' .$item->point_id, $sessionid);
+                $selectedfile = null;
+
+                // Iterate through to find the non-directory file.
+                foreach ($files as $file) {
+                    if (!$file->is_directory()) {
+                        $selectedfile = $file;
+                    }
+                }
+
+                // Make pluginfile url.
+                if (!empty($selectedfile)) {
+                    $itemid = $selectedfile->get_itemid();
+
+                    $data['link'] = \moodle_url::make_pluginfile_url(
+                        $selectedfile->get_contextid(),
+                        $selectedfile->get_component(),
+                        $selectedfile->get_filearea(),
+                        $itemid,
+                        $selectedfile->get_filepath(),
+                        $selectedfile->get_filename()
+                    );
+                } else {
+                    $data['link'] = 'submitted file is empty';
+                }
+
+                if (!empty($selectedfile)) {
+                    // Set the response to html that allows the file to be viewed and downloaded.
+                    $item->response = '<img src="'.$data['link'].'?preview=thumb"></img><br>'.$selectedfile->get_filename().'<br>
+                    <a href="'.$data['link'].'" target="_blank">Open in new tab</a><br>
+                    <a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download</a>';
+                }
+            }
+
             return [
                 $item->title,
                 $item->response,

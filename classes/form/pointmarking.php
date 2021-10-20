@@ -72,8 +72,17 @@ class pointmarking extends \moodleform {
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('pass', 'observation'), 'Pass');
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('fail', 'observation'), 'Fail');
                 $mform->addGroup($radioarray, 'radioar', get_string('passfailtype', 'observation'), array(' '), false);
-                $mform->setType('response', PARAM_TEXT); // Response will be Pass or Fail.
+                $mform->setType('response', PARAM_TEXT);
                 $mform->addRule('radioar', get_string('required', 'observation'), 'required', null, 'client');
+                break;
+            case \mod_observation\observation_manager::INPUT_EVIDENCE:
+                // Image upload here.
+                $maxbytes = $prefill['file_size'];
+                $mform->addElement('filemanager', 'response', get_string('evidenceupload', 'observation'), null,
+                    array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => $maxbytes, 'maxfiles' => 1,
+                          'accepted_types' => 'audio,video,image,document'));
+                $mform->setType('response', PARAM_INT);
+                $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
                 break;
         }
 

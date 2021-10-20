@@ -55,5 +55,18 @@ function xmldb_observation_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021052523, 'observation');
     }
 
+    if ($oldversion < 2021052527) {
+        // Add two columns to observation_points table.
+        $table2 = new xmldb_table('observation_points');
+        $field1 = new xmldb_field('file_size', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+
+        if (!$dbman->field_exists($table2, $field1)) {
+            $dbman->add_field($table2, $field1);
+        }
+
+        // Observation savepoint reached.
+        upgrade_mod_savepoint(true, 2021052527, 'observation');
+    }
+
     return true;
 }
