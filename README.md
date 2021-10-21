@@ -7,16 +7,32 @@ in courses requiring lots of practical work such as nursing and chemistry, among
 ### Development Version
 Warning! Never use the development version in production, there are no guarantees for which state the development branches are in at a given time.
 
-Inside your `moodle/mod` folder you run the following command:
+## Installation
+
+1. Navigate to `moodle/siteroot/mod`
+
 ```
-git clone -b main https://github.com/catalyst/moodle-mod_observation observation
+git clone git@github.com:catalyst/moodle-mod_observation.git observation
 ```
 
-### Enabling The Plugin
+2. Enabling The Plugin
 In Moodle, go to administrator -> plugin overview, and press 'Update database'.
 
 ## Settings
 Settings can be found at: Site Administration -> Plugins -> Activity Modules -> observation
+
+## Running Tests
+1. To setup the testing environment run:
+```
+./control web
+composer install
+php admin/tool/phpunit/cli/init.php
+```
+2. To run Observation plugin tests:
+```
+./control web
+./vendor/bin/phpunit --mod_observation
+```
 
 ## License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
