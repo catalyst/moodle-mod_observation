@@ -55,7 +55,7 @@ class calendar_signup {
         $daysinmonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
         // Padding is the day of week number (e.g. monday = 1) for the first day of the month & year.
-        $startpad = (int) date("w", date($year.'-'.$month.'-01'));
+        $startpad = (int) date("w", date(strtotime($year.'-'.$month.'-01'))) - 1;
 
         // Create array for every day of month.
         $totaldays = $daysinmonth + $startpad;
