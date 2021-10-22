@@ -66,6 +66,7 @@ $capabilities = array(
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
         )
     ),
     'mod/observation:assignstudents' => array(
