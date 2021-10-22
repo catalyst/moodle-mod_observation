@@ -4,7 +4,7 @@ Create and manage observation assessments. This plugin is primarily designed
 for educational facilities as an additional method to conduct assessment tasks 
 in courses requiring lots of practical work such as nursing and chemistry, among others.
 
-### Development Version
+## Development Version
 Warning! Never use the development version in production, there are no guarantees for which state the development branches are in at a given time.
 
 ## Installation
