@@ -54,7 +54,7 @@ class mod_observation_mod_form extends moodleform_mod {
 
         // Timeslot Settings.
         $mform->addElement('header', 'timeslotsettings', get_string('timeslotsettings', 'observation'));
-        $mform->addElement('checkbox', 'students_self_unregister', get_string('allowunenrol', 'observation'));
+        $mform->addElement('advcheckbox', 'students_self_unregister', get_string('allowunenrol', 'observation'));
 
         // Footer.
         $this->standard_coursemodule_elements();

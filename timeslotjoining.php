@@ -40,11 +40,9 @@ require_login($course, true, $cm);
 $pageurl = new moodle_url('/mod/observation/timeslotjoining.php', array('id' => $id));
 
 if ($action !== null) {
-
+    require_sesskey();
     switch ($action) {
         case 'join':
-            require_sesskey();
-
             // Assign user to timeslot.
             if ($slotid === null) {
                 throw new \coding_exception("Missing SlotID parameter");

@@ -42,8 +42,7 @@ class timesloteditor extends \moodleform {
      * Defines the time slot form
      */
     public function definition() {
-        global $PAGE;
-        global $USER;
+        global $PAGE, $USER;
         $mform = $this->_form;
 
         $prefill = $this->_customdata;
