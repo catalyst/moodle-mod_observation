@@ -43,6 +43,7 @@ class timesloteditor extends \moodleform {
      */
     public function definition() {
         global $PAGE;
+        global $USER;
         $mform = $this->_form;
 
         $prefill = $this->_customdata;
@@ -93,7 +94,7 @@ class timesloteditor extends \moodleform {
 
         // Selecting Observer.
         $context = $PAGE->context;
-        $finalusers = [];
+        $finalusers = [$USER->id => fullname($USER)];
         $users = get_enrolled_users($context, 'mod/observation:performobservation');
         foreach ($users as $user) {
             $finalusers[$user->id] = fullname($user);
