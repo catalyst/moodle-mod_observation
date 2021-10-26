@@ -85,8 +85,8 @@ class timesloteditor extends \moodleform {
             $mform->disabledIf('interval_end', 'enable_interval');
 
             // Interval preview.
-            $mform->addElement('static', 'preview_interval', get_string('previewinterval', 'observation'));
-            $mform->addElement('submit', 'preview_submit', get_string('previewinterval', 'observation'));
+            $mform->addElement('static', 'preview_interval', get_string('previewtimeslots', 'observation'));
+            $mform->addElement('submit', 'preview_submit', get_string('previewtimeslots', 'observation'));
             $mform->disabledIf('preview_submit', 'enable_interval');
         }
 
