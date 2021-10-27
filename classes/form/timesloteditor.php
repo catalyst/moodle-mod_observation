@@ -50,7 +50,7 @@ class timesloteditor extends \moodleform {
         // Timeslots.
 
         // Start Time.
-        $mform->addElement('header', 'timeslots', get_string('timeslotdetails', 'observation'));
+        $mform->addElement('header', 'timeslots', get_string('timeslotsetup', 'observation'));
         $mform->addElement('date_time_selector', 'start_time', get_string('starttime', 'observation'));
         $mform->addRule('start_time', get_string('required', 'observation'), 'required', null, 'client');
 
@@ -63,9 +63,8 @@ class timesloteditor extends \moodleform {
 
         // Multiple timeslots (only shown when creating new timeslots).
         if ($prefill['mode'] === 'new') {
-            $mform->addElement('header', 'multipletimeslots', get_string('multipletimeslots', 'observation'));
-
             $mform->addElement('checkbox', 'enable_interval', '', get_string('useinterval', 'observation'));
+            $mform->setDefault('enable_interval', 1);
 
             // Interval selector group.
             $options = [
@@ -86,8 +85,8 @@ class timesloteditor extends \moodleform {
             $mform->disabledIf('interval_end', 'enable_interval');
 
             // Interval preview.
-            $mform->addElement('static', 'preview_interval', get_string('previewinterval', 'observation'));
-            $mform->addElement('submit', 'preview_submit', get_string('previewinterval', 'observation'));
+            $mform->addElement('static', 'preview_interval', get_string('previewtimeslots', 'observation'));
+            $mform->addElement('submit', 'preview_submit', get_string('previewtimeslots', 'observation'));
             $mform->disabledIf('preview_submit', 'enable_interval');
         }
 
