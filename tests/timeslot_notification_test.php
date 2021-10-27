@@ -150,10 +150,12 @@ class timeslot_notification_test extends advanced_testcase {
                 (object) self::NOTIFY_DATA);
         }
 
-        // Try and create 1 more (error).
-        $this->expectException('moodle_exception');
+        // Try and create 1 more (will not create more, but no exception should be thrown).
         \mod_observation\timeslot_manager::create_notification($this->instance->id, $this->slot1id, $this->observee->id,
             (object) self::NOTIFY_DATA);
+
+        $notifys = \mod_observation\timeslot_manager::get_users_notifications($this->instance->id, $this->observee->id);
+        $this->assertEquals(\mod_observation\timeslot_manager::MAX_NOTIFICATIONS, count($notifys));
     }
 
     /**

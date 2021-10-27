@@ -30,11 +30,11 @@
     }
 }}
 
-<b> Timeslot registration details </b>
+<b> {{#str}} registerdetailsheader, mod_observation {{/str}} </b>
 
-<p> Start Time: {{start_time_formatted}} </p>
-<p> Duration: {{timeslot.duration}} minutes </p>
+<p> {{#str}} starttime, mod_observation {{/str}}: {{start_time_formatted}} </p>
+<p> {{#str}} duration, mod_observation {{/str}}: {{timeslot.duration}} {{#str}} minutes {{/str}} </p>
 
-<b> Other details </b>
-<p> Registration Time: {{current_time_formatted}} </p>
-<p> Activity: {{observation.name}}
+<b> {{#str}} otherdetails, mod_observation {{/str}} </b>
+<p> {{#str}} registrationtime, mod_observation {{/str}}: {{current_time_formatted}} </p>
+<p> {{#str}} activity, mod_observation {{/str}}: {{observation.name}}

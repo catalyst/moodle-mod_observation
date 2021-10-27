@@ -36,18 +36,16 @@ $pageurl = new moodle_url('/mod/observation/timeslotnotifications.php', ['id' =>
 require_login($course, true, $cm);
 
 // Check for actions in URL params.
-if ($action !== null) {
+if (!empty($action)) {
 
-    if ($notifyid === null) {
+    if (empty($notifyid)) {
         throw new \moodle_exception('missingparam', 'error', null, $a = 'notifyid');
     }
 
-    switch($action) {
-        case 'delete':
-            require_sesskey();
-            \mod_observation\timeslot_manager::delete_notification($observation->id, $USER->id, $notifyid);
-            redirect($pageurl);
-        break;
+    if ($action === 'delete') {
+        require_sesskey();
+        \mod_observation\timeslot_manager::delete_notification($observation->id, $USER->id, $notifyid);
+        redirect($pageurl);
     }
 }
 
@@ -62,8 +60,6 @@ $prefill = [
 $notificationeditor = new \mod_observation\form\notificationeditor(null, $prefill);
 
 if ($fromform = $notificationeditor->get_data()) {
-    require_sesskey();
-
     $data = (object) [
         'interval_amount' => (int)$fromform->interval_amount,
         'interval_multiplier' => (int)$fromform->interval_multiplier
@@ -73,8 +69,6 @@ if ($fromform = $notificationeditor->get_data()) {
 
     redirect($pageurl);
 }
-
-
 
 // Render page.
 $PAGE->set_url($pageurl);

@@ -38,7 +38,7 @@ require_capability('mod/observation:editobservationpoints', $PAGE->context);
 $pageurl = new moodle_url('/mod/observation/viewpoints.php', array('id' => $id));
 
 // Check if action and pointid are present.
-if ($action !== null && $pointid !== null) {
+if (!empty($action) && !empty($pointid)) {
     require_sesskey();
 
     switch ($action) {

@@ -327,7 +327,8 @@ class observation_manager {
                   FROM {observation_points} pts
              LEFT JOIN {observation_point_responses} sess_resp
                     ON pts.id = sess_resp.obs_pt_id AND sess_resp.obs_ses_id = :sessionid
-                 WHERE pts.obs_id = :observationid;';
+                 WHERE pts.obs_id = :observationid
+              ORDER BY list_order';
 
         return $DB->get_records_sql($sql, ['observationid' => $observationid, 'sessionid' => $sessionid]);
     }
@@ -432,9 +433,10 @@ class observation_manager {
 
                 if (!empty($selectedfile)) {
                     // Set the response to html that allows the file to be viewed and downloaded.
-                    $item->response = '<img src="'.$data['link'].'?preview=thumb"></img><br>'.$selectedfile->get_filename().'<br>
-                    <a href="'.$data['link'].'" target="_blank">Open in new tab</a><br>
-                    <a href="'.$data['link'].'" download="'.$selectedfile->get_filename().'" target="_blank">Download</a>';
+                    $item->response = '<img src="'.$data['link'].'?preview=thumb"></img><br>'.$selectedfile->get_filename().'<br>'.
+                    \html_writer::link($data['link'], get_string('opennewtab', 'observation'), ['target' => '_blank']).'<br>'.
+                    \html_writer::link($data['link'], get_string('download', 'observation'),
+                        ['target' => '_blank', 'download' => $selectedfile->get_filename()]);
                 }
             }
 

@@ -29,17 +29,10 @@
     }
 }}
 
-<b> Your registration for the timeslot below has been CANCELLED </b>
+<b> {{#str}} registrationcancelled, mod_observation {{/str}} </b>
 
-<p> Start Time: {{start_time_formatted}} </p>
-<p> Duration: {{timeslot.duration}} minutes </p>
-<p> Activity: {{observation.name}}
+<p> {{#str}} starttime, mod_observation {{/str}}: {{start_time_formatted}} </p>
+<p> {{#str}} duration, mod_observation {{/str}}: {{timeslot.duration}} {{#str}} minutes {{/str}} </p>
+<p> {{#str}} activity, mod_observation {{/str}}: {{observation.name}} </p>
 
-<p> This can happen for a number of reasons, such as:
-<ul>
-    <li> You unregistered yourself from the timeslot </li>
-    <li> A course administrator removed you from the timeslot </li>
-    <li> The timeslot was deleted </li>
-</ul>
-
-<p> Click the link at the bottom of this notification to sign up to a new timeslot. </p>
+<p> {{#str}} reregisternewslot, mod_observation {{/str}} </p>

@@ -88,12 +88,14 @@ function observation_update_instance($data): bool {
         "students_self_unregister" => (int) $data->students_self_unregister
     ));
 
-    // Update all the calendar events to get the new data.
-    $timeslots = \mod_observation\timeslot_manager::get_time_slots($data->instance);
-    $timeslotids = array_column($timeslots, 'id');
+    if ($success === true) {
+        // Update all the calendar events to get the new data.
+        $timeslots = \mod_observation\timeslot_manager::get_time_slots($data->instance);
+        $timeslotids = array_column($timeslots, 'id');
 
-    foreach ($timeslotids as $slotid) {
-        \mod_observation\timeslot_manager::update_timeslot_calendar_events($data->instance, $slotid);
+        foreach ($timeslotids as $slotid) {
+            \mod_observation\timeslot_manager::update_timeslot_calendar_events($data->instance, $slotid);
+        }
     }
 
     return $success;

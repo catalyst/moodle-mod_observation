@@ -39,7 +39,7 @@ require_capability('mod/observation:editobservationpoints', $PAGE->context);
 $pageurl = new moodle_url('/mod/observation/timeslots.php', array('id' => $id));
 
 // Check if action and slotid are present.
-if ($action !== null && $slotid !== null) {
+if (!empty($action) && !empty($slotid)) {
     require_sesskey();
 
     switch ($action) {

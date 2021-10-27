@@ -29,10 +29,10 @@
     }
 }}
 
-<b> Timeslot registration reminder </b>
+<b> {{#str}} messageprovider:signupreminder, mod_observation {{/str}} </b>
 
-<p> Start Time: {{start_time_formatted}} </p>
-<p> Duration: {{timeslot.duration}} minutes </p>
+<p> {{#str}} starttime, mod_observation {{/str}}: {{start_time_formatted}} </p>
+<p> {{#str}} duration, mod_observation {{/str}}: {{timeslot.duration}} {{#str}} minutes {{/str}} </p>
 
-<b> Other details </b>
-<p> Activity: {{observation.name}}
+<b> {{#str}} otherdetails, mod_observation {{/str}} </b>
+<p> {{#str}} activity, mod_observation {{/str}}: {{observation.name}}

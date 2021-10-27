@@ -25,6 +25,7 @@
 
 namespace mod_observation;
 
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/calendar/lib.php');
@@ -404,35 +405,22 @@ class timeslot_manager {
      * @param int $observationid ID of the observation
      * @param int $slotid ID of the timeslot
      * @param int $userid ID of user to remove
-     * @param bool $returnexception If true, returns moodle_exceptions, else will return False if errors
-     * @return bool|moodle_exception True if can unenrol, else False or moodle_exception
+     * @return bool|string True if can unenrol, else error string
      */
-    public static function can_unenrol(int $observationid, int $slotid, int $userid, bool $returnexception) {
+    public static function can_unenrol(int $observationid, int $slotid, int $userid) {
         $slotdata = self::get_existing_slot_data($observationid, $slotid);
         [$observation, $course, $cm] = \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
 
         if ((int)$observation->students_self_unregister === 0) {
-            if ($returnexception) {
-                return new \moodle_exception(get_string('unenrolnotallowed', 'observation'));
-            } else {
-                return false;
-            }
+            return get_string('unenrolnotallowed', 'observation');
         }
 
         if ((int)$slotdata->observee_id === null) {
-            if ($returnexception) {
-                return new \moodle_exception(get_string('unenrolerrorempty', 'observation'));
-            } else {
-                return false;
-            }
+            return get_string('unenrolerrorempty', 'observation');
         }
 
         if ((int)$slotdata->observee_id !== $userid) {
-            if ($returnexception) {
-                return new \moodle_exception(get_string('unenrolerrornotuser', 'observation'));
-            } else {
-                return false;
-            }
+            return get_string('unenrolerrornotuser', 'observation');
         }
 
         return true;
@@ -450,7 +438,7 @@ class timeslot_manager {
 
         // Some error meant the user cannot be unenrolled.
         if ($error !== true) {
-            throw $error;
+            throw new \moodle_exception($error);
         }
 
         // Delete timeslot notifications.
@@ -606,8 +594,9 @@ class timeslot_manager {
         // Ensure user hasn't created too many notifications.
         $currentnotifications = self::get_users_notifications($observationid, $userid);
 
+        // Fail silently if user tries to make too many notifications.
         if (count($currentnotifications) >= self::MAX_NOTIFICATIONS) {
-            throw new \moodle_exception(get_string('toomanynotifications', 'observation'));
+            return;
         }
 
         $DB->insert_record('observation_notifications', [
@@ -620,19 +609,17 @@ class timeslot_manager {
      * Obtains the notifications for a user in a given observation activity
      * @param int $observationid ID of the observation instance
      * @param int $userid ID of the user to get notifications for
-     * @return array
+     * @return array array containing the users notifications stored in the database
      */
-    public static function get_users_notifications(int $observationid, int $userid) {
+    public static function get_users_notifications(int $observationid, int $userid): array {
         global $DB;
 
-        $sql = '
-            SELECT obn.id as notification_id, time_before, ot.observee_id as userid
-              FROM {observation_notifications} obn
-         LEFT JOIN {observation_timeslots} ot
-                ON obn.timeslot_id = ot.id
-             WHERE ot.obs_id = :obsid
-               AND ot.observee_id = :userid
-        ';
+        $sql = 'SELECT obn.id as notification_id, time_before, ot.observee_id as userid
+                  FROM {observation_notifications} obn
+             LEFT JOIN {observation_timeslots} ot
+                    ON obn.timeslot_id = ot.id
+                 WHERE ot.obs_id = :obsid
+                   AND ot.observee_id = :userid';
 
         return $DB->get_records_sql($sql, ['userid' => $userid, 'obsid' => $observationid]);
     }
@@ -684,11 +671,8 @@ class timeslot_manager {
 
                 // Delete notification record.
                 $DB->delete_records('observation_notifications', ['id' => $n->notification_id]);
-                return;
             }
         }
-
-        return;
     }
 
     /**
@@ -807,7 +791,7 @@ class timeslot_manager {
      * @param int $year year to search for timeslots for
      * @return array array of timeslots
      */
-    public static function get_timeslots_for_calendar(int $observationid, int $month, int $year) {
+    public static function get_timeslots_for_calendar(int $observationid, int $month, int $year): array {
         // Get all timeslots.
         $timeslots = self::get_time_slots($observationid, 'start_time');
 
