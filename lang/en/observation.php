@@ -226,3 +226,6 @@ $string['thursday'] = 'Thursday';
 $string['friday'] = 'Friday';
 $string['saturday'] = 'Saturday';
 $string['sunday'] = 'Sunday';
+$string['observation:assignstudents'] = 'Assign students';
+$string['observation:editobservationpoints'] = 'Edit observation points';
+$string['observation:edittimeslots'] = 'Edit timeslots';
