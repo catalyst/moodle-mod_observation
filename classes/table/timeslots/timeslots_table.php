@@ -70,12 +70,6 @@ class timeslots_table extends \table_sql implements \renderable {
             get_string('actions', 'observation'),
         ];
 
-        if ($displaymode === \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING) {
-            // Add observee details as the second last column.
-            array_splice($columns, count($columns) - 1, 0, 'observee_fullname');
-            array_splice($headers, count($headers) - 1, 0, get_string('observeename', 'observation'));
-        }
-
         $this->define_columns($columns);
         $this->define_headers($headers);
 
