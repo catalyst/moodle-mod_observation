@@ -80,7 +80,7 @@ class session_manager {
 
         // Ensure not accidentially calling start session too quickly.
         $prevsession = $DB->get_record('observation_sessions', ['obs_id' => $obsid, 'observee_id' => $observeeid,
-            'observer_id' => $observerid, 'state' => self::SESSION_INPROGRESS]);
+            'observer_id' => $observerid, 'state' => self::SESSION_INPROGRESS], '*', IGNORE_MULTIPLE);
 
         // If there is a previous session similar, check how long ago it was.
         if ($prevsession !== false && time() - $prevsession->start_time < self::START_SESSION_LOCKOUT) {

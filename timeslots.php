@@ -100,7 +100,7 @@ echo $OUTPUT->container_end();
 echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
 
 // See if a timeslot already exists for this session.
-$slotexist = $DB->get_record('observation_timeslots', array('obs_id' => $id));
+$slotexist = $DB->record_exists('observation_timeslots', array('obs_id' => $id));
 
 if ($slotexist !== false) {
     echo \mod_observation\table\timeslots\timeslots_display::timeslots_table($observation->id, $pageurl,

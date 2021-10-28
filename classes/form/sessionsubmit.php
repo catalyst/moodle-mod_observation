@@ -53,7 +53,7 @@ class sessionsubmit extends \moodleform {
         $mform->setType('extracomment', PARAM_TEXT);
 
         // Hidden form elements.
-        $mform->addElement('hidden', 'sessionid', $prefill['session_id']);
+        $mform->addElement('hidden', 'sessionid', $prefill['sessionid']);
         $mform->setType('sessionid', PARAM_INT);
 
         // Set defaults.

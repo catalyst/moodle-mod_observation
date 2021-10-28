@@ -50,7 +50,7 @@ class pointselector extends \moodleform {
         // TODO make this display the titles maybe along with the ID.
         $mform->addElement('select', 'pointid', get_string('observationpoint', 'observation'), $prefill['pointid_options']);
 
-        $mform->addElement('hidden', 'sessionid', $prefill['session_id']);
+        $mform->addElement('hidden', 'sessionid', $prefill['sessionid']);
         $mform->setType('sessionid', PARAM_INT);
 
         // Set defaults.

@@ -74,8 +74,8 @@ class upcomingfilter extends \moodleform {
         $mform->setType('filter_enabled', PARAM_BOOL);
 
         // Disable all filter elements except the cancel button if the filter is applied.
-        $mform->disabledIf('interval_amount', 'filter_enabled', 'eq', true);
-        $mform->disabledIf('interval_multiplier', 'filter_enabled', 'eq', true);
+        $mform->disabledIf('interval_amount', 'filter_enabled', 'eq', 1);
+        $mform->disabledIf('interval_multiplier', 'filter_enabled', 'eq', 1);
 
         // Set defaults.
         $this->set_data($prefill);
@@ -90,8 +90,8 @@ class upcomingfilter extends \moodleform {
     public function validation($data, $files) {
         $errors = [];
 
-        // Ensure interval amount is >= 0.
-        if (!is_int($data['interval_amount']) || $data['interval_amount'] < 0) {
+        // Ensure interval amount is >= 0 if the interval is not currently enabled.
+        if (!$data['filter_enabled'] && (!is_int($data['interval_amount']) || $data['interval_amount'] < 0)) {
             $errors['interval_select_group'] = get_string('intgreaterthanorzero', 'observation');
         }
 

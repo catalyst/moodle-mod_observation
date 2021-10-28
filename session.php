@@ -113,11 +113,10 @@ if ($fromform = $markingform->get_data()) {
     if (!is_null($fromform->saveandnext)) {
         $allpointids = array_column($observationpoints, 'point_id');
         $index = array_search($pointid, $allpointids);
-        $nextpointid = $allpointids[$index + 1];
 
         // Only continue if there is a point to continue to.
-        if (!is_null($nextpointid)) {
-            $pointid = $nextpointid;
+        if (count($allpointids) > $index + 1) {
+            $pointid = $allpointids[$index + 1];
         } else {
             // No more points to process - redirect to the session summary/submission screen.
             redirect(
