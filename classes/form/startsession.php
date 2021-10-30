@@ -66,6 +66,7 @@ class startsession extends \moodleform {
 
         $mform->addElement('text', 'observername', get_string('observer', 'observation'));
         $mform->setDefault('observername', fullname($USER));
+        $mform->setType('observername', PARAM_TEXT);
         $mform->freeze('observername');
 
         $mform->addElement('autocomplete', 'observeeid', get_string('observee', 'observation'), $finalusers, $options);

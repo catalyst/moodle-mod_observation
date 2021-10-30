@@ -21,7 +21,7 @@
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -55,9 +55,8 @@ function observation_get_course_content_items(\core_course\local\entity\content_
  * @return int new observation instance id
  */
 function observation_add_instance($data): int {
-    $cmid = $data->coursemodule;
     return \mod_observation\observation_manager::modify_instance(array(
-        "course" => $cmid,
+        "course" => (int)$data->course,
         "name" => $data->name,
         "intro" => "",
         "timemodified" => time(),
@@ -65,6 +64,7 @@ function observation_add_instance($data): int {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
+        "students_self_unregister" => (int) $data->students_self_unregister
     ));
 }
 
@@ -77,7 +77,7 @@ function observation_add_instance($data): int {
  * @return bool true on success, false or a string error message on failure.
  */
 function observation_update_instance($data): bool {
-    return \mod_observation\observation_manager::modify_instance(array(
+    $success = \mod_observation\observation_manager::modify_instance(array(
         "id" => $data->instance,
         "name" => $data->name,
         "timemodified" => time(),
@@ -85,7 +85,20 @@ function observation_update_instance($data): bool {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
+        "students_self_unregister" => (int) $data->students_self_unregister
     ));
+
+    if ($success === true) {
+        // Update all the calendar events to get the new data.
+        $timeslots = \mod_observation\timeslot_manager::get_time_slots($data->instance);
+        $timeslotids = array_column($timeslots, 'id');
+
+        foreach ($timeslotids as $slotid) {
+            \mod_observation\timeslot_manager::update_timeslot_calendar_events($data->instance, $slotid);
+        }
+    }
+
+    return $success;
 }
 
 /**
@@ -142,4 +155,33 @@ function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
     $matchingevent = $DB->get_records_sql($sql, $params);
 
     return !empty($matchingevent);
+}
+/**
+ * Context checks and serves file from certain areas
+ * @param mixed $course course
+ * @param mixed $cm course module
+ * @param condex_module $context context
+ * @param string $filearea file area
+ * @param mixed $args args
+ * @param bool $forcedownload bool if download should be forced
+ * @param array $options an array of options
+ */
+function observation_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        send_file_not_found();
+    }
+
+    if (strpos($filearea, 'response') !== 0 ) {
+        send_file_not_found();
+    }
+
+    $fs = get_file_storage();
+
+    $filename = array_pop($args);
+    $itemid = array_pop($args);
+    $filepath = '/';
+
+    $file = $fs->get_file($context->id, 'mod_observation', $filearea, $itemid, $filepath, $filename);
+
+    send_stored_file($file, null, 0, $forcedownload, $options);
 }

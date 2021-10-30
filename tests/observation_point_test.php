@@ -46,6 +46,7 @@ class observation_point_test extends advanced_testcase {
         'ins_f' => 1,
         'max_grade' => 5,
         'res_type' => 0,
+        'file_size' => null,
     ];
 
     /**

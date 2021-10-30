@@ -4,15 +4,18 @@ Create and manage observation assessments. This plugin is primarily designed
 for educational facilities as an additional method to conduct assessment tasks 
 in courses requiring lots of practical work such as nursing and chemistry, among others.
 
-### Development Version
+## Development Version
 Warning! Never use the development version in production, there are no guarantees for which state the development branches are in at a given time.
 
-Inside your `moodle/mod` folder you run the following command:
+## Installation
+
+1. Navigate to `moodle/siteroot/mod`
+
 ```
-git clone -b main https://github.com/catalyst/moodle-mod_observation observation
+git clone git@github.com:catalyst/moodle-mod_observation.git observation
 ```
 
-### Enabling The Plugin
+2. Enabling The Plugin
 In Moodle, go to administrator -> plugin overview, and press 'Update database'.
 
 ## Settings

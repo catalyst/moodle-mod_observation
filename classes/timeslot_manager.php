@@ -41,6 +41,11 @@ require_once($CFG->dirroot . '/calendar/lib.php');
 class timeslot_manager {
 
     /**
+     * @var int Maximum number of notifications a user can create for themselves.
+     */
+    const MAX_NOTIFICATIONS = 3;
+
+    /**
      * Modifies or creates a new time slot in the database
      * @param mixed $data Data to pass to database function
      * @return mixed True if updating and successful or ID if inserting and successful.
@@ -103,11 +108,22 @@ class timeslot_manager {
     }
 
     /**
+     * Get all observation timeslots that have no observee registered to them.
+     * @param int $observationid ID of the observation instance
+     * @return array array of database objects obtained from database
+     */
+    public static function get_empty_timeslots(int $observationid): array {
+        global $DB;
+        return $DB->get_records('observation_timeslots', ['obs_id' => $observationid, 'observee_id' => null]);
+    }
+
+    /**
      * Deletes timeslot
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the observation point to delete
+     * @param int $actioninguserid ID of the user actioning this deletion (used in messaging)
      */
-    public static function delete_time_slot(int $observationid, int $slotid) {
+    public static function delete_time_slot(int $observationid, int $slotid, int $actioninguserid) {
         global $DB;
 
         // Get record to get the calendar event ID.
@@ -132,6 +148,11 @@ class timeslot_manager {
                 // If the event cant be deleted for some reason.
                 echo 'Error deleting observee event: ',  $e->getMessage(), "\n";
             }
+        }
+
+        // If observee was registered, send a cancellation message.
+        if (!empty($timeslot->observee_id)) {
+            self::send_cancellation_message($observationid, $slotid, $timeslot->observee_id, $actioninguserid);
         }
 
         $DB->delete_records('observation_timeslots', ['id' => $slotid, 'obs_id' => $observationid]);
@@ -364,9 +385,9 @@ class timeslot_manager {
         $signedupslot = self::get_registered_timeslot($observationid, $userid);
 
         if ($timeslot->observee_id !== null) {
-            throw new moodle_exception("Could not signup to timeslot. Timeslot already taken.");
+            throw new \moodle_exception("Could not signup to timeslot. Timeslot already taken.");
         } else if ($signedupslot !== false) {
-            throw new moodle_exception("Could not signup to timeslot. You have already signed up for a timeslot.");
+            throw new \moodle_exception("Could not signup to timeslot. You have already signed up for a timeslot.");
         }
 
         // Allow signup.
@@ -378,6 +399,67 @@ class timeslot_manager {
 
         self::modify_time_slot($dbdata);
         self::send_signup_confirmation_message($observationid, $slotid, $userid);
+    }
+
+    /** Determines if a user can unenrol from a timeslot as an observee
+     * @param int $observationid ID of the observation
+     * @param int $slotid ID of the timeslot
+     * @param int $userid ID of user to remove
+     * @return bool|string True if can unenrol, else error string
+     */
+    public static function can_unenrol(int $observationid, int $slotid, int $userid) {
+        $slotdata = self::get_existing_slot_data($observationid, $slotid);
+        [$observation, $course, $cm] = \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+
+        if ((int)$observation->students_self_unregister === 0) {
+            return get_string('unenrolnotallowed', 'observation');
+        }
+
+        if ((int)$slotdata->observee_id === null) {
+            return get_string('unenrolerrorempty', 'observation');
+        }
+
+        if ((int)$slotdata->observee_id !== $userid) {
+            return get_string('unenrolerrornotuser', 'observation');
+        }
+
+        return true;
+    }
+
+    /**
+     * Unenrols a user from a timeslot.
+     * @param int $observationid ID of the observation instance
+     * @param int $slotid ID of the timeslot
+     * @param int $userid User to unenrol from timeslot
+     */
+    public static function timeslot_unenrolment(int $observationid, int $slotid, int $userid) {
+        // Query the timeslot to find the signup status (throw exceptions).
+        $error = self::can_unenrol($observationid, $slotid, $userid, true);
+
+        // Some error meant the user cannot be unenrolled.
+        if ($error !== true) {
+            throw new \moodle_exception($error);
+        }
+
+        // Delete timeslot notifications.
+        $notifications = self::get_users_notifications($observationid, $userid);
+
+        foreach ($notifications as $n) {
+            self::delete_notification($observationid, $userid, $n->notification_id);
+        }
+
+        // Allow Unenrolment.
+        $dbdata = [
+            'id' => $slotid,
+            'observee_id' => null,
+            'obs_id' => $observationid,
+            'observee_event_id' => null
+        ];
+
+        // Send cancellation message.
+        self::send_cancellation_message($observationid, $slotid, $userid, $userid);
+
+        self::modify_time_slot($dbdata);
     }
 
     /**
@@ -418,7 +500,44 @@ class timeslot_manager {
         $eventdata->subject           = get_string('signupconfirm', 'observation', $observation->name);
         $eventdata->fullmessage       = "";
         $eventdata->fullmessageformat = FORMAT_HTML;
-        $eventdata->fullmessagehtml   = self::timeslot_html($observationid, $slotid);
+        $eventdata->fullmessagehtml   = self::timeslot_html($observationid, $slotid, 'mod_observation/confirm_message');
+
+        $eventdata->smallmessage      = "";
+        $eventdata->contexturl        = $contexturl;
+        $eventdata->contexturlname    = get_string('viewsignup', 'observation');
+
+        return message_send($eventdata);
+    }
+
+    /**
+     * Sends a reminder message about a timeslot to a specific user.
+     * @param int $observationid id of the observation instance.
+     * @param int $slotid id of the timeslot the user signed up to.
+     * @param int $userid id of the user to send the message to.
+     */
+    public static function send_reminder_message(int $observationid, int $slotid, int $userid) {
+        global $DB;
+        $user = $DB->get_record('user', ['id' => $userid]);
+
+        list($observation, $course, $cm) =
+            \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+
+        $contexturl =
+            (new \moodle_url('/mod/observation/timeslotjoining.php', ['id' => $observation->id]))->out(false);
+
+        $eventdata = new \core\message\message();
+
+        $eventdata->courseid          = $course->id;
+        $eventdata->component         = 'mod_observation';
+        $eventdata->name              = 'signupreminder';
+        $eventdata->notification      = 1;
+
+        $eventdata->userfrom          = \core_user::get_noreply_user();
+        $eventdata->userto            = $user;
+        $eventdata->subject           = get_string('signupreminder', 'observation', $observation->name);
+        $eventdata->fullmessage       = "";
+        $eventdata->fullmessageformat = FORMAT_HTML;
+        $eventdata->fullmessagehtml   = self::timeslot_html($observationid, $slotid, 'mod_observation/reminder_message');
 
         $eventdata->smallmessage      = "";
         $eventdata->contexturl        = $contexturl;
@@ -431,8 +550,9 @@ class timeslot_manager {
      * Generates timeslot HTML message used in signup message notification.
      * @param int $observationid ID of the observation instance
      * @param int $slotid ID of the timeslot
+     * @param string $template Mustache template to render the data to
      */
-    public static function timeslot_html(int $observationid, int $slotid) {
+    public static function timeslot_html(int $observationid, int $slotid, string $template='mod_observation/confirm_message') {
         global $OUTPUT;
 
         list($observation, $course, $cm) =
@@ -447,6 +567,241 @@ class timeslot_manager {
             "start_time_formatted" => userdate($slotdata->start_time)
         ];
 
-        return $OUTPUT->render_from_template('mod_observation/confirm_message', $data);
+        return $OUTPUT->render_from_template($template, $data);
+    }
+
+    /**
+     * Creates a database record for a notification to send at a later date.
+     * @param int $observationid ID of the observation instance
+     * @param int $slotid ID of the timeslot to create a notification for
+     * @param int $userid ID of the user to create the notification for
+     * @param object $data Data containing details about the notification
+     */
+    public static function create_notification(int $observationid, int $slotid, int $userid, $data) {
+        global $DB;
+
+        $interval = $data->interval_amount;
+        $multiplier = $data->interval_multiplier;
+
+        if (!is_int($interval) || $interval < 1) {
+            throw new \coding_exception("Interval amount must be an integer that is greater than or equal to 1");
+        }
+
+        if (!is_int($multiplier) || $multiplier < 1) {
+            throw new \coding_exception("Multiplier amount must be an integer that is greater than or equal to 1");
+        }
+
+        // Ensure user hasn't created too many notifications.
+        $currentnotifications = self::get_users_notifications($observationid, $userid);
+
+        // Fail silently if user tries to make too many notifications.
+        if (count($currentnotifications) >= self::MAX_NOTIFICATIONS) {
+            return;
+        }
+
+        $DB->insert_record('observation_notifications', [
+            'timeslot_id' => $slotid,
+            'time_before' => $interval * $multiplier
+        ]);
+    }
+
+    /**
+     * Obtains the notifications for a user in a given observation activity
+     * @param int $observationid ID of the observation instance
+     * @param int $userid ID of the user to get notifications for
+     * @return array array containing the users notifications stored in the database
+     */
+    public static function get_users_notifications(int $observationid, int $userid): array {
+        global $DB;
+
+        $sql = 'SELECT obn.id as notification_id, time_before, ot.observee_id as userid
+                  FROM {observation_notifications} obn
+             LEFT JOIN {observation_timeslots} ot
+                    ON obn.timeslot_id = ot.id
+                 WHERE ot.obs_id = :obsid
+                   AND ot.observee_id = :userid';
+
+        return $DB->get_records_sql($sql, ['userid' => $userid, 'obsid' => $observationid]);
+    }
+
+    /**
+     * Deletes a notification
+     * @param int $observationid ID of the observation instance
+     * @param int $userid ID of the user to delete notifications for
+     * @param int $notifyid ID of the notification to delete
+     */
+    public static function delete_notification(int $observationid, int $userid, int $notifyid) {
+        global $DB;
+
+        // Ensure user actually owns the notification.
+        $usersnotify = self::get_users_notifications($observationid, $userid);
+        $notifyids = array_column($usersnotify, 'notification_id');
+
+        if (!in_array($notifyid, $notifyids)) {
+            throw new \moodle_exception(get_string('notownnotification', 'observation'));
+        } else {
+            $DB->delete_records('observation_notifications', ['id' => $notifyid]);
+        }
+    }
+
+    /**
+     * Processes notifications. If it is the correct time, will notify user and delete notification. Else ignores.
+     * This is usually run via a CRON job at hourly intervals.
+     */
+    public static function process_notifications() {
+        global $DB;
+
+        // Get all notifications.
+        $sql = '
+            SELECT ot.obs_id as obs_id, obn.id as notification_id, time_before,
+                   ot.observee_id as userid, ot.id as timeslot_id,
+                   ot.start_time as start_time
+              FROM {observation_notifications} obn
+         LEFT JOIN {observation_timeslots} ot
+                ON obn.timeslot_id = ot.id';
+
+        $notifications = $DB->get_records_sql($sql);
+
+        foreach ($notifications as $n) {
+            $notifytime = $n->start_time - $n->time_before;
+
+            if ($notifytime < time()) {
+                // Process it !
+                self::send_reminder_message($n->obs_id, $n->timeslot_id, $n->userid);
+
+                // Delete notification record.
+                $DB->delete_records('observation_notifications', ['id' => $n->notification_id]);
+            }
+        }
+    }
+
+    /**
+     * Removes an observee from a timeslot, and sends a notification to user affected.
+     * @param int $observationid ID of the observation instance
+     * @param int $slotid ID of the timeslot to remove the observee for.
+     * @param int $actioninguserid ID of the user removing the observee (used in messaging)
+     */
+    public static function remove_observee(int $observationid, int $slotid, int $actioninguserid) {
+        global $DB;
+
+        // Find the current observee registered.
+        $slot = self::get_existing_slot_data($observationid, $slotid);
+
+        if (empty($slot->observee_id)) {
+            throw new \moodle_exception("Could not remove observee from timeslot, as there is currently none registered.");
+        }
+
+        $newdata = ['id' => $slotid, 'obs_id' => $observationid, 'observee_id' => null];
+
+        $DB->update_record('observation_timeslots', $newdata);
+        self::send_cancellation_message($observationid, $slotid, $slot->observee_id, $actioninguserid);
+    }
+
+    /**
+     * Sends the signup confirmation message to the desired user.
+     * @param int $observationid id of the observation instance.
+     * @param int $slotid id of the timeslot the user signed up to.
+     * @param int $userid id of the user to send the message to.
+     * @param int $sendinguserid ID of the user who is sending the message.
+     */
+    public static function send_cancellation_message(int $observationid, int $slotid, int $userid, int $sendinguserid) {
+        global $DB;
+        $user = $DB->get_record('user', ['id' => $userid]);
+        $sender = $DB->get_record('user', ['id' => $sendinguserid]);
+
+        list($observation, $course, $cm) =
+            \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+
+        $contexturl =
+            (new \moodle_url('/mod/observation/timeslotjoining.php', ['id' => $observation->id]))->out(false);
+
+        $eventdata = new \core\message\message();
+
+        $eventdata->courseid          = $course->id;
+        $eventdata->component         = 'mod_observation';
+        $eventdata->name              = 'cancellationalert';
+        $eventdata->notification      = 1;
+
+        $eventdata->userfrom          = $sender;
+        $eventdata->userto            = $user;
+        $eventdata->subject           = get_string('cancellationalert', 'observation', $observation->name);
+        $eventdata->fullmessage       = "";
+        $eventdata->fullmessageformat = FORMAT_HTML;
+        $eventdata->fullmessagehtml   = self::timeslot_html($observationid, $slotid, 'mod_observation/cancellation_message');
+
+        $eventdata->smallmessage      = "";
+        $eventdata->contexturl        = $contexturl;
+        $eventdata->contexturlname    = get_string('signupfortimeslot', 'observation');
+
+        return message_send($eventdata);
+    }
+
+    /**
+     * Randomly assigns users from the course to open timeslots.
+     * Users are only assigned if they do not have the mod/observation:performobservation permission,
+     * and have not already signed up to a timeslot.
+     * @param int $observationid ID of the observation instance
+     * @return array array of user Ids who were not signed up to a timeslot (e.g. not enough timeslots).
+     */
+    public static function randomly_assign_students(int $observationid): array {
+        global $DB;
+
+        list($obs, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
+        $context = \context_course::instance($course->id);
+
+        // Get everyone enrolled in this course.
+        $courseusers = array_column(get_enrolled_users($context), 'id');
+
+        // Ignore those who can perform observations (i.e. the tutors).
+        $observers = array_column(get_enrolled_users($context, 'mod/observation:performobservation'), 'id');
+
+        // Ignore students who already have a timeslot.
+        $currentslots = self::get_time_slots($observationid);
+        $existingobservees = array_column($currentslots, 'observee_id');
+        $existingobservees = array_filter($existingobservees); // Filter null.
+
+        // Find the users we want to sign up (i.e. the users who are enrolled, but are not already signed up and are not observers).
+        $users = array_diff($courseusers, $observers, $existingobservees);
+
+        // Find the empty timeslots.
+        $emptyslots = array_column(self::get_empty_timeslots($observationid), 'id');
+
+        $transaction = $DB->start_delegated_transaction();
+
+        // Match each user to an empty timeslot.
+        while (count($users) !== 0 && count($emptyslots) !== 0) {
+            // Pop off a user and a timeslot.
+            $user = array_pop($users);
+            $timeslot = array_pop($emptyslots);
+
+            // Sign up user to timeslot.
+            self::timeslot_signup($observationid, $timeslot, $user);
+        }
+
+        $transaction->allow_commit();
+
+        // Return the remaining users who were not signed up (likely due to insufficient number of timeslots).
+        return $users;
+    }
+
+    /**
+     * Gets the timeslots for the calendar view.
+     * @param int $observationid ID of the observation instance
+     * @param int $month month to search for timeslots for (1-12)
+     * @param int $year year to search for timeslots for
+     * @return array array of timeslots
+     */
+    public static function get_timeslots_for_calendar(int $observationid, int $month, int $year): array {
+        // Get all timeslots.
+        $timeslots = self::get_time_slots($observationid, 'start_time');
+
+        $calendartimeslots = array_filter($timeslots, function($slot) use($month, $year) {
+            $timeslotmonth = date('n', $slot->start_time);
+            $timeslotyear = date('Y', $slot->start_time);
+
+            return ((string) $month === $timeslotmonth && (string) $year === $timeslotyear);
+        });
+
+        return $calendartimeslots;
     }
 }

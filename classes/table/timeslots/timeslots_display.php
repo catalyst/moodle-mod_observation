@@ -56,10 +56,16 @@ class timeslots_display {
     const DISPLAY_MODE_UPCOMING = 2;
 
     /**
-     * Display mode with action buttons disabled.
+     * Display mode with action buttons for teachers.
      * @param const int
      */
-    const DISPLAY_MODE_ASSIGNED = 3;
+    const DISPLAY_MODE_OBSERVER_ASSIGNED = 3;
+
+    /**
+     * Display mode with action buttons for students.
+     * @param const int
+     */
+    const DISPLAY_MODE_OBSERVEE_REGISTERED = 4;
 
     /**
      * Common SQL for timeslot tables
@@ -69,7 +75,8 @@ class timeslots_display {
         'fields' => "ot.*,
                     CONCAT(u.firstname, ' ', u.lastname) as observer_fullname,
                     u.email as observer_email,
-                    CONCAT(o.firstname, ' ', o.lastname) as observee_fullname",
+                    CONCAT(o.firstname, ' ', o.lastname) as observee_fullname,
+                    o.email as observee_email",
         'from' => '{observation_timeslots} ot
                     LEFT JOIN {user} u ON ot.observer_id = u.id
                     LEFT JOIN {user} o on ot.observee_id = o.id',

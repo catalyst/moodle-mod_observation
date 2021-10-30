@@ -1,0 +1,120 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_observation/calendar_signup
+
+    Example context (json):
+    {
+	"title": "Timeslots",
+	"month": 10,
+	"year": 2021,
+	"monthname": "October",
+	"nextbtn": "<a href='somelink'> Next </a>",
+	"prevbtn": "<a href='somelink'> Prev </a>",
+	"entries": [
+		[{
+			"daynum": 1,
+			"events": [{
+				"start_time_formatted": "Tuesday 10 October 2021 5pm",
+				"join_button": "<a href='somelink'> Join </a>"
+			}]
+		},
+        {
+			"daynum": 2,
+			"events": [{
+				"start_time_formatted": "Tuesday 10 October 2021 5pm",
+				"join_button": "<a href='somelink'> Join </a>"
+			}]
+		},
+        {
+			"daynum": 3,
+			"events": [{
+				"start_time_formatted": "Tuesday 10 October 2021 5pm",
+				"join_button": "<a href='somelink'> Join </a>"
+			}]
+		},
+        {
+			"daynum": 4,
+			"events": [{
+				"start_time_formatted": "Tuesday 10 October 2021 5pm",
+				"join_button": "<a href='somelink'> Join </a>"
+			}]
+		},
+        {
+			"daynum": 5,
+			"events": [{
+				"start_time_formatted": "Tuesday 10 October 2021 5pm",
+				"join_button": "<a href='somelink'> Join </a>"
+			}]
+		},
+        {
+			"daynum": 6,
+			"events": [{
+				"start_time_formatted": "Tuesday 10 October 2021 5pm",
+				"join_button": "<a href='somelink'> Join </a>"
+			}]
+		},
+        {
+			"daynum": 7,
+			"events": [{
+				"start_time_formatted": "Tuesday 10 October 2021 5pm",
+				"join_button": "<a href='somelink'> Join </a>"
+			}]
+		}]
+	]
+}
+}}
+
+<h2> {{title}} </h2>
+
+<span> {{{prevbtn}}}  {{monthname}} {{year}} {{{nextbtn}}} </span>
+
+<table class="table table-bordered" style="table-layout: fixed">
+    <tbody>
+		<tr class="table-secondary">
+			<th> {{#str}} monday, mod_observation {{/str}} </th>
+			<th> {{#str}} tuesday, mod_observation {{/str}} </th>
+			<th> {{#str}} wednesday, mod_observation {{/str}} </th>
+			<th> {{#str}} thursday, mod_observation {{/str}} </th>
+			<th> {{#str}} friday, mod_observation {{/str}} </th>
+			<th> {{#str}} saturday, mod_observation {{/str}} </th>
+			<th> {{#str}} sunday, mod_observation {{/str}} </th>
+		</tr>
+
+        {{! Iterate over each week in the month}}
+        {{#entries}}
+            <tr>
+            {{! Iterate over each day in the week}}
+            {{#.}}
+                <td>
+                    {{daynum}}
+                     <div style="height: 150px; overflow-y: scroll;">
+                        {{! Iterate over every event in the day}}
+                        {{#events}}
+                            <div class="border p-2 mb-1">
+                                {{start_time_formatted}}
+                                <br />
+                                {{{join_button}}}
+                            </div>
+                        {{/events}}
+                    </div>
+                </td>
+            {{/.}}
+            </tr>
+        {{/entries}}
+    </tbody>
+</table>

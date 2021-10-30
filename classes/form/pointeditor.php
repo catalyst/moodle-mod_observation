@@ -51,8 +51,17 @@ class pointeditor extends \moodleform {
         $radioarray = array();
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('textinputtype', 'observation'), 0);
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('passfailtype', 'observation'), 1);
+        $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('evidencetype', 'observation'), 2);
+
         $mform->addGroup($radioarray, 'radioar', get_string('obpointtype', 'observation'), array(' '), false);
         $mform->setDefault('type', 0);
+
+        // Evidence file size.
+        $mform->addElement('text', 'file_size', get_string('maxfilesize', 'observation'));
+        $mform->setType('file_size', PARAM_INT);
+        $mform->setDefault('file_size', 500);
+        $mform->addRule('file_size', get_string('err_numeric', 'form'), 'numeric', null, 'client');
+        $mform->hideIf('file_size', 'res_type', 'notchecked', '2');
 
         // Title.
         $mform->addElement('text', 'title', get_string('title', 'observation'));
@@ -86,5 +95,29 @@ class pointeditor extends \moodleform {
 
         // Action buttons.
         $this->add_action_buttons();
+    }
+
+    /**
+     * Custom validations for the form.
+     * NOTE: these are only run server side when get_data() is called.
+     * @param mixed $data form data
+     * @param mixed $files form files
+     */
+    public function validation($data, $files) {
+        $errors = [];
+
+        if ((int)$data['res_type'] === 2) {
+            // Ensure file size is given for response type 'evidence'.
+            if (empty($data['file_size'])) {
+                $errors['file_size'] = get_string('filesizerequired', 'observation');
+            }
+
+            // Ensure 1 <= file size <= 1000 and is an integer.
+            if ($data['file_size'] > 1000 || $data['file_size'] < 1 || !is_int($data['file_size'])) {
+                $errors['file_size'] = get_string('filesizebounds', 'observation');
+            }
+        }
+
+        return $errors;
     }
 }

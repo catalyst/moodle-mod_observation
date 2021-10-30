@@ -29,6 +29,9 @@ $id = required_param('id', PARAM_INT); // Observation instance ID.
 $slotid = optional_param('slotid', null, PARAM_INT); // Time slot ID.
 $action = optional_param('action', null, PARAM_TEXT); // Action.
 
+$calmonth = optional_param('calmonth', (int)date('m'), PARAM_INT); // Signup calendar month.
+$calyear = optional_param('calyear', (int)date('Y'), PARAM_INT); // Signup calendar year.
+
 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
 // Check permissions.
@@ -37,7 +40,7 @@ require_login($course, true, $cm);
 $pageurl = new moodle_url('/mod/observation/timeslotjoining.php', array('id' => $id));
 
 if ($action !== null) {
-
+    require_sesskey();
     switch ($action) {
         case 'join':
             // Assign user to timeslot.
@@ -47,6 +50,13 @@ if ($action !== null) {
 
             \mod_observation\timeslot_manager::timeslot_signup($observation->id, $slotid, $USER->id);
             break;
+        case 'unenrol':
+            // Unenrols user from course.
+            if ($slotid === null) {
+                throw new \coding_exception("Missing SlotID parameter");
+            }
+            \mod_observation\timeslot_manager::timeslot_unenrolment($observation->id, $slotid, $USER->id);
+            break;
 
         default:
             // Unknown action.
@@ -54,7 +64,7 @@ if ($action !== null) {
                 'invalidqueryparam',
                 'error',
                 null,
-                ['expected' => "'join'", 'actual' => $action]);
+                ['expected' => "'join', 'unenrol'", 'actual' => $action]);
     }
 
     // Redirect back to this page but without params after running action to avoid weird errors if user refreshes page.
@@ -81,11 +91,19 @@ if ($signedupslot === false) {
     echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
     echo \mod_observation\table\timeslots\timeslots_display::timeslots_table($observation->id, $pageurl,
     \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_SIGNUP);
+
+    // Calendar signup view.
+    echo \mod_observation\calendar_signup::calendar_signup_view($observation->id,
+        get_string('calendarsignup', 'observation'), $calmonth, $calyear, $pageurl);
 } else {
     // Already signed up - show details.
     echo $OUTPUT->heading(get_string('yourtimeslot', 'observation'), 3);
     echo \mod_observation\table\timeslots\timeslots_display::assigned_timeslots_table($observation->id, $pageurl,
-    \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_ASSIGNED, $USER->id);
+    \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_OBSERVEE_REGISTERED, $USER->id);
+
+    echo $OUTPUT->heading(get_string('timeslotnotifications', 'observation'), 3);
+    echo $OUTPUT->single_button(new moodle_url('/mod/observation/timeslotnotifications.php', ['id' => $id]),
+        get_string('setuptimeslotnotifications', 'observation'), 'GET');
 }
 
 // Moodle footer.

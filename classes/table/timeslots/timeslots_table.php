@@ -25,8 +25,6 @@
 
 namespace mod_observation\table\timeslots;
 
-use context_course;
-
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -56,6 +54,8 @@ class timeslots_table extends \table_sql implements \renderable {
             'duration',
             'observer_fullname',
             'observer_email',
+            'observee_fullname',
+            'observee_email',
             'action',
         ];
 
@@ -65,14 +65,10 @@ class timeslots_table extends \table_sql implements \renderable {
             get_string('duration', 'observation'),
             get_string('observer_fullname', 'observation'),
             get_string('observer_email', 'observation'),
+            get_string('observee_fullname', 'observation'),
+            get_string('observee_email', 'observation'),
             get_string('actions', 'observation'),
         ];
-
-        if ($displaymode === \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING) {
-            // Add observee details as the second last column.
-            array_splice($columns, count($columns) - 1, 0, 'observee_fullname');
-            array_splice($headers, count($headers) - 1, 0, get_string('observeename', 'observation'));
-        }
 
         $this->define_columns($columns);
         $this->define_headers($headers);
@@ -106,22 +102,39 @@ class timeslots_table extends \table_sql implements \renderable {
         switch($this->displaymode) {
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_EDITING:
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'edit']), get_string('edit', 'observation'));
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'edit', 'sesskey' => sesskey()]),
+                    get_string('edit', 'observation'), 'btn-secondary');
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete']), get_string('delete', 'observation'));
-            break;
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'delete', 'sesskey' => sesskey()]),
+                    get_string('delete', 'observation'), 'btn-secondary');
+
+                if ($row->observee_id !== null) {
+                    $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
+                        ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'kick', 'sesskey' => sesskey()]),
+                        get_string('kickobservee', 'observation'), 'btn-warning');
+                }
+                break;
 
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_SIGNUP:
                 $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
-                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'join']), get_string('join', 'observation'));
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'join', 'sesskey' => sesskey()]),
+                    get_string('join', 'observation'), 'btn-secondary');
             break;
 
             case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_UPCOMING:
                 if ($row->observee_id !== null) {
                     $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
-                        'slotid' => $row->id, 'action' => 'startsession']), get_string('startobservationsession', 'observation'));
+                        'slotid' => $row->id, 'action' => 'startsession', 'sesskey' => sesskey()]),
+                        get_string('startobservationsession', 'observation'), 'btn-secondary');
                 } else {
                     $htmlout .= get_string('noobservee', 'observation');
+                }
+            break;
+            case \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_OBSERVEE_REGISTERED:
+                if (\mod_observation\timeslot_manager::can_unenrol($row->obs_id, $row->id, $row->observee_id) === true) {
+                    $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl,
+                    ['id' => $row->obs_id, 'slotid' => $row->id, 'action' => 'unenrol']),
+                    get_string('unenrol', 'observation'), 'btn-danger');
                 }
             break;
         }

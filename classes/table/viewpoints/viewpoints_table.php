@@ -92,23 +92,22 @@ class viewpoints_table extends \table_sql implements \renderable {
      * @param mixed $row current row
      */
     public function col_action($row) {
-        if ($this->displaymode == \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_ASSIGNED) {
-            $htmlout = "";
-            return $htmlout;
-        };
-
         // Add action buttons.
         $htmlout = \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
-            'pointid' => $row->id, 'action' => 'edit']), get_string('edit', 'observation'), 'btn-secondary');
+            'pointid' => $row->id, 'action' => 'edit', 'sesskey' => sesskey()]),
+            get_string('edit', 'observation'), 'btn-secondary');
 
         $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
-            'pointid' => $row->id, 'action' => 'delete']), get_string('delete', 'observation'), 'btn-secondary');
+            'pointid' => $row->id, 'action' => 'delete', 'sesskey' => sesskey()]),
+            get_string('delete', 'observation'), 'btn-secondary');
 
         $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
-            'pointid' => $row->id, 'action' => 'moveup']), get_string('moveup', 'observation'), 'btn-secondary');
+            'pointid' => $row->id, 'action' => 'moveup', 'sesskey' => sesskey()]),
+            get_string('moveup', 'observation'), 'btn-secondary');
 
         $htmlout .= \mod_observation\table\common::action_button(new \moodle_url($this->baseurl, ['id' => $row->obs_id,
-            'pointid' => $row->id, 'action' => 'movedown']), get_string('movedown', 'observation'), 'btn-secondary');
+            'pointid' => $row->id, 'action' => 'movedown', 'sesskey' => sesskey()]),
+            get_string('movedown', 'observation'), 'btn-secondary');
 
         return $htmlout;
     }

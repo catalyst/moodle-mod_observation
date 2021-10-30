@@ -39,7 +39,8 @@ require_capability('mod/observation:editobservationpoints', $PAGE->context);
 $pageurl = new moodle_url('/mod/observation/timeslots.php', array('id' => $id));
 
 // Check if action and slotid are present.
-if ($action !== null && $slotid !== null) {
+if (!empty($action) && !empty($slotid)) {
+    require_sesskey();
 
     switch ($action) {
         case 'edit':
@@ -48,7 +49,11 @@ if ($action !== null && $slotid !== null) {
             break;
 
         case 'delete':
-            \mod_observation\timeslot_manager::delete_time_slot($observation->id, $slotid);
+            \mod_observation\timeslot_manager::delete_time_slot($observation->id, $slotid, $USER->id);
+            break;
+
+        case 'kick':
+            \mod_observation\timeslot_manager::remove_observee($observation->id, $slotid, $USER->id);
             break;
 
         default:
@@ -57,7 +62,7 @@ if ($action !== null && $slotid !== null) {
                 'invalidqueryparam',
                 'error',
                 null,
-                ['expected' => "'edit','delete','moveup' or 'movedown'", 'actual' => $action]);
+                ['expected' => "'edit','delete','kick'", 'actual' => $action]);
     }
 
     // Redirect back to this page but without params after running action to avoid weird errors if user refreshes page.
@@ -73,7 +78,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('editingtimeslots', 'observation'), 2);
 
 // Actions buttons.
-echo $OUTPUT->box_start();
+echo $OUTPUT->container_start('mb-3 p-3 border border-secondary');
 
 // Create new time slot.
 echo $OUTPUT->single_button(
@@ -81,13 +86,21 @@ echo $OUTPUT->single_button(
     get_string('createnew', 'observation'),
     'get'
 );
-echo $OUTPUT->box_end();
+
+// Randomly assign students to timeslots.
+echo $OUTPUT->single_button(
+    new moodle_url('/mod/observation/assignstudents.php', array('mode' => 'randomassign', 'id' => $observation->id)),
+    get_string('randomlyassign', 'observation'),
+    'get'
+);
+
+echo $OUTPUT->container_end();
 
 // Time Slot Viewer (Table).
 echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
 
 // See if a timeslot already exists for this session.
-$slotexist = $DB->get_record('observation_timeslots', array('obs_id' => $id));
+$slotexist = $DB->record_exists('observation_timeslots', array('obs_id' => $id));
 
 if ($slotexist !== false) {
     echo \mod_observation\table\timeslots\timeslots_display::timeslots_table($observation->id, $pageurl,

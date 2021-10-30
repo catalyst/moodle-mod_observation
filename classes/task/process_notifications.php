@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form to mark an observation point
+ * Contains task setup to process observation reminder notifications.
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -23,40 +23,30 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_observation\form;
-
-defined('MOODLE_INTERNAL') || die;
-require_once($CFG->libdir.'/formslib.php');
+namespace mod_observation\task;
 
 /**
- * Creates a moodle_form to select an observation point
+ * Scheduled task to process reminder notifications for observation timeslots.
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class pointselector extends \moodleform {
+class process_notifications extends \core\task\scheduled_task {
+
     /**
-     * Defines the point selection form
+     * Returns name of task
+     * @return string name of task
      */
-    public function definition() {
-        $mform = $this->_form;
+    public function get_name() {
+        return get_string('processnotifications', 'observation');
+    }
 
-        $prefill = $this->_customdata;
-
-        $mform->addElement('header', 'selector_header', get_string('selectpoint', 'observation'));
-
-        // TODO make this display the titles maybe along with the ID.
-        $mform->addElement('select', 'pointid', get_string('observationpoint', 'observation'), $prefill['pointid_options']);
-
-        $mform->addElement('hidden', 'sessionid', $prefill['sessionid']);
-        $mform->setType('sessionid', PARAM_INT);
-
-        // Set defaults.
-        $this->set_data($prefill);
-
-        // Action buttons.
-        $this->add_action_buttons(false, get_string('go', 'observation'));
+    /**
+     * Executes the task
+     */
+    public function execute() {
+        \mod_observation\timeslot_manager::process_notifications();
     }
 }

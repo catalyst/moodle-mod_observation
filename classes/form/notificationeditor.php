@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for 'upcoming timeslots' table
+ * This file contains functions to create notifications for observation timeslots.
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
@@ -29,53 +29,46 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
 
 /**
- * Creates a moodle_form to select a filter for the 'upcoming timeslots' table
+ * Creates a moodle_form to create notifications for observation timeslots.
  *
  * @package   mod_observation
  * @copyright  2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
+ * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upcomingfilter extends \moodleform {
+class notificationeditor extends \moodleform {
     /**
-     * Defines the form
+     * Defines the notification editor form
      */
     public function definition() {
         $mform = $this->_form;
 
         $prefill = $this->_customdata;
-        // Interval selector group.
+
+        $mform->addElement('header', 'notificationheader', get_string('createnotification', 'observation'));
+
         $options = [
-            MINSECS => get_string('minutes'),
-            HOURSECS => get_string('hours'),
-            DAYSECS => get_string('days'),
+            MINSECS => get_string('minutes').' '.get_string('before', 'observation'),
+            HOURSECS => get_string('hours').' '.get_string('before', 'observation'),
+            DAYSECS => get_string('days').' '.get_string('before', 'observation'),
         ];
 
         // Change the button text depending on if the filter is enabled.
-        $buttontext = $prefill['filter_enabled'] === true ? get_string('resetfilter', 'observation')
-            : get_string('applyfilter', 'observation');
-
         $intervalselector = [
             $mform->createElement('text', 'interval_amount'),
             $mform->createElement('select', 'interval_multiplier', '', $options),
-            $mform->createElement('submit', 'submit_btn', $buttontext)
+            $mform->createElement('submit', 'submit_btn', get_string('create', 'observation'))
         ];
 
-        // Interval selector block.
-        $mform->addGroup($intervalselector, 'interval_select_group', get_string('filterwithin', 'observation'), null, false);
-        $mform->disabledIf('interval_amount', 'enable_interval');
+        $mform->addGroup($intervalselector, 'select_group', get_string('receivenotification', 'observation'), null, false);
         $mform->setType('interval_amount', PARAM_INT);
 
-        // Hidden Elements.
+        // Hidden form elements.
         $mform->addElement('hidden', 'id', $prefill['id']);
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'filter_enabled', $prefill['filter_enabled']);
-        $mform->setType('filter_enabled', PARAM_BOOL);
-
-        // Disable all filter elements except the cancel button if the filter is applied.
-        $mform->disabledIf('interval_amount', 'filter_enabled', 'eq', 1);
-        $mform->disabledIf('interval_multiplier', 'filter_enabled', 'eq', 1);
+        $mform->addElement('hidden', 'slotid', $prefill['slotid']);
+        $mform->setType('slotid', PARAM_INT);
 
         // Set defaults.
         $this->set_data($prefill);
@@ -87,12 +80,11 @@ class upcomingfilter extends \moodleform {
      * @param mixed $data form data
      * @param mixed $files form files
      */
-    public function validation($data, $files) {
-        $errors = [];
+    public function validation($data, $files): array {
+        $errors = parent::validation($data, $files);
 
-        // Ensure interval amount is >= 0 if the interval is not currently enabled.
-        if (!$data['filter_enabled'] && (!is_int($data['interval_amount']) || $data['interval_amount'] < 0)) {
-            $errors['interval_select_group'] = get_string('intgreaterthanorzero', 'observation');
+        if (!is_int($data['interval_amount']) || $data['interval_amount'] < 1) {
+            $errors['select_group'] = get_string('intgreaterthanone', 'observation');
         }
 
         return $errors;

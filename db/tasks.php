@@ -15,23 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines message permissions.
+ * Defines tasks for mod_observation
  *
- * @package mod_observation
- * @copyright 2021 Endurer Solutions Team
- * @author Matthew Hilton <mj.hilton@outlook.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_observation
+ * @copyright  2021 Endurer Solutions Team
+ * @author     Matthew Hilton <mj.hilton@outlook.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$messageproviders = array(
-    // Confirm timeslot signup.
-    'confirmsignup' => [],
-
-    // Reminder of timeslot signup.
-    'signupreminder' => [],
-
-    // Cancellation alert.
-    'cancellationalert' => []
-);
+$tasks = [
+    [
+        'classname' => 'mod_observation\task\process_notifications',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
+];
