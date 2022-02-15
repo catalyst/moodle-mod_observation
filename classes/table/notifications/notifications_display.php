@@ -25,8 +25,6 @@
 
 namespace mod_observation\table\notifications;
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Functions to view observation time slot notifications
  *

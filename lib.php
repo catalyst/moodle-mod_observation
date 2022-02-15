@@ -24,8 +24,6 @@
  * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Return the preconfigured tools which are configured for inclusion in the activity picker.
  *

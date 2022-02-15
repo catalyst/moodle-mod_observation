@@ -25,8 +25,6 @@
 
 namespace mod_observation;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * mod_observation observation management class
  *
