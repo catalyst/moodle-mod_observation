@@ -116,7 +116,7 @@ class observation_session_test extends advanced_testcase {
         $obid = $this->instance->id;
         $sessionid = $this->create_session();
 
-        $this->assertIsInt($sessionid);
+        $this->assertTrue(is_int($sessionid));
 
         // Get session info.
         $sessioninfo = \mod_observation\session_manager::get_session_info($sessionid);
@@ -130,15 +130,15 @@ class observation_session_test extends advanced_testcase {
         // Ensure the observation points are returned.
         $sessiondataids = array_column($sessiondata, 'point_id');
 
-        $this->assertContainsEquals($this->pointid1, $sessiondataids);
-        $this->assertContainsEquals($this->pointid2, $sessiondataids);
+        $this->assertTrue(in_array($this->pointid1, $sessiondataids));
+        $this->assertTrue(in_array($this->pointid2, $sessiondataids));
 
         // Get incomplete points (should be both of them.).
         $incomplete = \mod_observation\session_manager::get_incomplete_points($sessionid);
         $incompleteids = array_column($incomplete, 'point_id');
 
-        $this->assertContainsEquals($this->pointid1, $incompleteids);
-        $this->assertContainsEquals($this->pointid2, $incompleteids);
+        $this->assertTrue(in_array($this->pointid1, $incompleteids));
+        $this->assertTrue(in_array($this->pointid1, $incompleteids));
 
         // Current grade should be zero.
         $currentgrade = \mod_observation\session_manager::calculate_grade($sessionid);
@@ -154,8 +154,8 @@ class observation_session_test extends advanced_testcase {
         $incomplete = \mod_observation\session_manager::get_incomplete_points($sessionid);
         $incompleteids = array_column($incomplete, 'point_id');
 
-        $this->assertNotContainsEquals($this->pointid1, $incompleteids);
-        $this->assertContainsEquals($this->pointid2, $incompleteids);
+        $this->assertFalse(in_array($this->pointid1, $incompleteids));
+        $this->assertTrue(in_array($this->pointid2, $incompleteids));
 
         // Current grade should be 3.
         $currentgrade = \mod_observation\session_manager::calculate_grade($sessionid);
