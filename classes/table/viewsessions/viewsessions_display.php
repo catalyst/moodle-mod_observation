@@ -25,8 +25,6 @@
 
 namespace mod_observation\table\viewsessions;
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Functions to view the list of observation sessions
  *

@@ -25,8 +25,6 @@
 
 namespace mod_observation\table\timeslots;
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Functions to view observation time slots
  *

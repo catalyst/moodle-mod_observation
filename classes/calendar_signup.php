@@ -25,8 +25,6 @@
 
 namespace mod_observation;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Calendar view to signup to timeslots.
  *
