@@ -188,7 +188,6 @@ if ($markingform->no_submit_button_pressed()) {
 
     // Cancel / abandon observation button pressed.
     if (!is_null($fromform->abandonbutton)) {
-
         // If no confirmation yet, display confirmation dialog.
         if ($confirmcancel === null) {
             echo $OUTPUT->confirm(

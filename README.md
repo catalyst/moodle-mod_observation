@@ -1,25 +1,50 @@
 # moodle-mod_observation
 
-Create and manage observation assessments. This plugin is primarily designed 
-for educational facilities as an additional method to conduct assessment tasks 
-in courses requiring lots of practical work such as nursing and chemistry, among others.
+This plugin allows easy management of observational assessments. 
 
-## Development Version
-Warning! Never use the development version in production, there are no guarantees for which state the development branches are in at a given time.
+These assessment usually involve an 'observer' (such as a teacher, tutor, supervisor, etc) and an 'observee' (student, employee, etc). The observer watches the observee as they do a process (such as pour drinks at a bar or play piano), recording if they completed certain 'observation points' during the process. 
+
+These 'observation points' could be key assessment criteria, such as health and safety requirements or specific processes the observee must do. Currently three different types are supported: Pass/fail, Text feedback, and File upload (e.g. images). Observers can record a response and assign a mark for each point.
+
+After an observation session is complete, marks and feedback are stored in the Moodle gradebook for review.
+
+This plugin also supported a timeslot management system, allowing timeslots to be created, assigned to observers and joined by observees - notifications included.
+
+## Branches
+| Moodle Version      | Branch |
+| ----------- | ----------- |
+| 3.5+      | main       |
+
+This plugin has been tested on Moodle 3.9 and 3.5. Other versions are only assumed to be supported.
 
 ## Installation
 
-1. Navigate to `moodle/siteroot/mod`
-
+1. Clone the plugin into your moodle instance
 ```
-git clone git@github.com:catalyst/moodle-mod_observation.git observation
+git clone git@github.com:catalyst/moodle-mod_observation.git mod/observation
+```
+2. Run install / upgrade script
+   
+```
+php admin/cli/upgrade.php
 ```
 
-2. Enabling The Plugin
-In Moodle, go to administrator -> plugin overview, and press 'Update database'.
+## Contributing and Support
+Issues, and pull requests using github are welcome and encouraged!
 
-## Settings
-Settings can be found at: Site Administration -> Plugins -> Activity Modules -> observation
+https://github.com/catalyst/moodle-mod_observation/issues
+
+If you would like commercial support or would like to sponsor additional improvements to this plugin please contact us:
+
+https://www.catalyst-au.net/contact-us
+
+# Credits
+
+This plugin was developed by Catalyst IT Australia:
+
+https://www.catalyst-au.net/
+
+![Catalyst IT](pix/catalyst.svg)
 
 ## License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.

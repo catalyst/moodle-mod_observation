@@ -45,17 +45,13 @@ if ($mode !== 'randomassign') {
 require_login($course, true, $cm);
 require_capability('mod/observation:assignstudents', $PAGE->context);
 
-$pageurl = new moodle_url('/mod/observation/assignstudents.php', array('id' => $id, 'mode' => $mode));
-$PAGE->set_url($pageurl);
-$PAGE->set_title($course->shortname.': '.$observation->name);
-$PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
+$pageoutput;
 
 if ($mode === 'randomassign') {
     // If no confirmation yet, display confirmation dialog.
     if ($confirm === null) {
-        echo $OUTPUT->confirm(get_string('confirmrandomlyassign', 'observation'), new moodle_url($pageurl, ['confirm' => true]),
-            new moodle_url($pageurl, ['confirm' => false]));
+        $pageoutput = $OUTPUT->confirm(get_string('confirmrandomlyassign', 'observation'),
+            new moodle_url($pageurl, ['confirm' => true]), new moodle_url($pageurl, ['confirm' => false]));
     }
 
     // Accepted confirmation.
@@ -82,4 +78,11 @@ if ($mode === 'randomassign') {
     }
 }
 
+// Output page if no redirects.
+$pageurl = new moodle_url('/mod/observation/assignstudents.php', array('id' => $id, 'mode' => $mode));
+$PAGE->set_url($pageurl);
+$PAGE->set_title($course->shortname.': '.$observation->name);
+$PAGE->set_heading($course->fullname);
+echo $OUTPUT->header();
+echo $pageoutput;
 echo $OUTPUT->footer();
