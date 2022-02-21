@@ -17,6 +17,8 @@ This plugin also supported a timeslot management system, allowing timeslots to b
 
 This plugin has been tested on Moodle 3.9 and 3.5. Other versions are only assumed to be supported.
 
+![example workflow](https://github.com/catalyst/moodle-mod_observation/actions/workflows/ci.yml/badge.svg)
+
 ## Installation
 
 1. Clone the plugin into your moodle instance
