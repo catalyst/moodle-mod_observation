@@ -86,7 +86,7 @@ class observation_manager {
      * @param mixed $data Data to be passed to the update or create DB function
      * @return int Returns ID of new instance if creating, else returns 1 if updated successfully, else 0.
      */
-    public static function modify_instance($data): int {
+    public static function modify_instance($data) {
         global $DB;
 
         // Editor data need to be checked to ensure empty strings are not added.
@@ -178,7 +178,7 @@ class observation_manager {
      * @param int $pointid ID of the observation point
      * @return stdClass existing point data
      */
-    public static function get_existing_point_data(int $observationid, int $pointid): object {
+    public static function get_existing_point_data(int $observationid, int $pointid) {
         global $DB;
         return $DB->get_record('observation_points', ['id' => $pointid, 'obs_id' => $observationid], '*', MUST_EXIST);
     }
@@ -189,7 +189,7 @@ class observation_manager {
      * @param string $sortby column to sort by
      * @return array array of database objects obtained from database
      */
-    public static function get_observation_points(int $observationid, string $sortby='list_order'): array {
+    public static function get_observation_points(int $observationid, string $sortby='list_order') {
         global $DB;
         return $DB->get_records('observation_points', ['obs_id' => $observationid], $sortby);
     }
