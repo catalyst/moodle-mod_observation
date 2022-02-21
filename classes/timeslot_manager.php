@@ -89,7 +89,7 @@ class timeslot_manager {
      * Gets observation timeslot data
      * @param int $observationid ID of observation instance
      * @param int $slotid ID of the observation point
-     * @return object existing point data
+     * @return stdClass existing point data
      */
     public static function get_existing_slot_data(int $observationid, int $slotid): object {
         global $DB;

@@ -39,9 +39,9 @@ use \mod_observation\privacy\provider;
  */
 class mod_observation_privacy_testcase extends \core_privacy\tests\provider_testcase {
     /**
-     * Overriding setUp() function to always reset after tests.
+     * Set up for tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
         // Create course and activity.
         $course = $this->getDataGenerator()->create_course();

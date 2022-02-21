@@ -176,7 +176,7 @@ class observation_manager {
      * Gets observation point data
      * @param int $observationid ID of observation instance
      * @param int $pointid ID of the observation point
-     * @return object existing point data
+     * @return stdClass existing point data
      */
     public static function get_existing_point_data(int $observationid, int $pointid): object {
         global $DB;
