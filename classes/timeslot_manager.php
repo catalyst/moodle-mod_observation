@@ -89,9 +89,9 @@ class timeslot_manager {
      * Gets observation timeslot data
      * @param int $observationid ID of observation instance
      * @param int $slotid ID of the observation point
-     * @return object existing point data
+     * @return stdClass existing point data
      */
-    public static function get_existing_slot_data(int $observationid, int $slotid): object {
+    public static function get_existing_slot_data(int $observationid, int $slotid) {
         global $DB;
         return $DB->get_record('observation_timeslots', ['id' => $slotid, 'obs_id' => $observationid], '*', MUST_EXIST);
     }
@@ -102,7 +102,7 @@ class timeslot_manager {
      * @param string $sortby column to sort by
      * @return array array of database objects obtained from database
      */
-    public static function get_time_slots(int $observationid, string $sortby=''): array {
+    public static function get_time_slots(int $observationid, string $sortby='') {
         global $DB;
         return $DB->get_records('observation_timeslots', ['obs_id' => $observationid], $sortby);
     }
@@ -112,7 +112,7 @@ class timeslot_manager {
      * @param int $observationid ID of the observation instance
      * @return array array of database objects obtained from database
      */
-    public static function get_empty_timeslots(int $observationid): array {
+    public static function get_empty_timeslots(int $observationid) {
         global $DB;
         return $DB->get_records('observation_timeslots', ['obs_id' => $observationid, 'observee_id' => null]);
     }
@@ -305,7 +305,7 @@ class timeslot_manager {
      * @param int $endtime Unix epoch format time to stop creating intervals for. Stops when start_time < endtime
      * @return array array of generated timeslots
      */
-    public static function generate_interval_timeslots($data, int $interval, int $multiplier, int $endtime): array {
+    public static function generate_interval_timeslots($data, int $interval, int $multiplier, int $endtime) {
         // Parameter checks.
         if (!is_int($interval) || $interval < 1) {
             throw new \coding_exception("Interval amount must be an integer that is greater than or equal to 1");
@@ -339,7 +339,7 @@ class timeslot_manager {
      * @param mixed $formdata Data from timeslots form
      * @return array array of extracted data
      */
-    public static function transform_form_data($formdata): array {
+    public static function transform_form_data($formdata) {
         return [
             "obs_id" => $formdata->id,
             "start_time" => $formdata->start_time,
@@ -353,7 +353,7 @@ class timeslot_manager {
      * @param array $timeslots array of time slots, notably with the property 'start_time'.
      * @return string HTML string of the preview.
      */
-    public static function generate_preview(array $timeslots): string {
+    public static function generate_preview(array $timeslots) {
         $out = \html_writer::start_div();
 
         $out .= \html_writer::start_tag("b");
@@ -611,7 +611,7 @@ class timeslot_manager {
      * @param int $userid ID of the user to get notifications for
      * @return array array containing the users notifications stored in the database
      */
-    public static function get_users_notifications(int $observationid, int $userid): array {
+    public static function get_users_notifications(int $observationid, int $userid) {
         global $DB;
 
         $sql = 'SELECT obn.id as notification_id, time_before, ot.observee_id as userid
@@ -743,7 +743,7 @@ class timeslot_manager {
      * @param int $observationid ID of the observation instance
      * @return array array of user Ids who were not signed up to a timeslot (e.g. not enough timeslots).
      */
-    public static function randomly_assign_students(int $observationid): array {
+    public static function randomly_assign_students(int $observationid) {
         global $DB;
 
         list($obs, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($observationid);
@@ -791,7 +791,7 @@ class timeslot_manager {
      * @param int $year year to search for timeslots for
      * @return array array of timeslots
      */
-    public static function get_timeslots_for_calendar(int $observationid, int $month, int $year): array {
+    public static function get_timeslots_for_calendar(int $observationid, int $month, int $year) {
         // Get all timeslots.
         $timeslots = self::get_time_slots($observationid, 'start_time');
 
