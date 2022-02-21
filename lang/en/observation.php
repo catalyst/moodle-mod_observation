@@ -229,3 +229,28 @@ $string['sunday'] = 'Sunday';
 $string['observation:assignstudents'] = 'Assign students';
 $string['observation:editobservationpoints'] = 'Edit observation points';
 $string['observation:edittimeslots'] = 'Edit timeslots';
+
+$string['privacy:metadata:core_files'] = 'Files uploaded during observation by observer';
+$string['privacy:metadata:core_calendar'] = 'Calendar events created for timeslot management';
+$string['privacy:metadata:core_message'] = 'Messages sent as notifications with details about observation session signup';
+
+$string['privacy:metadata:observation_point_responses:grade_given'] = 'Grade given for response to observation point';
+$string['privacy:metadata:observation_point_responses:response'] = 'Response given (text, passfail or file)';
+$string['privacy:metadata:observation_point_responses:ex_comment'] = 'Extra comment given for observation point';
+$string['privacy:metadata:observation_point_responses:timecreated'] = 'Time the response was first added';
+$string['privacy:metadata:observation_point_responses:timemodified'] = 'Time the response was last updated';
+$string['privacy:metadata:observation_point_responses'] = 'Observation point responses';
+
+$string['privacy:metadata:observation_timeslots:observer_id'] = 'Observer assigned to timeslot';
+$string['privacy:metadata:observation_timeslots:observee_id'] = 'Observee assigned to timeslot';
+$string['privacy:metadata:observation_timeslots:start_time'] = 'Start time of the observation timeslot';
+$string['privacy:metadata:observation_timeslots:duration'] = 'Duration of the observation timeslot';
+$string['privacy:metadata:observation_timeslots'] = 'Observation timeslots';
+
+$string['privacy:metadata:observation_sessions:observer_id'] = 'Observer who created the observation session';
+$string['privacy:metadata:observation_sessions:observee_id'] = 'Observee being assessed during the observation session';
+$string['privacy:metadata:observation_sessions:state'] = 'State of the observation session';
+$string['privacy:metadata:observation_sessions:start_time'] = 'Start time of the observation session';
+$string['privacy:metadata:observation_sessions:finish_time'] = 'Finish time of the observation session';
+$string['privacy:metadata:observation_sessions:ex_comment'] = 'Extra comment stored in gradebook after observation session';
+$string['privacy:metadata:observation_sessions'] = 'Observation sessions';
