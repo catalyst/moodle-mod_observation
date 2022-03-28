@@ -41,7 +41,8 @@ function observation_get_course_content_items(\core_course\local\entity\content_
         $OUTPUT->pix_icon('icon', 'add observation', 'observation'),
         $defaultmodulecontentitem->get_help(),
         $defaultmodulecontentitem->get_archetype(),
-        $defaultmodulecontentitem->get_component_name()
+        $defaultmodulecontentitem->get_component_name(),
+        MOD_PURPOSE_ASSESSMENT
     );
 
     return [$contentitem];
