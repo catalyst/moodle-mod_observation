@@ -13,7 +13,8 @@ This plugin also supported a timeslot management system, allowing timeslots to b
 ## Branches
 | Moodle Version      | Branch |
 | ----------- | ----------- |
-| 3.5+      | main       |
+| 3.5 - 3.9      | main       |
+| 4.0 | MOODLE_400_STABLE |
 
 This plugin has been tested on Moodle 3.9 and 3.5. Other versions are only assumed to be supported.
 
