@@ -1,125 +1,113 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/observation/db" VERSION="20200615" COMMENT="XMLDB file for Moodle mod/observation"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
->
+<XMLDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PATH="mod/observation/db" VERSION="20220328" COMMENT="XMLDB file for Moodle mod/observation" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
   <TABLES>
     <TABLE NAME="observation" COMMENT="The settings for each observation.">
       <FIELDS>
-        <!-- Standard Moodle Fields -->
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key."/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the instance of the observation. Displayed at the top of each page."/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The description of the observation. This field is used by feature MOD_INTRO."/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the settings for this assign module instance were last modified."/>
-        
-        <!-- Instructions Fields -->
-        <FIELD NAME="observer_ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="string encoded observer instructions"/>
-        <FIELD NAME="observer_ins_f" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observer instructions, 1 = 'html'"/>
-
-        <FIELD NAME="observee_ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="string encoded observee instructions"/>
-        <FIELD NAME="observee_ins_f" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="false" COMMENT="Format for the observee instructions, 1 = 'html'"/>
-
-        <!-- Settings Fields -->
-        <FIELD NAME="students_self_unregister" TYPE="int" LENGTH="1" SEQUENCE="false" NOTNULL="true" DEFAULT="0" COMMENT="Setting to allow students to unregister themselves"/>
-        <FIELD NAME="marking_type" TYPE="char" LENGTH="32" SEQUENCE="false" NOTNULL="true" DEFAULT="immediate" COMMENT="Marking mode for the observation, either 'immediate' or 'post'"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the instance of the observation. Displayed at the top of each page." />
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The description of the observation. This field is used by feature MOD_INTRO." />
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the settings for this assign module instance were last modified." />
+        <FIELD NAME="observer_ins" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="string encoded observer instructions" />
+        <FIELD NAME="observer_ins_f" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Format for the observer instructions, 1 = 'html'" />
+        <FIELD NAME="observee_ins" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="string encoded observee instructions" />
+        <FIELD NAME="observee_ins_f" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Format for the observee instructions, 1 = 'html'" />
+        <FIELD NAME="students_self_unregister" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Setting to allow students to unregister themselves" />
+        <FIELD NAME="marking_type" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="immediate" SEQUENCE="false" COMMENT="Marking mode for the observation, either 'immediate' or 'post'" />
       </FIELDS>
       <KEYS>
-          <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        </KEYS>
-      </TABLE>
-      <TABLE NAME="observation_timeslots" COMMENT="Details about specific timeslots students can sign up to for an observation activity.">
-        <FIELDS>
-            <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
-            <FIELD NAME="obs_id" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" />
-            <FIELD NAME="start_time" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Start datetime for the timeslot (unixtime format)" />
-            <FIELD NAME="duration" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="true" COMMENT="Duration of this timeslot (minutes)" />
-
-            <FIELD NAME="observer_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="true" COMMENT="User id of the observer assigned to this timeslot" />
-            <FIELD NAME="observee_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="User id of the observee if one has registered for this timeslot, else NULL" />
-
-            <FIELD NAME="observer_event_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Event id for the observer assigned to this timeslot" />
-            <FIELD NAME="observee_event_id" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Event id for the observee registered to this timeslot" />
-        </FIELDS>
-        <KEYS>
-            <KEY NAME="primary" TYPE="primary" FIELDS="id" />
-            <KEY NAME="obs_id" TYPE="foreign" FIELDS="obs_id" REFTABLE="observation" REFFIELDS="id" COMMENT="The particular instance of the mod_observation this timeslot is linked to." />
-            <KEY NAME="observer_id" TYPE="foreign" FIELDS="observer_id" REFTABLE="user" REFFIELDS="id"/>
-            <KEY NAME="observee_id" TYPE="foreign" FIELDS="observee_id" REFTABLE="user" REFFIELDS="id"/>
-        </KEYS>
-      </TABLE>
-      <TABLE NAME="observation_points" COMMENT="Details about the questions/points that are shown to the observer to be marked during a session.">
-        <FIELDS>
-            <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
-            <FIELD NAME="obs_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" />
-            <FIELD NAME="title" TYPE="text" SEQUENCE="false" NOTNULL="true" COMMENT="Title of this observation point, used when shown in lists." />
-            <FIELD NAME="list_order" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Determines the ordering of this point relative to other points." />
-            <FIELD NAME="ins" TYPE="text" SEQUENCE="false" NOTNULL="false" COMMENT="Instructions for grading this observation point." />
-            <FIELD NAME="ins_f" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="false" COMMENT="Format of the instructions, either 'html', 'markdown' or 'plaintext'" />
-            <FIELD NAME="max_grade" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="true" COMMENT="Maximum grade that can be given for this observation point." />
-            <FIELD NAME="res_type" TYPE="int" LENGTH="2" SEQUENCE="false" NOTNULL="true" COMMENT="Type of response required for this point. 0 = 'text input'." />
-            <FIELD NAME="file_size" TYPE="int" LENGTH="20" SEQUENCE="false" NOTNULL="false" COMMENT="Maximum file size for evidence files submitted." />
-        </FIELDS>
-        <KEYS>
-            <KEY NAME="primary" TYPE="primary" FIELDS="id" />
-            <KEY NAME="obs_id" TYPE="foreign" FIELDS="obs_id" REFTABLE="observation" REFFIELDS="id" COMMENT="The particular instance of the mod_observation this point is linked to." />
-        </KEYS>
-      </TABLE>
-      <TABLE NAME="observation_sessions" COMMENT="Instance of an observation session whereby an observer marks an observee by completing the observation points">
-        <FIELDS>
-          <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
-          <FIELD NAME="obs_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" />
-          <FIELD NAME="observee_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="User Id of the observee"/>
-          <FIELD NAME="observer_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="User Id of the observer"/>
-          <FIELD NAME="state" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="Current state of the session. Either 'inprogress', 'cancelled' or 'completed'." />
-          <FIELD NAME="start_time" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Start time of the session (unixtime format)" />
-          <FIELD NAME="finish_time" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="Finish time of the session (unixtime format), or NULL if not finished" />
-          <FIELD NAME="ex_comment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="String encoded optional extra comment given if needed." />
-        </FIELDS>
-        <KEYS>
-          <KEY NAME="primary" TYPE="primary" FIELDS="id" />
-          <KEY NAME="obs_id" TYPE="foreign" FIELDS="obs_id" REFTABLE="observation" REFFIELDS="id" COMMENT="The particular instance of the mod_observation this session is linked to." />
-          <KEY NAME="observer_id" TYPE="foreign" FIELDS="observer_id" REFTABLE="user" REFFIELDS="id"/>
-          <KEY NAME="observee_id" TYPE="foreign" FIELDS="observee_id" REFTABLE="user" REFFIELDS="id"/>
-        </KEYS>
-      </TABLE>
-      <TABLE NAME="observation_point_responses" COMMENT="Data from the responses observers give to observation points">
-        <FIELDS>
-          <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
-          <FIELD NAME="obs_pt_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The observation point this response is responding to." />
-          <FIELD NAME="obs_ses_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The observation session this response is part of." />
-          <FIELD NAME="grade_given" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Grade assigned by the observer for this observation point." />
-          <FIELD NAME="response" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="String encoded response, originally formatted as defined by the FK observation_point_id.response_type." />
-          <FIELD NAME="ex_comment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="String encoded optional extra comment given if needed." />
-          <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Unix epoch time when item was created." />
-          <FIELD NAME="timemodified" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Unix epoch time when item was last edited." />
-        </FIELDS>
-        <KEYS>
-          <KEY NAME="primary" TYPE="primary" FIELDS="id" />
-          <KEY NAME="obs_pt_id" TYPE="foreign" FIELDS="obs_pt_id" REFTABLE="observation_points" REFFIELDS="id"/>
-          <KEY NAME="obs_ses_id" TYPE="foreign" FIELDS="obs_ses_id" REFTABLE="observation_sessions" REFFIELDS="id"/>
-        </KEYS>
-      </TABLE>
-      <TABLE NAME="observation_res_type_map" COMMENT="Mappings of response type code to the lang string code">
-        <FIELDS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="observation_timeslots" COMMENT="Details about specific timeslots students can sign up to for an observation activity.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
+        <FIELD NAME="obs_id" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="start_time" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Start datetime for the timeslot (unixtime format)" />
+        <FIELD NAME="duration" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Duration of this timeslot (minutes)" />
+        <FIELD NAME="observer_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="User id of the observer assigned to this timeslot" />
+        <FIELD NAME="observee_id" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="User id of the observee if one has registered for this timeslot, else NULL" />
+        <FIELD NAME="observer_event_id" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="Event id for the observer assigned to this timeslot" />
+        <FIELD NAME="observee_event_id" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="Event id for the observee registered to this timeslot" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="obs_id" TYPE="foreign" FIELDS="obs_id" REFTABLE="observation" REFFIELDS="id" COMMENT="The particular instance of the mod_observation this timeslot is linked to." />
+        <KEY NAME="observer_id" TYPE="foreign" FIELDS="observer_id" REFTABLE="user" REFFIELDS="id" />
+        <KEY NAME="observee_id" TYPE="foreign" FIELDS="observee_id" REFTABLE="user" REFFIELDS="id" />
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="observation_points" COMMENT="Details about the questions/points that are shown to the observer to be marked during a session.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
+        <FIELD NAME="obs_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="title" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Title of this observation point, used when shown in lists." />
+        <FIELD NAME="list_order" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Determines the ordering of this point relative to other points." />
+        <FIELD NAME="ins" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Instructions for grading this observation point." />
+        <FIELD NAME="ins_f" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Format of the instructions, either 'html', 'markdown' or 'plaintext'" />
+        <FIELD NAME="max_grade" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Maximum grade that can be given for this observation point." />
+        <FIELD NAME="res_type" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="Type of response required for this point. 0 = 'text input'." />
+        <FIELD NAME="file_size" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum file size for evidence files submitted." />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="obs_id" TYPE="foreign" FIELDS="obs_id" REFTABLE="observation" REFFIELDS="id" COMMENT="The particular instance of the mod_observation this point is linked to." />
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="observation_sessions" COMMENT="Instance of an observation session whereby an observer marks an observee by completing the observation points.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
+        <FIELD NAME="obs_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="observee_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="User Id of the observee" />
+        <FIELD NAME="observer_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="User Id of the observer" />
+        <FIELD NAME="state" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="Current state of the session. Either 'inprogress', 'cancelled' or 'completed'." />
+        <FIELD NAME="start_time" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Start time of the session (unixtime format)" />
+        <FIELD NAME="finish_time" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="Finish time of the session (unixtime format), or NULL if not finished" />
+        <FIELD NAME="ex_comment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="String encoded optional extra comment given if needed." />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="obs_id" TYPE="foreign" FIELDS="obs_id" REFTABLE="observation" REFFIELDS="id" COMMENT="The particular instance of the mod_observation this session is linked to." />
+        <KEY NAME="observer_id" TYPE="foreign" FIELDS="observer_id" REFTABLE="user" REFFIELDS="id" />
+        <KEY NAME="observee_id" TYPE="foreign" FIELDS="observee_id" REFTABLE="user" REFFIELDS="id" />
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="observation_point_responses" COMMENT="Data from the responses observers give to observation points.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
+        <FIELD NAME="obs_pt_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The observation point this response is responding to." />
+        <FIELD NAME="obs_ses_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The observation session this response is part of." />
+        <FIELD NAME="grade_given" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Grade assigned by the observer for this observation point." />
+        <FIELD NAME="response" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="String encoded response, originally formatted as defined by the FK observation_point_id.response_type." />
+        <FIELD NAME="ex_comment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="String encoded optional extra comment given if needed." />
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Unix epoch time when item was created." />
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Unix epoch time when item was last edited." />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="obs_pt_id" TYPE="foreign" FIELDS="obs_pt_id" REFTABLE="observation_points" REFFIELDS="id" />
+        <KEY NAME="obs_ses_id" TYPE="foreign" FIELDS="obs_ses_id" REFTABLE="observation_sessions" REFFIELDS="id" />
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="observation_res_type_map" COMMENT="Mappings of response type code to the lang string code.">
+      <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
         <FIELD NAME="res_type" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="res_type code" />
         <FIELD NAME="lang_string" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="corresponding lang string" />
-        </FIELDS>
-          <KEYS>
-          <KEY NAME="primary" TYPE="primary" FIELDS="id" />
-        </KEYS>
-      </TABLE>
-     <TABLE NAME="observation_notifications" COMMENT="Notification records for observation timeslots">
-        <FIELDS>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="observation_notifications" COMMENT="Notification records for observation timeslots">
+      <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." />
         <FIELD NAME="timeslot_id" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="ID of timeslot" />
         <FIELD NAME="time_before" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Seconds to notify before" />
-        </FIELDS>
-          <KEYS>
-          <KEY NAME="primary" TYPE="primary" FIELDS="id" />
-          <KEY NAME="timeslot_id" TYPE="foreign" FIELDS="timeslot_id" REFTABLE="observation_timeslots" REFFIELDS="id"/>
-        </KEYS>
-      </TABLE>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="timeslot_id" TYPE="foreign" FIELDS="timeslot_id" REFTABLE="observation_timeslots" REFFIELDS="id" />
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>
