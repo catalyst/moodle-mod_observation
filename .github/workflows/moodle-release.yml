@@ -1,0 +1,16 @@
+name: Releasing in the Plugins directory
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'version.php'
+
+jobs:
+  workflow_group_35_plus_release:
+    uses: catalyst/catalyst-moodle-workflows/.github/workflows/group-35-plus-release.yml@main
+    with:
+      plugin_name: mod_observation
+    secrets:
+      moodle_org_token: ${{ secrets.MOODLE_ORG_TOKEN }}
