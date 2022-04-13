@@ -229,6 +229,7 @@ $string['sunday'] = 'Sunday';
 $string['observation:assignstudents'] = 'Assign students';
 $string['observation:editobservationpoints'] = 'Edit observation points';
 $string['observation:edittimeslots'] = 'Edit timeslots';
+$string['observation:viewfiles'] = 'View uploaded files';
 
 $string['privacy:metadata:core_files'] = 'Files uploaded during observation by observer';
 $string['privacy:metadata:core_calendar'] = 'Calendar events created for timeslot management';
