@@ -57,6 +57,8 @@ if ($mode === 'randomassign') {
 
     // Accepted confirmation.
     if ($confirm === 1) {
+        require_sesskey();
+
         $remainingusers = timeslot_manager::randomly_assign_students($id);
 
         $message = get_string('randomassignsuccess', 'observation');
