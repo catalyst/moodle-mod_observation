@@ -158,13 +158,19 @@ function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
  * Context checks and serves file from certain areas
  * @param mixed $course course
  * @param mixed $cm course module
- * @param condex_module $context context
+ * @param context $context context
  * @param string $filearea file area
  * @param mixed $args args
  * @param bool $forcedownload bool if download should be forced
  * @param array $options an array of options
  */
 function observation_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+    // Ensure logged in to course.
+    require_course_login($course->id);
+
+    // Ensure has correct capability.
+    require_capability('mod/observation:viewfiles', $context);
+
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }
