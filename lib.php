@@ -119,12 +119,12 @@ function observation_delete_instance($id) {
  */
 function observation_supports($feature) {
     switch($feature) {
-        case FEATURE_GRADE_HAS_GRADE: {
+        case FEATURE_GRADE_HAS_GRADE:
             return true;
-        }
-        default: {
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        default:
             return null;
-        }
     }
 }
 
