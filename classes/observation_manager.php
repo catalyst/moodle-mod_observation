@@ -336,9 +336,12 @@ class observation_manager {
      * @param int $sessionid ID of the observation session
      * @param int $pointid ID of the observation point this response is for
      * @param mixed $data data object returned from the pointmarking_form
+     * @return int ID of point response.
      */
     public static function submit_point_response(int $sessionid, int $pointid, $data) {
         global $DB;
+
+        $data = (object)$data;
 
         if ($data->grade_given < 0 || !is_int($data->grade_given)) {
             throw new \coding_exception("Grade given must be an integer that is zero or more");
@@ -370,11 +373,12 @@ class observation_manager {
         if ($existingresponse === false) {
             // Insert new.
             $dbdata['timecreated'] = time();
-            $DB->insert_record('observation_point_responses', $dbdata);
+            return $DB->insert_record('observation_point_responses', $dbdata);
         } else {
             // Update existing.
             $dbdata['id'] = $existingresponse->id;
             $DB->update_record('observation_point_responses', $dbdata);
+            return $dbdata['id'];
         }
     }
 
@@ -403,7 +407,7 @@ class observation_manager {
                 $context = \context_module::instance($cm->id);
 
                 $storage = get_file_storage();
-                $files = $storage->get_area_files($context->id, 'mod_observation', 'response' .$item->point_id, $sessionid);
+                $files = $storage->get_area_files($context->id, 'mod_observation', 'response', $item->response);
                 $selectedfile = null;
 
                 // Iterate through to find the non-directory file.

@@ -73,5 +73,40 @@ function xmldb_observation_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021052531, 'observation');
     }
 
+    if ($oldversion < 2021052533) {
+        $storage = get_file_storage();
+
+        // Get all files for mod_observation.
+        $filerecords = $DB->get_records('files', ['component' => 'mod_observation']);
+        $storage = get_file_storage();
+
+        foreach ($filerecords as $file) {
+            // Find files using the old filearea naming scheme.
+            if ($file->filearea != 'response') {
+                // Decode the $pointid and $sessionid.
+                $pointid = (int)str_replace('response', '', $file->filearea);
+                $sessionid = (int)$file->itemid;
+
+                // Get the response  that this file is for.
+                $pointresponse = $DB->get_record('observation_point_responses',
+                    ['obs_pt_id' => $pointid, 'obs_ses_id' => $sessionid]);
+                $newfileitemid = $pointresponse->id;
+
+                // Move to the new file area and record using response ID as the 'item' id.
+                $changes = [
+                    'filearea' => 'response',
+                    'itemid' => $newfileitemid
+                ];
+                $migratedfile = $storage->create_file_from_storedfile($changes, $file->id);
+
+                // Update the response to use the new file item ID.
+                $DB->update_record('observation_point_responses', ['id' => $pointresponse->id, 'response' => $newfileitemid]);
+            }
+        }
+
+        // Observation savepoint reached.
+        upgrade_mod_savepoint(true, 2021052533, 'observation');
+    }
+
     return true;
 }
