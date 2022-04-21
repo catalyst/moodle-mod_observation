@@ -18,7 +18,7 @@
  * Defines the observation module settings form.
  *
  * @package    mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

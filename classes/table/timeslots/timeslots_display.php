@@ -18,7 +18,7 @@
  * Renderable to render the list of observation time slots
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@ namespace mod_observation\table\timeslots;
  * Functions to view observation time slots
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

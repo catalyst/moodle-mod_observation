@@ -18,14 +18,14 @@
  * Observation activity version information.
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2021052531;
+$plugin->version   = 2021052532;
 $plugin->release   = 2021052531;
 $plugin->requires  = 2018051700;
 $plugin->component = 'mod_observation';

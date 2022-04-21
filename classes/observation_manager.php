@@ -18,7 +18,7 @@
  * This file contains functions to get various observation data objects
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>, Celine Lindeque
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@ namespace mod_observation;
  * mod_observation observation management class
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
