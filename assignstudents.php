@@ -18,7 +18,7 @@
  * Functional page, used by the activity coordinators to assign students
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,6 +30,7 @@ require_once(__DIR__.'/../../config.php');
 $id = required_param('id', PARAM_INT); // Observation instance ID.
 $mode = required_param('mode', PARAM_TEXT); // Editor mode - currently only 'randomassign' is supported.
 $confirm = optional_param('confirm', null, PARAM_BOOL);
+$pageurl = new moodle_url('/mod/observation/assignstudents.php', ['id' => $id, 'mode' => $mode]);
 
 list($observation, $course, $cm) = \mod_observation\observation_manager::get_observation_course_cm_from_obid($id);
 
@@ -45,7 +46,7 @@ if ($mode !== 'randomassign') {
 require_login($course, true, $cm);
 require_capability('mod/observation:assignstudents', $PAGE->context);
 
-$pageoutput;
+$pageoutput = '';
 
 if ($mode === 'randomassign') {
     // If no confirmation yet, display confirmation dialog.
@@ -56,6 +57,8 @@ if ($mode === 'randomassign') {
 
     // Accepted confirmation.
     if ($confirm === 1) {
+        require_sesskey();
+
         $remainingusers = timeslot_manager::randomly_assign_students($id);
 
         $message = get_string('randomassignsuccess', 'observation');
@@ -79,7 +82,6 @@ if ($mode === 'randomassign') {
 }
 
 // Output page if no redirects.
-$pageurl = new moodle_url('/mod/observation/assignstudents.php', array('id' => $id, 'mode' => $mode));
 $PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);

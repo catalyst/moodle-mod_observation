@@ -18,7 +18,7 @@
  * User inteface to view timeslots.
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Jared Hungerford, Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -99,15 +99,8 @@ echo $OUTPUT->container_end();
 // Time Slot Viewer (Table).
 echo $OUTPUT->heading(get_string('currenttimeslots', 'observation'), 3);
 
-// See if a timeslot already exists for this session.
-$slotexist = $DB->record_exists('observation_timeslots', array('obs_id' => $id));
-
-if ($slotexist !== false) {
-    echo \mod_observation\table\timeslots\timeslots_display::timeslots_table($observation->id, $pageurl,
-    \mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_EDITING);
-} else if ($slotexist === false) {
-    echo "Nothing to display";
-}
+echo \mod_observation\table\timeslots\timeslots_display::timeslots_table($observation->id, $pageurl,
+\mod_observation\table\timeslots\timeslots_display::DISPLAY_MODE_EDITING);
 
 // Moodle footer.
 echo $OUTPUT->footer();

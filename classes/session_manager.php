@@ -18,7 +18,7 @@
  * This file contains functions to manage observation sessions
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/gradelib.php');
  * mod_observation observation session management class
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -61,11 +61,12 @@ class session_manager {
 
     /**
      * Returns all the sessions
+     * @param int $observationid ID of observation to get sessions from
      * @return array of integer ids of observation sessions
      */
-    private static function get_sessions() {
+    public static function get_sessions($observationid) {
         global $DB;
-        return $DB->get_fieldset_select('observation_sessions', 'id', '');
+        return $DB->get_records('observation_sessions', ['obs_id' => $observationid]);
     }
 
     /**

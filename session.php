@@ -18,7 +18,7 @@
  * This file contains the page view if the user has the capability 'perform_observations'
  *
  * @package   mod_observation
- * @copyright  2021 Endurer Solutions Team
+ * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -89,7 +89,7 @@ $selectedpointdata = $observationpoints[$pointid];
 
 $formprefill = (array)$selectedpointdata;
 $draftitemid = file_get_submitted_draft_itemid('response');
-file_prepare_draft_area($draftitemid, $PAGE->context->id, 'mod_observation', 'response' . $pointid, $sessionid);
+file_prepare_draft_area($draftitemid, $PAGE->context->id, 'mod_observation', 'response', $draftitemid);
 $formprefill['sessionid'] = $sessionid;
 
 if (is_null($formprefill['file_size'])) {
@@ -101,13 +101,17 @@ $markingform = new \mod_observation\form\pointmarking(null, $formprefill);
 
 // If point marking form was submitted.
 if ($fromform = $markingform->get_data()) {
-
-    // Save submitted image.
-    $draftitemid = file_get_submitted_draft_itemid('response');
-    file_save_draft_area_files($draftitemid, $PAGE->context->id, 'mod_observation', 'response' . $pointid, $sessionid);
-
     // Save or Save and Next point button pressed.
-    \mod_observation\observation_manager::submit_point_response($sessionid, $pointid, $fromform);
+    $responseid = \mod_observation\observation_manager::submit_point_response($sessionid, $pointid, $fromform);
+
+    // If response type is file, save draft files to storage.
+    if ($observationpoints[$pointid]->res_type == 2) {
+        // Save response files using response ID.
+        file_save_draft_area_files($draftitemid, $PAGE->context->id, 'mod_observation', 'response', $responseid);
+
+        // Update the 'response' to be the the new file ID.
+        $DB->update_record('observation_point_responses', ['id' => $responseid, 'response' => $responseid]);
+    }
 
     // If save and continue button pressed, find next observation point to redirect to.
     if (!is_null($fromform->saveandnext)) {
