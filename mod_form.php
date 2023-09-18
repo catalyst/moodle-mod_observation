@@ -79,12 +79,17 @@ class mod_observation_mod_form extends moodleform_mod {
         }
 
         // Editing, find the defaults and update the form values.
-        $obsdata = $DB->get_record('observation', array('id' => $obsid));
+        $obsdata = (object) $DB->get_record('observation', array('id' => $obsid));
 
-        $defaultvalues['observerins_editor']->text = $obsdata->observer_ins;
-        $defaultvalues['observerins_editor']->format = $obsdata->observer_ins_f;
-        $defaultvalues['observeeins_editor']->text = $obsdata->observee_ins;
-        $defaultvalues['observeeins_editor']->format = $obsdata->observee_ins_f;
+        $defaultvalues['observerins_editor'] = (object) [
+            'text' => $obsdata->observer_ins,
+            'format' => $obsdata->observer_ins_f
+        ];
+
+        $defaultvalues['observeeins_editor'] = (object) [
+            'text' => $obsdata->observee_ins,
+            'format' => $obsdata->observee_ins_f
+        ];
 
         return;
     }
