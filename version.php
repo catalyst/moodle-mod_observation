@@ -30,3 +30,4 @@ $plugin->release   = 2022041900;
 $plugin->requires  = 2022041900;
 $plugin->component = 'mod_observation';
 $plugin->maturity = MATURITY_STABLE;
+$plugin->supported = [40, 41];
