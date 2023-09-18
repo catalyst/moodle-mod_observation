@@ -122,6 +122,10 @@ function observation_supports($feature) {
             return true;
         case FEATURE_BACKUP_MOODLE2:
             return true;
+        // Activity plugins default this to true, so explicity set to false.
+        // Since it is not supported by mod_observation.
+        case FEATURE_MOD_INTRO:
+            return false;
         default:
             return null;
     }
