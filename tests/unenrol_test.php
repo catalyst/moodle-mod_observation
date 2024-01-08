@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the observation session class.
- *
- * @package    mod_observation
- * @category   test
- * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
- * @author Jack Kepper <Jack@Kepper.net>, Matthew Hilton <mj.hilton@outlook.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_observation;
+
+use advanced_testcase;
 
 /**
  * Unit tests for unenrollment functions.
@@ -32,6 +26,7 @@
  * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author     Jack Kepper <Jack@Kepper.net>, Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_observation\timeslot_manager
  */
 class unenrol_test extends advanced_testcase {
 

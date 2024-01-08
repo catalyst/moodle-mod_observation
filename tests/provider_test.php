@@ -14,30 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the block_community implementation of the privacy API.
- *
- * @package   mod_observation
- * @copyright  Catalyst IT
- * @author Matthew Hilton <matthewhilton@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_observation;
 
-defined('MOODLE_INTERNAL') || die();
-
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\approved_contextlist;
-use \mod_observation\privacy\provider;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\approved_contextlist;
+use mod_observation\privacy\provider;
 
 /**
  * Unit tests for the mod_observation implementation of the privacy API.
  *
  * @copyright  Catalyst IT
+ * @package mod_observation
  * @author Matthew Hilton <matthewhilton@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_observation\privacy\provider
  */
-class mod_observation_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Set up for tests.
      */
@@ -359,7 +352,7 @@ class mod_observation_privacy_testcase extends \core_privacy\tests\provider_test
         ]);
 
         // Export the user data for this user.
-        $cmcontext = context_module::instance($this->instance->cmid);
+        $cmcontext = \context_module::instance($this->instance->cmid);
         $writer = writer::with_context($cmcontext);
         $contextlist = new approved_contextlist($this->observee, 'mod_observation' , [$cmcontext->id]);
 
