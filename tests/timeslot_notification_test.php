@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the observation timeslot joining.
- *
- * @package    mod_observation
- * @category   test
- * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
- * @author Matthew Hilton <mj.hilton@outlook.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_observation;
+
+use advanced_testcase;
 
 /**
  * Unit tests for observation timeslot notifications.
@@ -32,6 +26,7 @@
  * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_observation\timeslot_manager
  */
 class timeslot_notification_test extends advanced_testcase {
 
@@ -285,5 +280,28 @@ class timeslot_notification_test extends advanced_testcase {
         // Ensure notifications are removed.
         $notifications = \mod_observation\timeslot_manager::get_users_notifications($obid, $this->observee->id);
         $this->assertEmpty($notifications);
+    }
+
+    /**
+     * Tests that process_notifications handles correctly a notification with no observee to send it to.
+     * In this case, it should just ignore it and delete the notification processing record.
+     */
+    public function test_process_notifications_after_user_removed() {
+        global $DB;
+
+        // Create notification.
+        $this->setUser($this->observee);
+        \mod_observation\timeslot_manager::create_notification($this->instance->id, $this->slot1id, $this->observee->id,
+            (object) self::NOTIFY_DATA);
+
+        $this->assertEquals(1, $DB->count_records('observation_notifications'));
+
+        // Remove them from the timeslot.
+        \mod_observation\timeslot_manager::remove_observee($this->instance->id, $this->slot1id, $this->observee->id);
+
+        // Process their notifications. This should just remove the notification,
+        // since the user is not longer assigned to the timeslot.
+        \mod_observation\timeslot_manager::process_notifications();
+        $this->assertEquals(0, $DB->count_records('observation_notifications'));
     }
 }
