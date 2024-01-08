@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_observation;
+
+use advanced_testcase;
+
 /**
  * Unit tests for observation backups.
  *
@@ -22,6 +26,8 @@
  * @copyright   Catalyst IT Australia
  * @author      Matthew Hilton
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers      \backup_observation_activity_task
+ * @covers      \restore_observation_activity_task
  */
 class backup_test extends advanced_testcase {
     /**
