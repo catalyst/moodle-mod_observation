@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for timeslots.
- *
- * @package    mod_observation
- * @category   test
- * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
- * @author Matthew Hilton <mj.hilton@outlook.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_observation;
+
+use advanced_testcase;
 
 /**
  * Unit tests for timeslots.
@@ -32,6 +26,7 @@
  * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author     Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \mod_observation\timeslot_manager
  */
 class timeslots_test extends advanced_testcase {
 
@@ -224,7 +219,7 @@ class timeslots_test extends advanced_testcase {
      * Creates data for valid interval timeslot
      */
     private function create_valid_interval_timeslot() {
-        $data = new stdClass();
+        $data = new \stdClass();
 
         $data->interval_amount = 30;
         // In form the multiplier is a string, so simulate that here.

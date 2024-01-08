@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the observation timeslot joining.
- *
- * @package    mod_observation
- * @category   test
- * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
- * @author Matthew Hilton <mj.hilton@outlook.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_observation;
+
+use advanced_testcase;
 
 /**
  * Unit tests for observation timeslot notifications.
@@ -32,6 +26,7 @@
  * @copyright  Matthew Hilton, Celine Lindeque, Jack Kepper, Jared Hungerford
  * @author Matthew Hilton <mj.hilton@outlook.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_observation\timeslot_manager
  */
 class timeslot_notification_test extends advanced_testcase {
 
@@ -303,8 +298,9 @@ class timeslot_notification_test extends advanced_testcase {
 
         // Remove them from the timeslot.
         \mod_observation\timeslot_manager::remove_observee($this->instance->id, $this->slot1id, $this->observee->id);
-        
-        // Process their notifications. This should just remove the notification, since the user is not longer assigned to the timeslot.
+
+        // Process their notifications. This should just remove the notification,
+        // since the user is not longer assigned to the timeslot.
         \mod_observation\timeslot_manager::process_notifications();
         $this->assertEquals(0, $DB->count_records('observation_notifications'));
     }
