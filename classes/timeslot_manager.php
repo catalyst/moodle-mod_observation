@@ -665,13 +665,18 @@ class timeslot_manager {
         foreach ($notifications as $n) {
             $notifytime = $n->start_time - $n->time_before;
 
-            if ($notifytime < time()) {
-                // Process it !
-                self::send_reminder_message($n->obs_id, $n->timeslot_id, $n->userid);
-
-                // Delete notification record.
-                $DB->delete_records('observation_notifications', ['id' => $n->notification_id]);
+            // Not ready yet - skip.
+            if (time() < $notifytime) {
+                continue;
             }
+
+            // If user is still linked to the timeslot, send the reminder message.
+            if (!empty($n->userid)) {
+                self::send_reminder_message($n->obs_id, $n->timeslot_id, $n->userid);
+            }
+
+            // Delete the record.
+            $DB->delete_records('observation_notifications', ['id' => $n->notification_id]);
         }
     }
 
