@@ -83,7 +83,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             'duration' => 5,
             'obs_id' => $this->instance->id,
             'observer_id' => $this->observer->id,
-            'observee_id' => $this->observee->id
+            'observee_id' => $this->observee->id,
         ];
 
         \mod_observation\timeslot_manager::modify_time_slot($tsdata);
@@ -112,7 +112,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             'duration' => 5,
             'obs_id' => $this->instance->id,
             'observer_id' => $this->observer->id,
-            'observee_id' => $this->observee->id
+            'observee_id' => $this->observee->id,
         ];
 
         \mod_observation\timeslot_manager::modify_time_slot($tsdata);
@@ -144,7 +144,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             'duration' => 5,
             'obs_id' => $this->instance->id,
             'observer_id' => $this->observer->id,
-            'observee_id' => $this->observee->id
+            'observee_id' => $this->observee->id,
         ];
 
         \mod_observation\timeslot_manager::modify_time_slot($tsdata);
@@ -160,14 +160,14 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             'obs_id' => $this->instance->id,
             'title' => 'point1',
             'max_grade' => 5,
-            'res_type' => \mod_observation\observation_manager::INPUT_TEXT
+            'res_type' => \mod_observation\observation_manager::INPUT_TEXT,
         ], true);
 
         // Make a response to the session.
         \mod_observation\observation_manager::submit_point_response($sessid, $obpoint, (object)[
             'grade_given' => 5,
             'response' => 'response text',
-            'ex_comment' => 'extra comment'
+            'ex_comment' => 'extra comment',
         ]);
 
         // Ensure they have been created properly.
@@ -206,7 +206,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             'duration' => 5,
             'obs_id' => $this->instance->id,
             'observer_id' => $this->observer->id,
-            'observee_id' => $this->observee->id
+            'observee_id' => $this->observee->id,
         ];
 
         \mod_observation\timeslot_manager::modify_time_slot($tsdata);
@@ -219,14 +219,14 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             'obs_id' => $this->instance->id,
             'title' => 'point1',
             'max_grade' => 5,
-            'res_type' => \mod_observation\observation_manager::INPUT_TEXT
+            'res_type' => \mod_observation\observation_manager::INPUT_TEXT,
         ], true);
 
         // Make a response to the session.
         \mod_observation\observation_manager::submit_point_response($sessid, $obpoint, (object)[
             'grade_given' => 5,
             'response' => 'response text',
-            'ex_comment' => 'extra comment'
+            'ex_comment' => 'extra comment',
         ]);
 
         // Ensure they have been created properly.
@@ -265,7 +265,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             'obs_id' => $this->instance->id,
             'title' => 'point1',
             'max_grade' => 5,
-            'res_type' => \mod_observation\observation_manager::INPUT_TEXT
+            'res_type' => \mod_observation\observation_manager::INPUT_TEXT,
         ], true);
 
         // Create additional user.
@@ -282,7 +282,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
                 'duration' => 5,
                 'obs_id' => $this->instance->id,
                 'observer_id' => $this->observer->id,
-                'observee_id' => $userid
+                'observee_id' => $userid,
             ];
 
             \mod_observation\timeslot_manager::modify_time_slot($tsdata);
@@ -294,7 +294,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             \mod_observation\observation_manager::submit_point_response($sessid, $obpoint, (object)[
                 'grade_given' => 5,
                 'response' => 'response text',
-                'ex_comment' => 'extra comment'
+                'ex_comment' => 'extra comment',
             ]);
         }
 
@@ -328,7 +328,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             'duration' => 5,
             'obs_id' => $this->instance->id,
             'observer_id' => $this->observer->id,
-            'observee_id' => $this->observee->id
+            'observee_id' => $this->observee->id,
         ];
 
         \mod_observation\timeslot_manager::modify_time_slot($tsdata);
@@ -341,14 +341,14 @@ class provider_test extends \core_privacy\tests\provider_testcase {
             'obs_id' => $this->instance->id,
             'title' => 'point1',
             'max_grade' => 5,
-            'res_type' => \mod_observation\observation_manager::INPUT_TEXT
+            'res_type' => \mod_observation\observation_manager::INPUT_TEXT,
         ], true);
 
         // Make a response to the session to the observation point.
         \mod_observation\observation_manager::submit_point_response($sessid, $obpoint, (object)[
             'grade_given' => 5,
             'response' => 'response text',
-            'ex_comment' => 'extra comment'
+            'ex_comment' => 'extra comment',
         ]);
 
         // Export the user data for this user.

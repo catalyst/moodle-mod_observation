@@ -66,7 +66,7 @@ class calendar_signup {
 
             return (object) [
                 "daynum" => $daynum,
-                "events" => []
+                "events" => [],
             ];
         }, $monthdays, array_keys($monthdays));
 
@@ -117,7 +117,7 @@ class calendar_signup {
             'monthname' => date('F', mktime(0, 0, 0, $month, 10)),
             'nextbtn' => $nextmonthbtn,
             'prevbtn' => $prevmonthbtn,
-            'entries' => $weeks
+            'entries' => $weeks,
         ];
 
         return $OUTPUT->render_from_template('mod_observation/calendar_signup', $templatedata);

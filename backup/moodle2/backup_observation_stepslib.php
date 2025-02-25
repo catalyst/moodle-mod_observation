@@ -43,14 +43,14 @@ class backup_observation_activity_structure_step extends backup_activity_structu
             'observee_ins',
             'observee_ins_f',
             'students_self_unregister',
-            'marking_type'
+            'marking_type',
         ]);
 
         $notifications = new backup_nested_element('notifications');
 
         $notification = new backup_nested_element('notification', ['id'], [
             'timeslot_id',
-            'time_before'
+            'time_before',
         ]);
 
         $points = new backup_nested_element('points');
@@ -63,7 +63,7 @@ class backup_observation_activity_structure_step extends backup_activity_structu
             'ins_f',
             'max_grade',
             'res_type',
-            'file_size'
+            'file_size',
         ]);
 
         $responses = new backup_nested_element('responses');
@@ -75,7 +75,7 @@ class backup_observation_activity_structure_step extends backup_activity_structu
             'response',
             'ex_comment',
             'timecreated',
-            'timemodified'
+            'timemodified',
         ]);
 
         $sessions = new backup_nested_element('sessions');
@@ -87,7 +87,7 @@ class backup_observation_activity_structure_step extends backup_activity_structu
             'state',
             'start_time',
             'finish_time',
-            'ex_comment'
+            'ex_comment',
         ]);
 
         $timeslots = new backup_nested_element('timeslots');
@@ -99,7 +99,7 @@ class backup_observation_activity_structure_step extends backup_activity_structu
             'observer_id',
             'observee_id',
             'observer_event_id',
-            'observee_event_id'
+            'observee_event_id',
         ]);
 
         // Timeslots tree.

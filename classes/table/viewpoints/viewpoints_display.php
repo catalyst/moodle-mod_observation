@@ -48,7 +48,7 @@ class viewpoints_display {
             'fields' => 'op.*, ortm.lang_string',
             'from' => '{observation_points} op LEFT JOIN {observation_res_type_map} ortm ON op.res_type = ortm.res_type',
             'where' => 'obs_id = :obsid',
-            'params' => ['obsid' => $observationid]
+            'params' => ['obsid' => $observationid],
         ];
         $table->sql = $sql;
         return $table->out($table->pagesize, true);

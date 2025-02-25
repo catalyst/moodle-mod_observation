@@ -93,7 +93,7 @@ class session_manager {
             'observee_id' => $observeeid,
             'observer_id' => $observerid,
             'state' => self::SESSION_INPROGRESS,
-            'start_time' => time()
+            'start_time' => time(),
         ];
 
         return $DB->insert_record('observation_sessions', $data, true);
@@ -116,7 +116,7 @@ class session_manager {
             'ex_comment' => $sessiondata->ex_comment,
             'state' => $sessiondata->state,
             'observee' => $sessiondata->observee_id,
-            'observer' => $sessiondata->observer_id
+            'observer' => $sessiondata->observer_id,
         ];
     }
 
@@ -174,7 +174,7 @@ class session_manager {
 
         return [
             'total' => array_sum($givengrades),
-            'max' => array_sum($maxgrades)
+            'max' => array_sum($maxgrades),
         ];
     }
 
@@ -275,7 +275,7 @@ class session_manager {
             'gradetype' => 1,
             'grademax' => $maxgrade,
             'grademin' => $mingrade,
-            'itemname' => $cm->name . ' - ' . get_string('gradeitemname', 'observation')
+            'itemname' => $cm->name . ' - ' . get_string('gradeitemname', 'observation'),
         ];
 
         $grade = [
@@ -285,7 +285,7 @@ class session_manager {
             'datesubmitted' => time(),
             'dategraded' => time(),
             'feedbackformat' => FORMAT_PLAIN,
-            'feedback' => $sessioninfo['ex_comment']
+            'feedback' => $sessioninfo['ex_comment'],
         ];
 
         return \grade_update('mod/observation', $course->id, 'mod', 'observation', $obid, 0, $grade, $params);

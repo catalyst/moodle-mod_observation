@@ -53,7 +53,7 @@ class pointmarking extends \moodleform {
 
         // Observation point information.
         $instext = $prefill['ins'];
-        $insformat = $prefill['ins_f'];
+        $insformat = (int) $prefill['ins_f'];
 
         $mform->addElement('static', 'instructions', get_string('gradinginstructions', 'observation'),
             format_text($instext, $insformat));
@@ -68,10 +68,10 @@ class pointmarking extends \moodleform {
                 break;
             // Pass/Fail type.
             case \mod_observation\observation_manager::INPUT_PASSFAIL:
-                $radioarray = array();
+                $radioarray = [];
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('pass', 'observation'), 'Pass');
                 $radioarray[] = $mform->createElement('radio', 'response', '', get_string('fail', 'observation'), 'Fail');
-                $mform->addGroup($radioarray, 'radioar', get_string('passfailtype', 'observation'), array(' '), false);
+                $mform->addGroup($radioarray, 'radioar', get_string('passfailtype', 'observation'), [' '], false);
                 $mform->setType('response', PARAM_TEXT);
                 $mform->addRule('radioar', get_string('required', 'observation'), 'required', null, 'client');
                 break;
@@ -79,8 +79,8 @@ class pointmarking extends \moodleform {
                 // Image upload here.
                 $maxbytes = $prefill['file_size'];
                 $mform->addElement('filemanager', 'response', get_string('evidenceupload', 'observation'), null,
-                    array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => $maxbytes, 'maxfiles' => 1,
-                          'accepted_types' => 'audio,video,image,document'));
+                    ['subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => $maxbytes, 'maxfiles' => 1,
+                          'accepted_types' => 'audio,video,image,document']);
                 $mform->setType('response', PARAM_INT);
                 $mform->addRule('response', get_string('required', 'observation'), 'required', null, 'client');
                 break;

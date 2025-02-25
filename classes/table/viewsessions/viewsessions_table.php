@@ -54,7 +54,7 @@ class viewsessions_table extends \table_sql implements \renderable {
             'state',
             'start_time',
             'finish_time',
-            'action'
+            'action',
         ]);
 
         $this->define_headers([

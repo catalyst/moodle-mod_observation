@@ -41,7 +41,7 @@ class mod_observation_mod_form extends moodleform_mod {
 
         // General.
         $mform->addElement('header', 'general', get_string('general', 'observation'));
-        $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('name'), ['size' => '64']);
         $mform->setType('name', PARAM_TEXT);
 
         // Activity Instructions Elements.
@@ -84,16 +84,16 @@ class mod_observation_mod_form extends moodleform_mod {
         }
 
         // Editing, find the defaults and update the form values.
-        $obsdata = (object) $DB->get_record('observation', array('id' => $obsid));
+        $obsdata = (object) $DB->get_record('observation', ['id' => $obsid]);
 
         $defaultvalues['observerins_editor'] = (object) [
             'text' => $obsdata->observer_ins,
-            'format' => $obsdata->observer_ins_f
+            'format' => $obsdata->observer_ins_f,
         ];
 
         $defaultvalues['observeeins_editor'] = (object) [
             'text' => $obsdata->observee_ins,
-            'format' => $obsdata->observee_ins_f
+            'format' => $obsdata->observee_ins_f,
         ];
 
         return;

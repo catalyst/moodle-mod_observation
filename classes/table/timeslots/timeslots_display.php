@@ -78,7 +78,7 @@ class timeslots_display {
         'from' => '{observation_timeslots} ot
                     LEFT JOIN {user} u ON ot.observer_id = u.id
                     LEFT JOIN {user} o on ot.observee_id = o.id',
-        'where' => 'obs_id = :obsid'
+        'where' => 'obs_id = :obsid',
     ];
 
     /**

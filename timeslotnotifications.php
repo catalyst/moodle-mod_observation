@@ -55,14 +55,14 @@ $timeslot = \mod_observation\timeslot_manager::get_registered_timeslot($observat
 // Load forms.
 $prefill = [
     'id' => $observation->id,
-    'slotid' => $timeslot->id
+    'slotid' => $timeslot->id,
 ];
 $notificationeditor = new \mod_observation\form\notificationeditor(null, $prefill);
 
 if ($fromform = $notificationeditor->get_data()) {
     $data = (object) [
         'interval_amount' => (int)$fromform->interval_amount,
-        'interval_multiplier' => (int)$fromform->interval_multiplier
+        'interval_multiplier' => (int)$fromform->interval_multiplier,
     ];
 
     \mod_observation\timeslot_manager::create_notification($fromform->id, $fromform->slotid, $USER->id, $data);

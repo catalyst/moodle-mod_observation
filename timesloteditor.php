@@ -37,7 +37,7 @@ if (!in_array($mode, $validmodes)) {
         'invalidqueryparam',
         'error',
         null,
-        $a = array('expected' => 'mode to be \'new\' or \'edit\'', 'actual' => $mode));
+        $a = ['expected' => 'mode to be \'new\' or \'edit\'', 'actual' => $mode]);
 }
 
 // Ensure slotID is given if mode is 'edit'.
@@ -52,11 +52,11 @@ require_login($course, true, $cm);
 require_capability('mod/observation:editobservationpoints', $PAGE->context);
 
 // Prefill hidden data in form regardless of mode.
-$formprefill = array(
+$formprefill = [
     'id' => $id,
     'mode' => $mode,
     'slotid' => $slotid,
-);
+];
 
 // If editing, add prefill data from DB.
 if ($mode === "edit") {
@@ -100,13 +100,13 @@ if ($fromform = $sloteditorform->get_data()) {
         }
 
         // Redirect back to slot viewer.
-        redirect(new moodle_url('timeslots.php', array('id' => $id)));
+        redirect(new moodle_url('timeslots.php', ['id' => $id]));
         die;
     }
 }
 
 // Form not submitted, render form.
-$PAGE->set_url(new moodle_url('/mod/observation/timesloteditor.php', array('mode' => $mode, 'id' => $id)));
+$PAGE->set_url(new moodle_url('/mod/observation/timesloteditor.php', ['mode' => $mode, 'id' => $id]));
 $PAGE->set_title(get_string('creatingtimeslot', 'observation'));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();

@@ -89,7 +89,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests CRUD operations for observation point with expected data.
      */
-    public function test_crud_expected () {
+    public function test_crud_expected() {
         global $DB;
 
         $data = self::VALID_DATA;
@@ -155,7 +155,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests the ordering logic for a single observation point.
      */
-    public function test_ordering_single () {
+    public function test_ordering_single() {
         // Generate a single valid point.
         $returnedpoint = self::create_valid_point($this->instance->id);
 

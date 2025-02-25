@@ -87,7 +87,7 @@ class timeslot_joining_test extends advanced_testcase {
     /**
      * Tests basic joining functions.
      */
-    public function test_joining_function () {
+    public function test_joining_function() {
         $obid = $this->instance->id;
 
         // Observee 1 joins timeslot 1, Observee 2 joins timeslot 2.
@@ -104,7 +104,7 @@ class timeslot_joining_test extends advanced_testcase {
     /**
      * Tests if students are not allowed to join multiple timeslots.
      */
-    public function test_double_joining () {
+    public function test_double_joining() {
         $obid = $this->instance->id;
 
         // Observee 1 tries to join both timeslots 1 and 2 (not allowed).
@@ -117,7 +117,7 @@ class timeslot_joining_test extends advanced_testcase {
     /**
      * Tests if two students are not allowed to join same timeslot.
      */
-    public function test_join_filled () {
+    public function test_join_filled() {
         $obid = $this->instance->id;
 
         // Observee 1 joins timeslot 1.

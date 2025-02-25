@@ -40,7 +40,7 @@ if ($mode !== 'randomassign') {
         'invalidqueryparam',
         'error',
         null,
-        $a = array('expected' => 'mode to be \'randomassign\'', 'actual' => $mode));
+        $a = ['expected' => 'mode to be \'randomassign\'', 'actual' => $mode]);
 }
 
 require_login($course, true, $cm);

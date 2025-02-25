@@ -42,10 +42,10 @@ class viewpoints_table extends \table_sql implements \renderable {
      * Constructs the table and defines how the data from the SQL query is displayed
      * @param string $uniqueid ID that uniquely identifies this element on the HTML page
      * @param \moodle_url $callbackurl URL used for callback for action buttons in the table
-     * @param int $displaymode display mode for table
+     * @param int|null $displaymode display mode for table
      * @param int $perpage number of entries per page for the table
      */
-    public function __construct(string $uniqueid, \moodle_url $callbackurl, int $displaymode = null, int $perpage = 50) {
+    public function __construct(string $uniqueid, \moodle_url $callbackurl, ?int $displaymode = null, int $perpage = 50) {
         parent::__construct($uniqueid);
 
         $this->define_columns([

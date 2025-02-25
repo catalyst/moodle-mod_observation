@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$messageproviders = array(
+$messageproviders = [
     // Confirm timeslot signup.
     'confirmsignup' => [],
 
@@ -33,5 +33,5 @@ $messageproviders = array(
     'signupreminder' => [],
 
     // Cancellation alert.
-    'cancellationalert' => []
-);
+    'cancellationalert' => [],
+];

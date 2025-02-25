@@ -37,7 +37,7 @@ list($observation, $course, $cm) = \mod_observation\observation_manager::get_obs
 // Check permissions.
 require_login($course, true, $cm);
 
-$pageurl = new moodle_url('/mod/observation/timeslotjoining.php', array('id' => $id));
+$pageurl = new moodle_url('/mod/observation/timeslotjoining.php', ['id' => $id]);
 
 if ($action !== null) {
     require_sesskey();
@@ -72,7 +72,7 @@ if ($action !== null) {
 }
 
 // Render page.
-$pageurl = new moodle_url('/mod/observation/timeslotjoining.php', array('id' => $id));
+$pageurl = new moodle_url('/mod/observation/timeslotjoining.php', ['id' => $id]);
 $PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);

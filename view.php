@@ -47,11 +47,11 @@ require_login($course, true, $cm);
 
 // If user can perform observations, redirect to the 'observer' view.
 if (has_capability('mod/observation:performobservation', $PAGE->context)) {
-    $observerurl = new moodle_url('/mod/observation/observer.php', array('id' => $observation->id));
+    $observerurl = new moodle_url('/mod/observation/observer.php', ['id' => $observation->id]);
     redirect($observerurl);
     die;
 }
 
 // Else, redirect user to 'observee' view (default).
-$observeeurl = new moodle_url('/mod/observation/observee.php', array('id' => $observation->id));
+$observeeurl = new moodle_url('/mod/observation/observee.php', ['id' => $observation->id]);
 redirect($observeeurl);

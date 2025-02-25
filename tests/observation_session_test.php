@@ -47,7 +47,7 @@ class observation_session_test extends advanced_testcase {
     private const VALID_RESPONSE = [
         'grade_given' => 3,
         'response' => 'test response',
-        'ex_comment' => 'extra comment'
+        'ex_comment' => 'extra comment',
     ];
 
 

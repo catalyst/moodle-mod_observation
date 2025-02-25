@@ -32,7 +32,7 @@ list($observation, $course, $cm) = \mod_observation\observation_manager::get_obs
 require_login($course, true, $cm);
 
 // Render page.
-$pageurl = new moodle_url('/mod/observation/observee.php', array('id' => $id));
+$pageurl = new moodle_url('/mod/observation/observee.php', ['id' => $id]);
 $PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
@@ -41,7 +41,7 @@ echo $OUTPUT->heading($observation->name, 2);
 
 echo $OUTPUT->box_start();
 echo $OUTPUT->single_button(
-    new moodle_url('/mod/observation/timeslotjoining.php', array('id' => $observation->id)),
+    new moodle_url('/mod/observation/timeslotjoining.php', ['id' => $observation->id]),
     get_string('selectingslot', 'observation')
 );
 echo $OUTPUT->box_end();
