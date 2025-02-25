@@ -36,7 +36,7 @@ list($observation, $course, $cm) = \mod_observation\observation_manager::get_obs
 require_login($course, true, $cm);
 require_capability('mod/observation:editobservationpoints', $PAGE->context);
 
-$pageurl = new moodle_url('/mod/observation/timeslots.php', array('id' => $id));
+$pageurl = new moodle_url('/mod/observation/timeslots.php', ['id' => $id]);
 
 // Check if action and slotid are present.
 if (!empty($action) && !empty($slotid)) {
@@ -70,7 +70,7 @@ if (!empty($action) && !empty($slotid)) {
 }
 
 // Render page.
-$pageurl = new moodle_url('/mod/observation/timeslots.php', array('id' => $id));
+$pageurl = new moodle_url('/mod/observation/timeslots.php', ['id' => $id]);
 $PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
@@ -82,14 +82,14 @@ echo $OUTPUT->container_start('mb-3 p-3 border border-secondary');
 
 // Create new time slot.
 echo $OUTPUT->single_button(
-    new moodle_url('/mod/observation/timesloteditor.php', array('mode' => 'new', 'id' => $observation->id)),
+    new moodle_url('/mod/observation/timesloteditor.php', ['mode' => 'new', 'id' => $observation->id]),
     get_string('createnew', 'observation'),
     'get'
 );
 
 // Randomly assign students to timeslots.
 echo $OUTPUT->single_button(
-    new moodle_url('/mod/observation/assignstudents.php', array('mode' => 'randomassign', 'id' => $observation->id)),
+    new moodle_url('/mod/observation/assignstudents.php', ['mode' => 'randomassign', 'id' => $observation->id]),
     get_string('randomlyassign', 'observation'),
     'get'
 );

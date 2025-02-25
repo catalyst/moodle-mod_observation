@@ -48,7 +48,7 @@ class provider implements
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $collection->add_subsystem_link(
             'core_files',
@@ -75,7 +75,7 @@ class provider implements
                 'response' => 'privacy:metadata:observation_point_responses:response',
                 'ex_comment' => 'privacy:metadata:observation_point_responses:ex_comment',
                 'timecreated' => 'privacy:metadata:observation_point_responses:timecreated',
-                'timemodified' => 'privacy:metadata:observation_point_responses:timemodified'
+                'timemodified' => 'privacy:metadata:observation_point_responses:timemodified',
              ],
             'privacy:metadata:observation_point_responses'
         );
@@ -113,7 +113,7 @@ class provider implements
       * @param int $userid The user to search.
       * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
       */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
 
         $params = [
@@ -208,7 +208,7 @@ class provider implements
             // Get all timeslot records where the user is a part of them.
             $timeslots = $DB->get_records_select('observation_timeslots', 'observer_id = :userid1 OR observee_id = :userid2', [
                 'userid1' => $userid,
-                'userid2' => $userid
+                'userid2' => $userid,
             ]);
 
             $data->timeslots = $timeslots;
@@ -249,7 +249,7 @@ class provider implements
             // Delete all timeslot records where the user is a part of them.
             $DB->delete_records_select('observation_timeslots', 'observer_id = :userid1 OR observee_id = :userid2', [
                 'userid1' => $userid,
-                'userid2' => $userid
+                'userid2' => $userid,
             ]);
         }
     }
@@ -291,7 +291,7 @@ class provider implements
             // Delete all timeslot records where the user is a part of them.
             $DB->delete_records_select('observation_timeslots', 'observer_id = :userid1 OR observee_id = :userid2', [
                 'userid1' => $userid,
-                'userid2' => $userid
+                'userid2' => $userid,
             ]);
         }
     }
@@ -301,7 +301,7 @@ class provider implements
      *
      * @param   context                 $context   The specific context to delete data for.
      */
-    public static function delete_data_for_all_users_in_context (\context $context) {
+    public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
         if ($context->contextlevel != CONTEXT_MODULE) {

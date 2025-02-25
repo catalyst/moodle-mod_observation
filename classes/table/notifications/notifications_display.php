@@ -48,7 +48,7 @@ class notifications_display {
             'fields' => 'obn.id AS id, time_before, start_time',
             'from' => '{observation_notifications} obn LEFT JOIN {observation_timeslots} ot ON obn.timeslot_id = ot.id',
             'where' => 'ot.observee_id = :userid AND ot.obs_id = :obsid',
-            'params' => ['userid' => $userid, 'obsid' => $observationid]
+            'params' => ['userid' => $userid, 'obsid' => $observationid],
         ];
 
         return $table->out($table->pagesize, true);

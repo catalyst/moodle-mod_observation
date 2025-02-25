@@ -60,7 +60,7 @@ $upcomingprefill = [
     'id' => $id,
     'interval_amount' => $interval,
     'interval_multiplier' => $intervalmultiplier,
-    'filter_enabled' => $filterenabled
+    'filter_enabled' => $filterenabled,
 ];
 
 $upcomingfilterform = new \mod_observation\form\upcomingfilter(null, $upcomingprefill);
@@ -79,7 +79,7 @@ if ($fromform = $upcomingfilterform->get_data()) {
 
 $startsessionformprefill = [
     'id' => $id,
-    'observerid' => $USER->id
+    'observerid' => $USER->id,
 ];
 $startsessionform = new \mod_observation\form\startsession(null, $startsessionformprefill);
 

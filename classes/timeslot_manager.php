@@ -280,12 +280,12 @@ class timeslot_manager {
         // Multiplier on form is set via a select which passes value as string, so cast to int.
         $intmultiplier = (int) $formdata->interval_multiplier;
 
-        $dbdata = array(
+        $dbdata = [
             "obs_id" => $formdata->id,
             "start_time" => $formdata->start_time,
             "duration" => $formdata->duration,
-            "observer_id" => $formdata->observer_id
-        );
+            "observer_id" => $formdata->observer_id,
+        ];
 
         $intervalslots = self::generate_interval_timeslots($dbdata, $intamount, $intmultiplier, $intend);
 
@@ -345,7 +345,7 @@ class timeslot_manager {
             "obs_id" => $formdata->id,
             "start_time" => $formdata->start_time,
             "duration" => $formdata->duration,
-            "observer_id" => $formdata->observer_id
+            "observer_id" => $formdata->observer_id,
         ];
     }
 
@@ -395,14 +395,15 @@ class timeslot_manager {
         $dbdata = [
             'id' => $slotid,
             'observee_id' => $userid,
-            'obs_id' => $observationid
+            'obs_id' => $observationid,
         ];
 
         self::modify_time_slot($dbdata);
         self::send_signup_confirmation_message($observationid, $slotid, $userid);
     }
 
-    /** Determines if a user can unenrol from a timeslot as an observee
+    /**
+     * Determines if a user can unenrol from a timeslot as an observee
      * @param int $observationid ID of the observation
      * @param int $slotid ID of the timeslot
      * @param int $userid ID of user to remove
@@ -454,7 +455,7 @@ class timeslot_manager {
             'id' => $slotid,
             'observee_id' => null,
             'obs_id' => $observationid,
-            'observee_event_id' => null
+            'observee_event_id' => null,
         ];
 
         // Send cancellation message.
@@ -565,7 +566,7 @@ class timeslot_manager {
             "timeslot" => $slotdata,
             "observation" => $observation,
             "current_time_formatted" => userdate(time()),
-            "start_time_formatted" => userdate($slotdata->start_time)
+            "start_time_formatted" => userdate($slotdata->start_time),
         ];
 
         return $OUTPUT->render_from_template($template, $data);
@@ -602,7 +603,7 @@ class timeslot_manager {
 
         $DB->insert_record('observation_notifications', [
             'timeslot_id' => $slotid,
-            'time_before' => $interval * $multiplier
+            'time_before' => $interval * $multiplier,
         ]);
     }
 

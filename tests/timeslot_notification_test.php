@@ -170,11 +170,11 @@ class timeslot_notification_test extends advanced_testcase {
     public function test_invalid_interval() {
         $invalidvars = [
             '',
-            array(),
+            [],
             true,
             -10,
             new \StdClass,
-            0.5
+            0.5,
         ];
 
         foreach ($invalidvars as $var) {
@@ -198,11 +198,11 @@ class timeslot_notification_test extends advanced_testcase {
     public function test_invalid_multiplier() {
         $invalidvars = [
             '',
-            array(),
+            [],
             true,
             -10,
             new \StdClass,
-            0.5
+            0.5,
         ];
 
         foreach ($invalidvars as $var) {

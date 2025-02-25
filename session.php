@@ -160,25 +160,25 @@ if ($confirmcancel === 1) {
 // If confirmation rejected proceed back to session.php.
 if ($confirmcancel === 0) {
     // Return to session page.
-    redirect(new moodle_url('/mod/observation/session.php', array('sessionid' => $sessionid)));
+    redirect(new moodle_url('/mod/observation/session.php', ['sessionid' => $sessionid]));
 }
 
 // If confirmation approved proceed to submit session.
 if ($confirmsubmit === 1) {
     // Redirect to final session page (summary, add final comments, etc.).
-    redirect(new moodle_url('/mod/observation/sessionsummary.php', array('sessionid' => $sessionid)));
+    redirect(new moodle_url('/mod/observation/sessionsummary.php', ['sessionid' => $sessionid]));
 }
 
 // If confirmation rejected proceed back to session.php.
 if ($confirmsubmit === 0) {
     // Return to session page.
-    redirect(new moodle_url('/mod/observation/session.php', array('sessionid' => $sessionid)));
+    redirect(new moodle_url('/mod/observation/session.php', ['sessionid' => $sessionid]));
 }
 
 // Render page.
-$pageurl = new moodle_url('/mod/observation/session.php', array(
-    'sessionid' => $sessionid, 'pointid' => $pointid
-));
+$pageurl = new moodle_url('/mod/observation/session.php', [
+    'sessionid' => $sessionid, 'pointid' => $pointid,
+]);
 $pageurl->out(false);
 $PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname . ': ' . $observation->name);

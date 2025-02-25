@@ -95,7 +95,7 @@ function xmldb_observation_upgrade($oldversion) {
                 // Move to the new file area and record using response ID as the 'item' id.
                 $changes = [
                     'filearea' => 'response',
-                    'itemid' => $newfileitemid
+                    'itemid' => $newfileitemid,
                 ];
                 $migratedfile = $storage->create_file_from_storedfile($changes, $file->id);
 

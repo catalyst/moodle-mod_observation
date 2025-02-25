@@ -50,13 +50,13 @@ class notifications_table extends \table_sql implements \renderable {
         $columns = [
             'id',
             'time_before',
-            'actions'
+            'actions',
         ];
 
         $headers = [
             get_string('id', 'observation'),
             get_string('notifyon', 'observation'),
-            get_string('actions', 'observation')
+            get_string('actions', 'observation'),
         ];
 
         $this->define_columns($columns);

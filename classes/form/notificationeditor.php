@@ -57,7 +57,7 @@ class notificationeditor extends \moodleform {
         $intervalselector = [
             $mform->createElement('text', 'interval_amount'),
             $mform->createElement('select', 'interval_multiplier', '', $options),
-            $mform->createElement('submit', 'submit_btn', get_string('create', 'observation'))
+            $mform->createElement('submit', 'submit_btn', get_string('create', 'observation')),
         ];
 
         $mform->addGroup($intervalselector, 'select_group', get_string('receivenotification', 'observation'), null, false);

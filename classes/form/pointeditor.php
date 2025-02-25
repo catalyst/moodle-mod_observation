@@ -48,12 +48,12 @@ class pointeditor extends \moodleform {
         $mform->addElement('header', 'gradingsettings', get_string('grading', 'observation'));
 
         // Point type selection.
-        $radioarray = array();
+        $radioarray = [];
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('textinputtype', 'observation'), 0);
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('passfailtype', 'observation'), 1);
         $radioarray[] = $mform->createElement('radio', 'res_type', '', get_string('evidencetype', 'observation'), 2);
 
-        $mform->addGroup($radioarray, 'radioar', get_string('obpointtype', 'observation'), array(' '), false);
+        $mform->addGroup($radioarray, 'radioar', get_string('obpointtype', 'observation'), [' '], false);
         $mform->setDefault('type', 0);
 
         // Evidence file size.

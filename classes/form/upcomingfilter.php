@@ -58,7 +58,7 @@ class upcomingfilter extends \moodleform {
         $intervalselector = [
             $mform->createElement('text', 'interval_amount'),
             $mform->createElement('select', 'interval_multiplier', '', $options),
-            $mform->createElement('submit', 'submit_btn', $buttontext)
+            $mform->createElement('submit', 'submit_btn', $buttontext),
         ];
 
         // Interval selector block.

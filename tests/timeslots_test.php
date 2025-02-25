@@ -89,7 +89,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests basic CRUD actions for timeslots using valid data.
      */
-    public function test_valid_crud () {
+    public function test_valid_crud() {
         // Test create.
         $obid = $this->instance->id;
         $data = $this->create_valid_timeslot();

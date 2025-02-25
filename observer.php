@@ -33,7 +33,7 @@ require_login($course, true, $cm);
 require_capability('mod/observation:performobservation', $PAGE->context);
 
 // Render page.
-$pageurl = new moodle_url('/mod/observation/observer.php', array('id' => $id));
+$pageurl = new moodle_url('/mod/observation/observer.php', ['id' => $id]);
 $PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
@@ -47,7 +47,7 @@ echo $OUTPUT->heading(get_string('actions', 'observation'), 3);
 // Edit observation point link button.
 if (has_capability('mod/observation:editobservationpoints', $PAGE->context)) {
     echo $OUTPUT->single_button(
-        new moodle_url('/mod/observation/viewpoints.php', array('id' => $observation->id)),
+        new moodle_url('/mod/observation/viewpoints.php', ['id' => $observation->id]),
         get_string('editobservationpoints', 'observation'),
         'get'
     );
@@ -56,7 +56,7 @@ if (has_capability('mod/observation:editobservationpoints', $PAGE->context)) {
 // Edit timeslots link button.
 if (has_capability('mod/observation:edittimeslots', $PAGE->context)) {
     echo $OUTPUT->single_button(
-        new moodle_url('/mod/observation/timeslots.php', array('id' => $observation->id)),
+        new moodle_url('/mod/observation/timeslots.php', ['id' => $observation->id]),
         get_string('edittimeslotss', 'observation'),
         'get'
     );

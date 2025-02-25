@@ -54,7 +54,7 @@ function observation_get_course_content_items(\core_course\local\entity\content_
  * @return int new observation instance id
  */
 function observation_add_instance($data): int {
-    return \mod_observation\observation_manager::modify_instance(array(
+    return \mod_observation\observation_manager::modify_instance([
         "course" => (int)$data->course,
         "name" => $data->name,
         "intro" => "",
@@ -63,8 +63,8 @@ function observation_add_instance($data): int {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
-        "students_self_unregister" => (int) $data->students_self_unregister
-    ));
+        "students_self_unregister" => (int) $data->students_self_unregister,
+    ]);
 }
 
 /**
@@ -76,7 +76,7 @@ function observation_add_instance($data): int {
  * @return bool true on success, false or a string error message on failure.
  */
 function observation_update_instance($data): bool {
-    $success = \mod_observation\observation_manager::modify_instance(array(
+    $success = \mod_observation\observation_manager::modify_instance([
         "id" => $data->instance,
         "name" => $data->name,
         "timemodified" => time(),
@@ -84,8 +84,8 @@ function observation_update_instance($data): bool {
         "observer_ins_f" => $data->observerins_editor['format'],
         "observee_ins" => $data->observeeins_editor['text'],
         "observee_ins_f" => $data->observeeins_editor['format'],
-        "students_self_unregister" => (int) $data->students_self_unregister
-    ));
+        "students_self_unregister" => (int) $data->students_self_unregister,
+    ]);
 
     if ($success === true) {
         // Update all the calendar events to get the new data.
@@ -172,7 +172,7 @@ function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
         "observerevent" => $event->id,
         "observeeevent" => $event->id,
         "observer" => $USER->id,
-        "observee" => $USER->id
+        "observee" => $USER->id,
     ];
 
     $matchingevent = $DB->get_records_sql($sql, $params);
@@ -189,7 +189,7 @@ function mod_observation_core_calendar_is_event_visible(calendar_event $event) {
  * @param bool $forcedownload bool if download should be forced
  * @param array $options an array of options
  */
-function observation_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function observation_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
     // Ensure logged in to course.
     require_course_login($course->id);
 

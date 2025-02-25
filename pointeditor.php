@@ -35,7 +35,7 @@ if ($mode !== 'new' && $mode !== 'edit') {
         'invalidqueryparam',
         'error',
         null,
-        $a = array('expected' => 'mode to be \'new\' or \'edit\'', 'actual' => $mode));
+        $a = ['expected' => 'mode to be \'new\' or \'edit\'', 'actual' => $mode]);
 }
 
 // Ensure pointID is given if mode is 'edit'.
@@ -50,11 +50,11 @@ require_login($course, true, $cm);
 require_capability('mod/observation:editobservationpoints', $PAGE->context);
 
 // Prefill hidden data in form regardless of mode.
-$formprefill = array(
+$formprefill = [
     'id' => $id,
     'mode' => $mode,
     'pointid' => $pointid,
-);
+];
 
 // If editing, add prefill data from DB.
 if ($mode === "edit") {
@@ -73,7 +73,7 @@ $pointeditorform = new \mod_observation\form\pointeditor(null, $formprefill);
 
 // Form submitted, save/edit the data.
 if ($fromform = $pointeditorform->get_data()) {
-    $dbdata = array(
+    $dbdata = [
         "obs_id" => $fromform->id,
         "title" => $fromform->title,
         "ins" => $fromform->ins['text'],
@@ -81,7 +81,7 @@ if ($fromform = $pointeditorform->get_data()) {
         "max_grade" => $fromform->maxgrade,
         "res_type" => $fromform->res_type,
         "file_size" => (int)$fromform->res_type === 2 ? $fromform->file_size : null,
-    );
+    ];
 
     if ($fromform->mode === "new") {
         // Creating new.
@@ -93,12 +93,12 @@ if ($fromform = $pointeditorform->get_data()) {
     }
 
     // Redirect back to point viewer.
-    redirect(new moodle_url('viewpoints.php', array('id' => $id)));
+    redirect(new moodle_url('viewpoints.php', ['id' => $id]));
     die;
 }
 
 // Form not submitted, render form.
-$PAGE->set_url(new moodle_url('/mod/observation/pointeditor.php', array('mode' => $mode, 'id' => $id)));
+$PAGE->set_url(new moodle_url('/mod/observation/pointeditor.php', ['mode' => $mode, 'id' => $id]));
 $PAGE->set_title(get_string('creatingobservationpoint', 'observation'));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();

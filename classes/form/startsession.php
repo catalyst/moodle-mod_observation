@@ -60,9 +60,9 @@ class startsession extends \moodleform {
             $finalusers[$u->id] = fullname($u);
         }
 
-        $options = array(
+        $options = [
             'multiple' => false,
-        );
+        ];
 
         $mform->addElement('text', 'observername', get_string('observer', 'observation'));
         $mform->setDefault('observername', fullname($USER));

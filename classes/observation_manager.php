@@ -210,7 +210,7 @@ class observation_manager {
             "obs_id = :obsid AND list_order > :listorder",
             [
                 'obsid' => $observationid,
-                'listorder' => $currentpoint->list_order
+                'listorder' => $currentpoint->list_order,
             ]
         );
 
@@ -225,7 +225,7 @@ class observation_manager {
                 'observation_points',
                 [
                     'id' => $pointabove->id,
-                    'list_order' => $pointabove->list_order - 1
+                    'list_order' => $pointabove->list_order - 1,
                 ]
             );
         }
@@ -290,7 +290,7 @@ class observation_manager {
         $DB->update_record('observation_points',
         [
             'id' => $targetpoint->id,
-            'list_order' => $newordering
+            'list_order' => $newordering,
         ]);
 
         // Reduce the direction to a unit vector (e.g. 5 -> 1 and -5 -> -1).
@@ -301,7 +301,7 @@ class observation_manager {
             $DB->update_record('observation_points',
             [
                 'id' => $e->id,
-                'list_order' => $e->list_order - $reductionamount
+                'list_order' => $e->list_order - $reductionamount,
             ]);
         }, $affectedpoints);
 
@@ -368,7 +368,7 @@ class observation_manager {
             'grade_given' => $data->grade_given,
             'response' => $data->response,
             'ex_comment' => $data->ex_comment,
-            'timemodified' => time()
+            'timemodified' => time(),
         ];
 
         if ($existingresponse === false) {
@@ -447,7 +447,7 @@ class observation_manager {
                 $item->title,
                 $item->response,
                 $item->grade_given,
-                $item->ex_comment
+                $item->ex_comment,
             ];
         }, $pointsandresponses);
 

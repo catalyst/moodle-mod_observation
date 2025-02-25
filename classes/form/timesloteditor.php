@@ -75,7 +75,7 @@ class timesloteditor extends \moodleform {
 
             $intervalselector = [
                 $mform->createElement('text', 'interval_amount'),
-                $mform->createElement('select', 'interval_multiplier', '', $options)
+                $mform->createElement('select', 'interval_multiplier', '', $options),
             ];
             $mform->addGroup($intervalselector, 'interval_select_group', get_string('repeatevery', 'observation'), null, false);
             $mform->disabledIf('interval_select_group', 'enable_interval');
@@ -97,10 +97,10 @@ class timesloteditor extends \moodleform {
         foreach ($users as $user) {
             $finalusers[$user->id] = fullname($user);
         }
-        $options = array(
+        $options = [
             'multiple' => false,
             'noselectionstring' => get_string('allareas', 'search'),
-        );
+        ];
         $mform->addElement('header', 'selecting_observer', get_string('selecting_observer', 'observation'));
         $mform->addElement('autocomplete', 'observer_id', get_string('teacher', 'observation'), $finalusers, $options);
 

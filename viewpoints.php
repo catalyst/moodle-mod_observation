@@ -35,7 +35,7 @@ list($observation, $course, $cm) = \mod_observation\observation_manager::get_obs
 require_login($course, true, $cm);
 require_capability('mod/observation:editobservationpoints', $PAGE->context);
 
-$pageurl = new moodle_url('/mod/observation/viewpoints.php', array('id' => $id));
+$pageurl = new moodle_url('/mod/observation/viewpoints.php', ['id' => $id]);
 
 // Check if action and pointid are present.
 if (!empty($action) && !empty($pointid)) {
@@ -73,7 +73,7 @@ if (!empty($action) && !empty($pointid)) {
 }
 
 // Render page.
-$pageurl = new moodle_url('/mod/observation/viewpoints.php', array('id' => $id));
+$pageurl = new moodle_url('/mod/observation/viewpoints.php', ['id' => $id]);
 $PAGE->set_url($pageurl);
 $PAGE->set_title($course->shortname.': '.$observation->name);
 $PAGE->set_heading($course->fullname);
@@ -85,7 +85,7 @@ echo $OUTPUT->box_start();
 
 // Create new observation point.
 echo $OUTPUT->single_button(
-    new moodle_url('/mod/observation/pointeditor.php', array('mode' => 'new', 'id' => $observation->id)),
+    new moodle_url('/mod/observation/pointeditor.php', ['mode' => 'new', 'id' => $observation->id]),
     get_string('createnew', 'observation'),
     'get'
 );

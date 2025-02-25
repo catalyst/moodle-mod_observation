@@ -49,7 +49,7 @@ $gradeformatted = $grade['total'].'/'.$grade['max'];
 $formprefill = [
     'gradecalculated' => $gradeformatted,
     'sessionid' => $sessionid,
-    'extracomment' => $sessioninfo['ex_comment']
+    'extracomment' => $sessioninfo['ex_comment'],
 ];
 
 $submitform = new \mod_observation\form\sessionsubmit(null, $formprefill, 'post', '', null, !$isviewonly);

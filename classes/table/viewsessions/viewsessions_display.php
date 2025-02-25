@@ -58,7 +58,7 @@ class viewsessions_display {
                   ) as observees
             ON os.observee_id = observees.observee_id',
             'where' => 'obs_id = :obsid',
-            'params' => ['obsid' => $observationid]
+            'params' => ['obsid' => $observationid],
         ];
         $table->sql = $sql;
         return $table->out($table->pagesize, true);
