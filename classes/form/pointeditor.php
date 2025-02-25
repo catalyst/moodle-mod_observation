@@ -70,7 +70,7 @@ class pointeditor extends \moodleform {
 
         // Grading instructions.
         $mform->addElement('editor', 'ins', get_string('gradinginstructions', 'observation'));
-        $mform->setType('ins', PARAM_TEXT);
+        $mform->setType('ins', PARAM_RAW); // Editors must be PARAM_RAW.
         $mform->addRule('ins', get_string('required', 'observation'), 'required', null, 'client');
 
         // Max / default grade selection.

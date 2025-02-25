@@ -53,7 +53,7 @@ class pointmarking extends \moodleform {
 
         // Observation point information.
         $instext = $prefill['ins'];
-        $insformat = $prefill['ins_f'];
+        $insformat = (int) $prefill['ins_f'];
 
         $mform->addElement('static', 'instructions', get_string('gradinginstructions', 'observation'),
             format_text($instext, $insformat));

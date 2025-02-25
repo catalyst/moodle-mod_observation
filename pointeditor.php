@@ -65,7 +65,7 @@ if ($mode === "edit") {
     $formprefill['maxgrade'] = $pointdata->max_grade;
     $formprefill['title'] = $pointdata->title;
     $formprefill['ins']['text'] = $pointdata->ins;
-    $formprefill['ins']['format'] = $pointdata->ins_f;
+    $formprefill['ins']['format'] = (int) $pointdata->ins_f;
 }
 
 // Load form.
