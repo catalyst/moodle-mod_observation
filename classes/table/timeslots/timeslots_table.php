@@ -38,6 +38,9 @@ require_once($CFG->libdir . '/tablelib.php');
  */
 class timeslots_table extends \table_sql implements \renderable {
 
+    /** @var int Display mode for table. */
+    public $displaymode = 0;
+
     /**
      * Constructs the table and defines how the data from the SQL query is displayed
      * @param string $uniqueid ID that uniquely identifies this element on the HTML page

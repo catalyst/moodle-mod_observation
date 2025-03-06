@@ -38,6 +38,13 @@ require_once($CFG->libdir . '/tablelib.php');
  */
 class viewpoints_table extends \table_sql implements \renderable {
 
+
+    /** @var context\system System context. */
+    protected $context = 0;
+
+    /** @var int Display mode for table. */
+    protected $displaymode = 0;
+
     /**
      * Constructs the table and defines how the data from the SQL query is displayed
      * @param string $uniqueid ID that uniquely identifies this element on the HTML page
