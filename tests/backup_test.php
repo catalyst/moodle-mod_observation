@@ -29,7 +29,7 @@ use advanced_testcase;
  * @covers      \backup_observation_activity_task
  * @covers      \restore_observation_activity_task
  */
-class backup_test extends advanced_testcase {
+final class backup_test extends advanced_testcase {
     /** @var object course */
     private $course;
 
@@ -40,6 +40,7 @@ class backup_test extends advanced_testcase {
      * Set up for tests. Creates course, activity and adds three basic user roles to it.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         // Create course and activity.
         $generator = $this->getDataGenerator();
@@ -76,7 +77,7 @@ class backup_test extends advanced_testcase {
         $this->instance = $obinstance;
     }
 
-    public function test_backup_and_restore() {
+    public function test_backup_and_restore(): void {
         global $DB;
 
         $this->setAdminUser();

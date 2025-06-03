@@ -28,7 +28,7 @@ use advanced_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_observation\observation_manager
  */
-class observation_session_test extends advanced_testcase {
+final class observation_session_test extends advanced_testcase {
 
     /** @var object observation instance */
     private $instance;
@@ -73,6 +73,7 @@ class observation_session_test extends advanced_testcase {
      * Set up for tests. Creates course, activity and adds three basic user roles to it.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         // Create course and activity.
         $course = $this->getDataGenerator()->create_course();
@@ -121,7 +122,7 @@ class observation_session_test extends advanced_testcase {
         return \mod_observation\session_manager::start_session($obid, $oberid, $obeeid);
     }
 
-    public function test_valid_session_flow() {
+    public function test_valid_session_flow(): void {
         $obid = $this->instance->id;
         $sessionid = $this->create_session();
 
@@ -196,7 +197,7 @@ class observation_session_test extends advanced_testcase {
         $this->assertEquals('complete', $sessioninfo['state']);
     }
 
-    public function test_cancel_session() {
+    public function test_cancel_session(): void {
         $sessionid = $this->create_session();
         \mod_observation\session_manager::cancel_session($sessionid);
 
@@ -204,7 +205,7 @@ class observation_session_test extends advanced_testcase {
         $this->assertEquals('cancelled', $sessioninfo['state']);
     }
 
-    public function test_submit_invalid_grade() {
+    public function test_submit_invalid_grade(): void {
         $sessionid = $this->create_session();
 
         $response = (object)self::VALID_RESPONSE;
@@ -214,7 +215,7 @@ class observation_session_test extends advanced_testcase {
         \mod_observation\observation_manager::submit_point_response($sessionid, $this->pointid1, $response);
     }
 
-    public function test_submit_high_grade() {
+    public function test_submit_high_grade(): void {
         $sessionid = $this->create_session();
 
         $response = (object)self::VALID_RESPONSE;
@@ -224,14 +225,14 @@ class observation_session_test extends advanced_testcase {
         \mod_observation\observation_manager::submit_point_response($sessionid, $this->pointid1, $response);
     }
 
-    public function test_finish_nonexistent_session() {
+    public function test_finish_nonexistent_session(): void {
         $sessionid = $this->create_session();
 
         $this->expectException('moodle_exception');
         \mod_observation\session_manager::finish_session($sessionid + 1);
     }
 
-    public function test_submit_no_response() {
+    public function test_submit_no_response(): void {
         $sessionid = $this->create_session();
 
         $response = (object)self::VALID_RESPONSE;
@@ -247,7 +248,7 @@ class observation_session_test extends advanced_testcase {
      * Tests a particular edge case where the observation points are
      * modified before a session is submitted, causing the grade given to be invalid.
      */
-    public function test_modified_before_submit() {
+    public function test_modified_before_submit(): void {
         // Start a session as normal.
         $obid = $this->instance->id;
         $sessionid = $this->create_session();
@@ -281,7 +282,7 @@ class observation_session_test extends advanced_testcase {
     /**
      * Tests to ensure the lockout is working properly.
      */
-    public function test_start_session_lockout() {
+    public function test_start_session_lockout(): void {
         $obid = $this->instance->id;
         $sessionid = $this->create_session();
 
@@ -293,7 +294,7 @@ class observation_session_test extends advanced_testcase {
     /**
      * Tests to ensure lockout DOES NOT lockout when using different observees.
      */
-    public function test_start_session_lockout_neg() {
+    public function test_start_session_lockout_neg(): void {
         $obid = $this->instance->id;
         $oberid = $this->observer->id;
 
@@ -305,7 +306,7 @@ class observation_session_test extends advanced_testcase {
     /**
      * Tests CRUD operations for observation point with expected data.
      */
-    public function test_crud_expected() {
+    public function test_crud_expected(): void {
         global $DB;
 
         // Create session and submit point response.

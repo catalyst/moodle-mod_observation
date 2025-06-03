@@ -28,7 +28,7 @@ use advanced_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_observation\observation_manager
  */
-class observation_point_test extends advanced_testcase {
+final class observation_point_test extends advanced_testcase {
     /** @var object observation instance */
     private $instance;
 
@@ -48,6 +48,7 @@ class observation_point_test extends advanced_testcase {
      * Set up for tests. Creates course, activity and adds three basic user roles to it.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         // Create course and activity.
         $course = $this->getDataGenerator()->create_course();
@@ -86,7 +87,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests CRUD operations for observation point with expected data.
      */
-    public function test_crud_expected() {
+    public function test_crud_expected(): void {
         $data = self::VALID_DATA;
         $data['obs_id'] = $this->instance->id;
 
@@ -150,7 +151,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests the ordering logic for a single observation point.
      */
-    public function test_ordering_single() {
+    public function test_ordering_single(): void {
         // Generate a single valid point.
         $returnedpoint = self::create_valid_point($this->instance->id);
 
@@ -169,7 +170,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests the ordering logic for multiple observation points.
      */
-    public function test_ordering_multiple() {
+    public function test_ordering_multiple(): void {
         // Generate three valid points.
         $point1 = self::create_valid_point($this->instance->id);
         $point2 = self::create_valid_point($this->instance->id);
@@ -208,7 +209,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests ordering when overstepping another point (i.e. |direction| > 1)
      */
-    public function test_ordering_overstep() {
+    public function test_ordering_overstep(): void {
         // Generate four valid points.
         $point1 = self::create_valid_point($this->instance->id);
         $point2 = self::create_valid_point($this->instance->id);
@@ -262,7 +263,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Test maxgrade input as float.
      */
-    public function test_float_maxgrade() {
+    public function test_float_maxgrade(): void {
         // Get some valid data to begin with.
         $data = self::VALID_DATA;
         $data['obs_id'] = $this->instance->id;
@@ -278,7 +279,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests a negative max grade.
      */
-    public function test_negative_maxgrade() {
+    public function test_negative_maxgrade(): void {
         $data = self::VALID_DATA;
         $data['obs_id'] = $this->instance->id;
 
@@ -293,7 +294,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests a string maxgrade.
      */
-    public function test_string_maxgrade() {
+    public function test_string_maxgrade(): void {
         $data = self::VALID_DATA;
         $data['obs_id'] = $this->instance->id;
 
@@ -308,7 +309,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests a missing maxgrade.
      */
-    public function test_missing_maxgrade() {
+    public function test_missing_maxgrade(): void {
         $data = self::VALID_DATA;
         $data['obs_id'] = $this->instance->id;
 
@@ -323,7 +324,7 @@ class observation_point_test extends advanced_testcase {
     /**
      * Tests restype that doesn't exist.
      */
-    public function test_invalid_restype() {
+    public function test_invalid_restype(): void {
         // Get some valid data to begin with.
         $data = self::VALID_DATA;
         $data['obs_id'] = $this->instance->id;
