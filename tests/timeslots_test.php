@@ -29,6 +29,23 @@ use advanced_testcase;
  * @covers     \mod_observation\timeslot_manager
  */
 class timeslots_test extends advanced_testcase {
+    /** @var object course */
+    private $course;
+
+    /** @var object observation instance */
+    private $instance;
+
+    /** @var object observer user */
+    private $observer;
+
+    /** @var object observer user */
+    private $observer2;
+
+    /** @var object coordinator user */
+    private $coordinator;
+
+    /** @var object observee user */
+    private $observee;
 
     /**
      * Valid data point to use for testing.

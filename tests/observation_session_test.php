@@ -30,6 +30,24 @@ use advanced_testcase;
  */
 class observation_session_test extends advanced_testcase {
 
+    /** @var object observation instance */
+    private $instance;
+
+    /** @var object observer user */
+    private $observer;
+
+    /** @var object observee user */
+    private $observee;
+
+    /** @var object observee user */
+    private $observee2;
+
+    /** @var int observation point id */
+    private $pointid1;
+
+    /** @var int observation point id */
+    private $pointid2;
+
     /**
      * Valid data point to use for testing.
      */
@@ -82,10 +100,8 @@ class observation_session_test extends advanced_testcase {
         $pointid2 = \mod_observation\observation_manager::modify_observation_point($data, true);
 
         // Add data to the context.
-        $this->course = $course;
         $this->instance = $obinstance;
 
-        $this->coordinator = $coordinator;
         $this->observer = $observer;
         $this->observee = $observee;
         $this->observee2 = $observee2;

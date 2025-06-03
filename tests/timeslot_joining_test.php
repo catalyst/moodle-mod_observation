@@ -29,6 +29,23 @@ use advanced_testcase;
  * @covers \mod_observation\timeslot_manager
  */
 class timeslot_joining_test extends advanced_testcase {
+    /** @var object observation instance */
+    private $instance;
+
+    /** @var object observer user */
+    private $observer;
+
+    /** @var object observee user */
+    private $observee;
+
+    /** @var object observee user */
+    private $observee2;
+
+    /** @var int observation timeslot id */
+    private $slot1id;
+
+    /** @var int observation timeslot id */
+    private $slot2id;
 
     /**
      * First valid data point to use for testing.
@@ -59,7 +76,6 @@ class timeslot_joining_test extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($observee2->id, $course->id, 'student');
 
         // Add data to the context.
-        $this->course = $course;
         $this->instance = $obinstance;
 
         $this->observer = $observer;

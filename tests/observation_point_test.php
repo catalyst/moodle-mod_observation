@@ -29,6 +29,8 @@ use advanced_testcase;
  * @covers \mod_observation\observation_manager
  */
 class observation_point_test extends advanced_testcase {
+    /** @var object observation instance */
+    private $instance;
 
     /**
      * Valid data point to use for testing.
@@ -64,12 +66,7 @@ class observation_point_test extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($observee->id, $course->id, 'student');
 
         // Add data to the context.
-        $this->course = $course;
         $this->instance = $obinstance;
-
-        $this->coordinator = $coordinator;
-        $this->observer = $observer;
-        $this->observee = $observee;
     }
 
     /**
@@ -90,8 +87,6 @@ class observation_point_test extends advanced_testcase {
      * Tests CRUD operations for observation point with expected data.
      */
     public function test_crud_expected() {
-        global $DB;
-
         $data = self::VALID_DATA;
         $data['obs_id'] = $this->instance->id;
 

@@ -30,6 +30,12 @@ use advanced_testcase;
  * @covers      \restore_observation_activity_task
  */
 class backup_test extends advanced_testcase {
+    /** @var object course */
+    private $course;
+
+    /** @var object observation instance */
+    private $instance;
+
     /**
      * Set up for tests. Creates course, activity and adds three basic user roles to it.
      */
@@ -68,9 +74,6 @@ class backup_test extends advanced_testcase {
         // Add data to the context.
         $this->course = $course;
         $this->instance = $obinstance;
-
-        $this->observer = $observer;
-        $this->observee = $observee;
     }
 
     public function test_backup_and_restore() {

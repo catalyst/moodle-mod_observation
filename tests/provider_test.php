@@ -31,6 +31,18 @@ use mod_observation\privacy\provider;
  * @covers \mod_observation\privacy\provider
  */
 class provider_test extends \core_privacy\tests\provider_testcase {
+    /** @var object observation instance */
+    private $instance;
+
+    /** @var object course */
+    private $course;
+
+    /** @var object observer user */
+    private $observer;
+
+    /** @var object observee user */
+    private $observee;
+
     /**
      * Set up for tests.
      */
@@ -56,7 +68,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->course = $course;
         $this->instance = $obinstance;
 
-        $this->coordinator = $coordinator;
         $this->observer = $observer;
         $this->observee = $observee;
     }
