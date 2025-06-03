@@ -28,7 +28,22 @@ use advanced_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_observation\timeslot_manager
  */
-class unenrol_test extends advanced_testcase {
+final class unenrol_test extends advanced_testcase {
+
+    /** @var object observation instance */
+    private $instance;
+
+    /** @var object observer user */
+    private $observer;
+
+    /** @var object observee user */
+    private $observee;
+
+    /** @var object observee user */
+    private $observee2;
+
+    /** @var int timeslot id */
+    private $slotid;
 
     /**
      * Valid data point to use for testing.
@@ -42,6 +57,7 @@ class unenrol_test extends advanced_testcase {
      * Set up for tests. Creates course, activity and adds three basic user roles to it.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         // Create course and activity.
         $course = $this->getDataGenerator()->create_course();
@@ -60,7 +76,6 @@ class unenrol_test extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($observee2->id, $course->id, 'student');
 
         // Add data to the context.
-        $this->course = $course;
         $this->instance = $obinstance;
 
         $this->observer = $observer;
@@ -83,7 +98,7 @@ class unenrol_test extends advanced_testcase {
         return \mod_observation\timeslot_manager::modify_time_slot($data);
     }
 
-    public function test_unenrolling_enabled() {
+    public function test_unenrolling_enabled(): void {
         global $DB;
 
         // Creating test.
@@ -113,7 +128,7 @@ class unenrol_test extends advanced_testcase {
         $this->assertEquals(null, $timeslot->observee_event_id);
     }
 
-    public function test_unenrolling_disabled() {
+    public function test_unenrolling_disabled(): void {
         global $DB;
 
         // Creating test.
@@ -130,7 +145,7 @@ class unenrol_test extends advanced_testcase {
         \mod_observation\timeslot_manager::timeslot_unenrolment($obid, $this->slotid, $this->observee->id);
     }
 
-    public function test_unenrolling_empty() {
+    public function test_unenrolling_empty(): void {
         global $DB;
 
         // Ensure unenrolment is enabled.
@@ -144,7 +159,7 @@ class unenrol_test extends advanced_testcase {
         \mod_observation\timeslot_manager::timeslot_unenrolment($this->instance->id, $this->slotid, $this->observee->id);
     }
 
-    public function test_unenrolling_not_own() {
+    public function test_unenrolling_not_own(): void {
         global $DB;
 
         // Ensure unenrolment is enabled.

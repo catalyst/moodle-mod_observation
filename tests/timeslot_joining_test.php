@@ -28,7 +28,24 @@ use advanced_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_observation\timeslot_manager
  */
-class timeslot_joining_test extends advanced_testcase {
+final class timeslot_joining_test extends advanced_testcase {
+    /** @var object observation instance */
+    private $instance;
+
+    /** @var object observer user */
+    private $observer;
+
+    /** @var object observee user */
+    private $observee;
+
+    /** @var object observee user */
+    private $observee2;
+
+    /** @var int observation timeslot id */
+    private $slot1id;
+
+    /** @var int observation timeslot id */
+    private $slot2id;
 
     /**
      * First valid data point to use for testing.
@@ -42,6 +59,7 @@ class timeslot_joining_test extends advanced_testcase {
      * Set up for tests. Creates course, activity and adds three basic user roles to it.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         // Create course and activity.
         $course = $this->getDataGenerator()->create_course();
@@ -59,7 +77,6 @@ class timeslot_joining_test extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($observee2->id, $course->id, 'student');
 
         // Add data to the context.
-        $this->course = $course;
         $this->instance = $obinstance;
 
         $this->observer = $observer;
@@ -87,7 +104,7 @@ class timeslot_joining_test extends advanced_testcase {
     /**
      * Tests basic joining functions.
      */
-    public function test_joining_function() {
+    public function test_joining_function(): void {
         $obid = $this->instance->id;
 
         // Observee 1 joins timeslot 1, Observee 2 joins timeslot 2.
@@ -104,7 +121,7 @@ class timeslot_joining_test extends advanced_testcase {
     /**
      * Tests if students are not allowed to join multiple timeslots.
      */
-    public function test_double_joining() {
+    public function test_double_joining(): void {
         $obid = $this->instance->id;
 
         // Observee 1 tries to join both timeslots 1 and 2 (not allowed).
@@ -117,7 +134,7 @@ class timeslot_joining_test extends advanced_testcase {
     /**
      * Tests if two students are not allowed to join same timeslot.
      */
-    public function test_join_filled() {
+    public function test_join_filled(): void {
         $obid = $this->instance->id;
 
         // Observee 1 joins timeslot 1.
@@ -131,7 +148,7 @@ class timeslot_joining_test extends advanced_testcase {
      /**
       * Tests notifications on timeslot signup
       */
-    public function test_signup_notification() {
+    public function test_signup_notification(): void {
         $obid = $this->instance->id;
 
         $this->preventResetByRollback();

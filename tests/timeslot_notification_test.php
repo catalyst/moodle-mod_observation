@@ -28,7 +28,24 @@ use advanced_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_observation\timeslot_manager
  */
-class timeslot_notification_test extends advanced_testcase {
+final class timeslot_notification_test extends advanced_testcase {
+    /** @var object observation instance */
+    private $instance;
+
+    /** @var object observer user */
+    private $observer;
+
+    /** @var object observee user */
+    private $observee;
+
+    /** @var object observee user */
+    private $observee2;
+
+    /** @var int observation timeslot id */
+    private $slot1id;
+
+    /** @var int observation timeslot id */
+    private $slot2id;
 
     /**
      * Valid data for the timeslot to create notifications for.
@@ -47,6 +64,7 @@ class timeslot_notification_test extends advanced_testcase {
     ];
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         // Create course and activity.
         $course = $this->getDataGenerator()->create_course();
@@ -64,7 +82,6 @@ class timeslot_notification_test extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($observee2->id, $course->id, 'student');
 
         // Add data to the context.
-        $this->course = $course;
         $this->instance = $obinstance;
 
         $this->observer = $observer;
@@ -95,7 +112,7 @@ class timeslot_notification_test extends advanced_testcase {
     /**
      * Test basic CRUD operations for notifications
      */
-    public function test_notification_crud() {
+    public function test_notification_crud(): void {
         $this->setUser($this->observee);
 
         // Create notification.
@@ -129,7 +146,7 @@ class timeslot_notification_test extends advanced_testcase {
     /**
      * Test if user can delete a notification they didn't create
      */
-    public function test_delete_not_owned() {
+    public function test_delete_not_owned(): void {
         $this->setUser($this->observee);
 
         // Create notification for observee 1.
@@ -147,7 +164,7 @@ class timeslot_notification_test extends advanced_testcase {
     /**
      * Tests if a user can create too many notifications than allowed
      */
-    public function test_create_too_many() {
+    public function test_create_too_many(): void {
         $this->setUser($this->observee);
 
         // Create the allowed number.
@@ -167,7 +184,7 @@ class timeslot_notification_test extends advanced_testcase {
     /**
      * Tests invalid inputs for the interval field
      */
-    public function test_invalid_interval() {
+    public function test_invalid_interval(): void {
         $invalidvars = [
             '',
             [],
@@ -195,7 +212,7 @@ class timeslot_notification_test extends advanced_testcase {
     /**
      * Tests invalid inputs for the interval multiplier field
      */
-    public function test_invalid_multiplier() {
+    public function test_invalid_multiplier(): void {
         $invalidvars = [
             '',
             [],
@@ -223,7 +240,7 @@ class timeslot_notification_test extends advanced_testcase {
     /**
      * Tests if the notifications are deleted if a student unenrols from a timeslot
      */
-    public function test_deleted_after_unenrol() {
+    public function test_deleted_after_unenrol(): void {
         global $DB;
 
         $obid = $this->instance->id;
@@ -247,7 +264,7 @@ class timeslot_notification_test extends advanced_testcase {
         $this->assertEmpty($notifications);
     }
 
-    public function test_deleted_after_kicked() {
+    public function test_deleted_after_kicked(): void {
         global $DB;
 
         $obid = $this->instance->id;
@@ -271,7 +288,7 @@ class timeslot_notification_test extends advanced_testcase {
         $this->assertEmpty($notifications);
     }
 
-    public function test_deleted_after_slot_deleted() {
+    public function test_deleted_after_slot_deleted(): void {
         global $DB;
 
         $obid = $this->instance->id;
@@ -299,7 +316,7 @@ class timeslot_notification_test extends advanced_testcase {
      * Tests that process_notifications handles correctly a notification with no observee to send it to.
      * In this case, it should just ignore it and delete the notification processing record.
      */
-    public function test_process_notifications_after_user_removed() {
+    public function test_process_notifications_after_user_removed(): void {
         global $DB;
 
         // Create notification.

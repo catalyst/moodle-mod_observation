@@ -28,7 +28,24 @@ use advanced_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \mod_observation\timeslot_manager
  */
-class timeslots_test extends advanced_testcase {
+final class timeslots_test extends advanced_testcase {
+    /** @var object course */
+    private $course;
+
+    /** @var object observation instance */
+    private $instance;
+
+    /** @var object observer user */
+    private $observer;
+
+    /** @var object observer user */
+    private $observer2;
+
+    /** @var object coordinator user */
+    private $coordinator;
+
+    /** @var object observee user */
+    private $observee;
 
     /**
      * Valid data point to use for testing.
@@ -42,6 +59,7 @@ class timeslots_test extends advanced_testcase {
      * Set up for tests. Creates course, activity and adds three basic user roles to it.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         // Create course and activity.
         $course = $this->getDataGenerator()->create_course();
@@ -89,7 +107,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests basic CRUD actions for timeslots using valid data.
      */
-    public function test_valid_crud() {
+    public function test_valid_crud(): void {
         // Test create.
         $obid = $this->instance->id;
         $data = $this->create_valid_timeslot();
@@ -174,7 +192,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests a negative duration.
      */
-    public function test_negative_duration() {
+    public function test_negative_duration(): void {
         $data = $this->create_valid_timeslot();
         $data['duration'] = -1;
 
@@ -185,7 +203,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests a non-int duration.
      */
-    public function test_float_duration() {
+    public function test_float_duration(): void {
         $data = $this->create_valid_timeslot();
         $data['duration'] = 20.5;
 
@@ -196,7 +214,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests a string start time
      */
-    public function test_string_start_time() {
+    public function test_string_start_time(): void {
         $data = $this->create_valid_timeslot();
         $data['start_time'] = 'Wed 5th July 10am';
 
@@ -207,7 +225,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests a negative start time
      */
-    public function test_negative_start_time() {
+    public function test_negative_start_time(): void {
         $data = $this->create_valid_timeslot();
         $data['start_time'] = -1000;
 
@@ -236,7 +254,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests valid creation of interval timeslot
      */
-    public function test_interval() {
+    public function test_interval(): void {
         $data = $this->create_valid_interval_timeslot();
 
         \mod_observation\timeslot_manager::create_timeslots_by_interval($data);
@@ -249,7 +267,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests invalid interval amount
      */
-    public function test_interval_invalid_amount() {
+    public function test_interval_invalid_amount(): void {
         $data = $this->create_valid_interval_timeslot();
         $data->interval_amount = -10;
 
@@ -260,7 +278,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests invalid interval multiplier
      */
-    public function test_interval_invalid_multiplier() {
+    public function test_interval_invalid_multiplier(): void {
         $data = $this->create_valid_interval_timeslot();
         $data->interval_multiplier = "-2.5";
 
@@ -271,7 +289,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests interval end time before start time
      */
-    public function test_interval_end_before_start() {
+    public function test_interval_end_before_start(): void {
         $data = $this->create_valid_interval_timeslot();
         $data->interval_end = $data->start_time - 20;
 
@@ -282,7 +300,7 @@ class timeslots_test extends advanced_testcase {
     /**
      * Tests interval invalid end time
      */
-    public function test_interval_invalid_end() {
+    public function test_interval_invalid_end(): void {
         $data = $this->create_valid_interval_timeslot();
         $data->interval_end = 0;
 
@@ -297,7 +315,7 @@ class timeslots_test extends advanced_testcase {
      * Tests the basic case when randomly assigning students
      * to timeslots.
      */
-    public function test_random_assign_single_user() {
+    public function test_random_assign_single_user(): void {
         $obid = $this->instance->id;
 
         // Currently 1 observee created in setUp.
@@ -317,7 +335,7 @@ class timeslots_test extends advanced_testcase {
      * Tests that if there are not enough slots, the users who
      * where not signed up to a timeslot are returned.
      */
-    public function test_random_assign_not_enough_slots() {
+    public function test_random_assign_not_enough_slots(): void {
         $obid = $this->instance->id;
 
         // Create an additional user (to make 2 in total), but only a single timeslots.
@@ -336,7 +354,7 @@ class timeslots_test extends advanced_testcase {
      * Tests if there are more empty slots than users,
      * that a user is not assigned to more than a single slot.
      */
-    public function test_random_assign_excessive_slots() {
+    public function test_random_assign_excessive_slots(): void {
         $obid = $this->instance->id;
 
         // Create 5 slots.
@@ -362,7 +380,7 @@ class timeslots_test extends advanced_testcase {
         $this->assertEquals(array_values($observees)[0], $this->observee->id);
     }
 
-    public function test_kick_observee() {
+    public function test_kick_observee(): void {
         $obid = $this->instance->id;
 
         $data = $this->create_valid_timeslot();

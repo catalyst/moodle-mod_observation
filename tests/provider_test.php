@@ -30,11 +30,24 @@ use mod_observation\privacy\provider;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_observation\privacy\provider
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
+    /** @var object observation instance */
+    private $instance;
+
+    /** @var object course */
+    private $course;
+
+    /** @var object observer user */
+    private $observer;
+
+    /** @var object observee user */
+    private $observee;
+
     /**
      * Set up for tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         // Create course and activity.
         $course = $this->getDataGenerator()->create_course();
@@ -56,7 +69,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->course = $course;
         $this->instance = $obinstance;
 
-        $this->coordinator = $coordinator;
         $this->observer = $observer;
         $this->observee = $observee;
     }
@@ -64,7 +76,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_metadata().
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new collection('mod_observation');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
@@ -74,7 +86,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid().
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->setUser($this->observee);
 
         // Enrol user into timeslot.
@@ -101,7 +113,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that only users within a course context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         // Create an unrelated third user.
         $unrelated = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($unrelated->id, $this->course->id, 'student');
@@ -132,7 +144,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that user data for specific users is deleted from a specified context.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $unrelated = $this->getDataGenerator()->create_user();
@@ -197,7 +209,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all user data is deleted for a specific context.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         // Enrol user into timeslot.
@@ -257,7 +269,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertCount(0, $responses);
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         // Setup an observation point.
@@ -321,7 +333,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertCount(0, $responses);
     }
 
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         // Enrol user into timeslot.
         $tsdata = [
             'start_time' => time(),
