@@ -114,7 +114,7 @@ if ($fromform = $markingform->get_data()) {
     }
 
     // If save and continue button pressed, find next observation point to redirect to.
-    if (!is_null($fromform->saveandnext)) {
+    if (isset($fromform->saveandnext)) {
         $allpointids = array_column($observationpoints, 'point_id');
         $index = array_search($pointid, $allpointids);
 
@@ -191,7 +191,7 @@ if ($markingform->no_submit_button_pressed()) {
     $fromform = $markingform->get_submitted_data();
 
     // Cancel / abandon observation button pressed.
-    if (!is_null($fromform->abandonbutton)) {
+    if (isset($fromform->abandonbutton)) {
         // If no confirmation yet, display confirmation dialog.
         if ($confirmcancel === null) {
             echo $OUTPUT->confirm(
@@ -203,7 +203,7 @@ if ($markingform->no_submit_button_pressed()) {
     }
 
     // Submit observation button pressed.
-    if (!is_null($fromform->submitobservation)) {
+    if (isset($fromform->submitobservation)) {
 
         // If no confirmation yet, display confirmation dialog.
         if ($confirmsubmit === null) {
