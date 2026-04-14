@@ -187,6 +187,33 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('markingobservation', 'observation'), 2);
 
+// Display the learner (observee) being observed.
+$observee = \core_user::get_user($sessiondata['observee'], '*', MUST_EXIST);
+
+// Determine which identity fields the current user (grader) is permitted to see.
+$identityfields = \core_user\fields::get_identity_fields($PAGE->context, false);
+
+// fullname() respects $CFG->fullnamedisplay / $CFG->alternativefullnameformat.
+$canviewfullnames = has_capability('moodle/site:viewfullnames', $PAGE->context);
+
+echo $OUTPUT->container_start('my-2');
+echo $OUTPUT->heading(get_string('observee', 'observation') . ': ' . fullname($observee, $canviewfullnames), 5);
+
+// Build secondary details line - only include fields the admin has enabled and the
+// current user is permitted to view.
+$observeedetails = [];
+if (in_array('email', $identityfields) && !empty($observee->email)) {
+    $observeedetails[] = get_string('email') . ': ' .
+        html_writer::tag('a', $observee->email, ['href' => 'mailto:' . $observee->email]);
+}
+if (in_array('username', $identityfields) && !empty($observee->username)) {
+    $observeedetails[] = get_string('username') . ': ' . s($observee->username);
+}
+if (!empty($observeedetails)) {
+    echo html_writer::tag('p', implode(' &nbsp;|&nbsp; ', $observeedetails), ['class' => 'text-muted mb-0']);
+}
+echo $OUTPUT->container_end();
+
 if ($markingform->no_submit_button_pressed()) {
     $fromform = $markingform->get_submitted_data();
 
