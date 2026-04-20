@@ -398,7 +398,7 @@ class observation_manager {
         // Determine which identity fields the current user (grader) is permitted to see.
         $identityfields = \core_user\fields::get_identity_fields($context, false);
 
-        // fullname() respects $CFG->fullnamedisplay / $CFG->alternativefullnameformat.
+        // Variable fullname() respects $CFG->fullnamedisplay / $CFG->alternativefullnameformat.
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
         $out = $OUTPUT->container_start('my-2');
