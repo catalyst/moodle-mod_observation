@@ -384,6 +384,44 @@ class observation_manager {
     }
 
     /**
+     * Renders a labelled info box showing the observee's details to the grader.
+     * @param int $observeeid ID of the observee being observed in this session
+     * @param context $context context to check permissions against for which fields to show
+     * @return string HTML string
+     */
+    public static function render_observee_details(int $observeeid, \context $context) {
+        global $OUTPUT;
+
+        // Display the learner (observee) being observed.
+        $observee = \core_user::get_user($observeeid, '*', MUST_EXIST);
+
+        // Determine which identity fields the current user (grader) is permitted to see.
+        $identityfields = \core_user\fields::get_identity_fields($context, false);
+
+        // Variable fullname() respects $CFG->fullnamedisplay / $CFG->alternativefullnameformat.
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
+        $out = $OUTPUT->container_start('my-2');
+        $out .= $OUTPUT->heading(get_string('observee', 'observation') . ': ' . fullname($observee, $canviewfullnames), 5);
+
+        // Build secondary details line - only include fields the admin has enabled and the
+        // Current user is permitted to view.
+        $observeedetails = [];
+        if (in_array('email', $identityfields) && !empty($observee->email)) {
+            $observeedetails[] = get_string('email') . ': ' .
+                \html_writer::tag('a', $observee->email, ['href' => 'mailto:' . $observee->email]);
+        }
+        if (in_array('username', $identityfields) && !empty($observee->username)) {
+            $observeedetails[] = get_string('username') . ': ' . s($observee->username);
+        }
+        if (!empty($observeedetails)) {
+            $out .= \html_writer::tag('p', implode(' &nbsp;|&nbsp; ', $observeedetails), ['class' => 'text-muted mb-0']);
+        }
+        $out .= $OUTPUT->container_end();
+        return $out;
+    }
+
+    /**
      * Generates a HTML table that summarises the observation points and their responses
      * @param int $observationid ID of the observation instance
      * @param int $sessionid ID of the observation session

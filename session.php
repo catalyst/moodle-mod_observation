@@ -187,6 +187,9 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('markingobservation', 'observation'), 2);
 
+// Display the learner (observee) being observed.
+echo \mod_observation\observation_manager::render_observee_details($sessiondata['observee'], $PAGE->context);
+
 if ($markingform->no_submit_button_pressed()) {
     $fromform = $markingform->get_submitted_data();
 

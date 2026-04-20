@@ -103,6 +103,9 @@ echo $OUTPUT->container_end();
 
 echo $OUTPUT->heading(get_string('sessionsummary', 'observation'), 2);
 
+// Display the learner (observee) being observed.
+echo \mod_observation\observation_manager::render_observee_details($sessioninfo['observee'], $PAGE->context);
+
 // Summary of points and responses.
 echo \mod_observation\observation_manager::format_points_and_responses($obid, $sessionid);
 
