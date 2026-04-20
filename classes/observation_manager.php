@@ -405,7 +405,7 @@ class observation_manager {
         $out .= $OUTPUT->heading(get_string('observee', 'observation') . ': ' . fullname($observee, $canviewfullnames), 5);
 
         // Build secondary details line - only include fields the admin has enabled and the
-        // current user is permitted to view.
+        // Current user is permitted to view.
         $observeedetails = [];
         if (in_array('email', $identityfields) && !empty($observee->email)) {
             $observeedetails[] = get_string('email') . ': ' .
